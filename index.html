@@ -62,6 +62,94 @@
         </div>
     </div>
 
+    <!-- App Download Banner -->
+    <style>
+        .app-download-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(135deg, rgba(229, 9, 20, 0.15) 0%, rgba(20, 20, 25, 0.9) 100%);
+            border: 1px solid rgba(229, 9, 20, 0.3);
+            border-radius: 20px;
+            padding: 16px 24px;
+            margin: 20px auto;
+            max-width: 1200px;
+            width: calc(100% - 40px);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .app-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .app-logo {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            object-fit: cover;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        }
+        .app-text h3 {
+            margin: 0;
+            color: #fff;
+            font-size: 1.15rem;
+            font-weight: 600;
+        }
+        .app-text p {
+            margin: 4px 0 0;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+        }
+        .app-download-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #e50914;
+            color: #fff;
+            padding: 10px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        .app-download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(229, 9, 20, 0.4);
+        }
+        @media (max-width: 600px) {
+            .app-download-banner {
+                flex-direction: column;
+                text-align: center;
+                padding: 20px;
+            }
+            .app-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            .app-download-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+    <div class="app-download-banner">
+        <div class="app-info">
+            <img src="https://i.ibb.co/fGKBtZTQ/Chat-GPT-Image-Jun-7-2026-02-02-35-PM.png" alt="Series Update App Logo" class="app-logo">
+            <div class="app-text">
+                <h3>Download Series Update App</h3>
+                <p>Experience cinematic streaming on Android & Android TV</p>
+            </div>
+        </div>
+        <a href="https://gwedrqphjpvyrbdeqakr.supabase.co/storage/v1/object/sign/APP/app4072113-wkg85a.apk?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV80ZDFlNDcyYi0zZjI4LTQwMmItYTc1My02NmMwYzk3NzhhNmEiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJBUFAvYXBwNDA3MjExMy13a2c4NWEuYXBrIiwiaWF0IjoxNzgwODI0NDQxLCJleHAiOjE4MTIzNjA0NDF9.1nW_RX_3iGy0b1_-HWkFzMg8KgC48RQvz_P4LScFlKM" class="app-download-btn">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download Now
+        </a>
+    </div>
+
     <div class="global-ad-slot" data-position="top"></div>
     <div style="display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden;">
         <script>
