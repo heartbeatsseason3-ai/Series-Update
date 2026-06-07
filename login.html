@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin Login | Series Update OTT Platform</title>
+    <meta name="description" content="Secure admin login for Series Update OTT platform. This page is for authorized administrators only.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="login-body">
+    
+    <div class="login-card">
+        <a href="index.html" class="logo login-logo">
+            <img src="https://i.ibb.co/hxWHyVMY/Chat-GPT-Image-Jun-7-2026-01-56-00-PM.png" alt="HEART BEAT" class="logo-img">
+        </a>
+        <h1 class="login-title">Admin Access</h1>
+        <p class="login-subtitle">Please enter your credentials to continue.</p>
+
+        <div id="error-msg" class="error-msg">Invalid email or password.</div>
+
+        <form id="login-form" class="login-form">
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" placeholder="example1@email.com" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn btn-primary login-btn">
+                <span>🔒</span> Login to Dashboard
+            </button>
+        </form>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Redirect if already logged in - wait for Supabase session to initialize
+        auth.ready.then(session => {
+            if (session) {
+                window.location.href = 'admin.html';
+            }
+        });
+
+        const loginForm = document.getElementById('login-form');
+        const errorMsg = document.getElementById('error-msg');
+        const loginBtn = loginForm.querySelector('button[type="submit"]');
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span>⏳</span> Signing in...';
+            errorMsg.style.display = 'none';
+
+            try {
+                const result = await auth.login(email, password);
+                if (result.success) {
+                    loginBtn.innerHTML = '<span>✅</span> Success! Redirecting...';
+                    window.location.href = 'admin.html';
+                } else {
+                    errorMsg.textContent = '❌ ' + result.message;
+                    errorMsg.style.display = 'block';
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<span>🔒</span> Login to Dashboard';
+                    document.getElementById('password').value = '';
+                }
+            } catch (err) {
+                console.error('Login exception:', err);
+                errorMsg.textContent = '❌ Exception: ' + err.message;
+                errorMsg.style.display = 'block';
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<span>🔒</span> Login to Dashboard';
+            }
+        });
+    </script>
+</body>
+</html>

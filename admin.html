@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Series Update Admin | Content Management</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="style.css">
+    <!-- Admin-specific overrides -->
+    <style>
+        /* Always show icon + text in admin navbar regardless of viewport */
+        #admin-navbar .btn-text {
+            display: inline !important;
+        }
+
+        #admin-navbar .btn-icon {
+            display: inline-flex !important;
+            font-size: 1rem !important;
+        }
+
+        #admin-navbar .nav-right .btn-secondary {
+            aspect-ratio: auto !important;
+            border-radius: 10px !important;
+            padding: 0.6rem 1rem !important;
+        }
+
+        @media (max-width: 650px) {
+            #admin-navbar {
+                height: auto !important;
+                padding: 10px 0;
+            }
+            #admin-navbar .nav-container {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px;
+            }
+            #admin-navbar .nav-right {
+                width: 100%;
+                justify-content: center;
+            }
+            .admin-container {
+                margin-top: 120px !important; /* prevent overlap if navbar gets taller */
+            }
+        }
+    </style>
+
+    <!-- Auth Check -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
+    <script src="supabase-config.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // Critical: Check auth before rendering the rest of the page
+        // We wait for the 'auth.ready' promise to avoid race conditions
+        document.addEventListener('DOMContentLoaded', () => {
+            auth.ready.then((session) => {
+                if (!session) {
+                    window.location.href = 'login.html';
+                }
+            });
+        });
+    </script>
+    <script src="https://consumptionbackwardsentiments.com/45/8c/9f/458c9f092462724a78a8ae9c2bf80302.js"></script>
+</head>
+
+<body class="admin-body">
+
+    <!-- Navigation Bar -->
+    <nav class="navbar scrolled" id="admin-navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="index.html" class="logo" id="admin-logo">
+                    <img src="https://i.ibb.co/hxWHyVMY/Chat-GPT-Image-Jun-7-2026-01-56-00-PM.png" alt="HEART BEAT" class="logo-img"> <span class="admin-badge-text">ADMIN</span>
+                </a>
+            </div>
+            <div class="nav-right" style="gap: 0.6rem;">
+                <button onclick="auth.logout()" class="btn btn-secondary logout-link" style="white-space:nowrap;">
+                    <span class="btn-icon" style="font-size:1rem;">🚪</span>
+                    <span class="btn-text" style="display:inline;">Logout</span>
+                </button>
+                <a href="index.html" class="btn btn-secondary" style="white-space:nowrap;">
+                    <span class="btn-icon" style="font-size:1rem;">🏠</span>
+                    <span class="btn-text" style="display:inline;">Back to Site</span>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="admin-container">
+        <div class="admin-header">
+            <h1 class="admin-title">Content Dashboard <span id="edit-mode-tag"
+                    class="edit-mode-indicator hidden-initial">EDIT MODE</span></h1>
+            <p class="admin-subtitle">Create and manage your OTT library from here.</p>
+        </div>
+
+        <div class="admin-grid">
+            <!-- Create Content Section -->
+            <section class="admin-card">
+                <h2 class="admin-section-title">
+                    <span>➕</span> Add New Content
+                </h2>
+                <form id="admin-form">
+                    <div class="form-group">
+                        <label for="title">Content Title</label>
+                        <input type="text" id="title" placeholder="e.g. Inception" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="thumbPortrait">Portrait Poster URL (2:3)</label>
+                        <input type="url" id="thumbPortrait" placeholder="Vertical poster image..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="thumbLandscape">Landscape Backdrop URL (16:9)</label>
+                        <input type="url" id="thumbLandscape" placeholder="Horizontal background image..." required>
+                        <span class="form-hint">Used for the Hero Banner and Watch Page background.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" required>
+                            <option value="Action">Action</option>
+                            <option value="Sci-Fi">Sci-Fi</option>
+                            <option value="Thriller">Thriller</option>
+                            <option value="Comedy">Comedy</option>
+                            <option value="Trending Now">Trending Now</option>
+                            <option value="Latest Uploads">Latest Uploads</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quality">Video Quality</label>
+                        <select id="quality" required>
+                            <option value="4K Ultra HD">4K Ultra HD</option>
+                            <option value="1080p Full HD">1080p Full HD</option>
+                            <option value="720p HD">720p HD</option>
+                            <option value="CAM">CAM</option>
+                            <option value="TS">TS</option>
+                            <option value="WEB-DL">WEB-DL</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="publishDate">Publish Date</label>
+                        <input type="date" id="publishDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="content">Description / Content</label>
+                        <textarea id="content" rows="4" placeholder="Briefly describe the plot..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contentType">Content Type</label>
+                        <select id="contentType" required onchange="app.toggleStreamTypeFields()">
+                            <option value="Movie">Movie</option>
+                            <option value="Series">Series</option>
+                        </select>
+                    </div>
+
+                    <div id="movie-fields" class="form-group">
+                        <label for="videoLink">Watch Now Link (Stream URL)</label>
+                        <input type="url" id="videoLink" placeholder="https://example.com/movie.mp4">
+                        <span class="form-hint">The direct link used when 'Watch Now' is clicked.</span>
+                        
+                        <label for="downloadLink" style="margin-top: 1rem;">Download Link (Optional)</label>
+                        <input type="url" id="downloadLink" placeholder="https://example.com/download.mp4" style="margin-top: 0.5rem;">
+                        <span class="form-hint">The direct link for the user to download the content.</span>
+
+                        <label for="embedCode" style="margin-top: 1rem;">Embed Code or Video Link</label>
+                        <textarea id="embedCode" rows="3" placeholder="Paste direct link (e.g., YouTube, MP4) or <iframe> code..." style="width: 100%; border-radius: 8px; padding: 0.8rem; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);"></textarea>
+                        <span class="form-hint">Paste a video link or the full iframe HTML snippet to play directly on the Watch page.</span>
+                    </div>
+
+                    <div id="series-fields" class="form-group hidden-initial">
+                        <label>Episodes Management</label>
+                        <div id="episodes-container" class="episodes-admin-list">
+                            <!-- Episode rows will be added here -->
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-small full-width-mt"
+                            onclick="app.addEpisodeRow()">
+                            ➕ Add New Episode
+                        </button>
+                    </div>
+
+                    <div class="form-group featured-checkbox-group">
+                        <input type="checkbox" id="is-featured" class="checkbox-input">
+                        <label for="is-featured" class="checkbox-label">Show in Hero (Featured) 🌟</label>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="btn btn-primary publish-submit-btn">
+                        🚀 Publish to Website
+                    </button>
+                    <button type="button" id="cancel-edit-btn" class="btn btn-secondary"
+                        style="width: 100%; margin-top: 0.5rem; display: none;">
+                        Cancel Editing
+                    </button>
+                </form>
+            </section>
+
+            <!-- Manage Content Section -->
+            <section class="admin-card">
+                <h2 class="admin-section-title">
+                    <span>📂</span> Manage Library
+                </h2>
+                <div class="content-list" id="admin-content-list">
+                    <!-- Dynamic list items will be injected here -->
+                    <div class="loading-status">
+                        <p>Loading content...</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <div class="admin-header" style="margin-top: 3rem;">
+            <h1 class="admin-title">Products Dashboard <span id="prod-edit-mode-tag"
+                    class="edit-mode-indicator hidden-initial">EDIT MODE</span></h1>
+            <p class="admin-subtitle">Manage affiliate shopping products.</p>
+        </div>
+
+        <div class="admin-grid">
+            <!-- Create Product Section -->
+            <section class="admin-card">
+                <h2 class="admin-section-title">
+                    <span>🛍️</span> Add New Product
+                </h2>
+                <form id="admin-product-form">
+                    <div class="form-group">
+                        <label for="prodName">Product Name</label>
+                        <input type="text" id="prodName" placeholder="e.g. Smart Watch" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodImage">Product Image URL</label>
+                        <input type="url" id="prodImage" placeholder="Image URL..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodCategory">Category</label>
+                        <input type="text" id="prodCategory" placeholder="e.g. Electronics" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: end;">
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="prodOriginalPrice">Original Price</label>
+                            <input type="text" id="prodOriginalPrice" placeholder="e.g. ₹2,999" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <label for="prodPrice">Sale Price</label>
+                            <input type="text" id="prodPrice" placeholder="e.g. ₹1,999" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="prodDiscount">Discount Percentage (Auto-calculated)</label>
+                        <input type="number" id="prodDiscount" placeholder="%" readonly style="background: rgba(0,0,0,0.3); color: #aaa;">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodAffiliateUrl">Affiliate URL (Buy Link)</label>
+                        <input type="url" id="prodAffiliateUrl" placeholder="https://amazon.com/..." required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="prodDesc">Short Description</label>
+                        <textarea id="prodDesc" rows="3" placeholder="Briefly describe the product..." required></textarea>
+                    </div>
+
+                    <div class="form-group featured-checkbox-group">
+                        <input type="checkbox" id="prodFeatured" class="checkbox-input">
+                        <label for="prodFeatured" class="checkbox-label">Featured Product 🌟</label>
+                    </div>
+                    
+                    <div class="form-group featured-checkbox-group">
+                        <input type="checkbox" id="prodStatus" class="checkbox-input" checked>
+                        <label for="prodStatus" class="checkbox-label">Visible (Active) 👁️</label>
+                    </div>
+
+                    <button type="submit" id="prod-submit-btn" class="btn btn-primary publish-submit-btn">
+                        🚀 Publish Product
+                    </button>
+                    <button type="button" id="prod-cancel-edit-btn" class="btn btn-secondary"
+                        style="width: 100%; margin-top: 0.5rem; display: none;">
+                        Cancel Editing
+                    </button>
+                </form>
+            </section>
+
+            <!-- Manage Products Section -->
+            <section class="admin-card">
+                <h2 class="admin-section-title">
+                    <span>📦</span> Manage Products
+                </h2>
+                <div class="content-list" id="admin-product-list">
+                    <div class="loading-status">
+                        <p>Loading products...</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <div class="admin-header" style="margin-top: 3rem;">
+            <h1 class="admin-title">Ads Dashboard <span id="ad-edit-mode-tag" class="edit-mode-indicator hidden-initial">EDIT MODE</span></h1>
+            <p class="admin-subtitle">Manage advertisement banners globally.</p>
+        </div>
+
+        <div class="admin-grid">
+            <section class="admin-card">
+                <h2 class="admin-section-title"><span>📢</span> Add New Banner</h2>
+                <form id="admin-ad-form">
+                    <div class="form-group">
+                        <label for="adPosition">Position</label>
+                        <select id="adPosition" required>
+                            <option value="top">Top (Below Header)</option>
+                            <option value="middle">Middle of Content</option>
+                            <option value="bottom">Bottom (Above Footer)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="adImage">Banner Image URL</label>
+                        <input type="url" id="adImage" placeholder="Image URL (optional if using script)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adLink">Destination URL</label>
+                        <input type="url" id="adLink" placeholder="Where the ad goes when clicked...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adScript">Custom Script / HTML (Optional)</label>
+                        <textarea id="adScript" rows="4" placeholder="Paste ad network script here (e.g. <script>...</script>). Overrides image/link if provided."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="adOrder">Display Order (Lower = First)</label>
+                        <input type="number" id="adOrder" value="0" required>
+                    </div>
+
+                    <div class="form-group featured-checkbox-group">
+                        <input type="checkbox" id="adStatus" class="checkbox-input" checked>
+                        <label for="adStatus" class="checkbox-label">Visible (Active) 👁️</label>
+                    </div>
+
+                    <button type="submit" id="ad-submit-btn" class="btn btn-primary publish-submit-btn">🚀 Publish Ad</button>
+                    <button type="button" id="ad-cancel-edit-btn" class="btn btn-secondary" style="width: 100%; margin-top: 0.5rem; display: none;">Cancel Editing</button>
+                </form>
+            </section>
+
+            <section class="admin-card">
+                <h2 class="admin-section-title"><span>📊</span> Manage Ads</h2>
+                <div class="content-list" id="admin-ad-list">
+                    <div class="loading-status"><p>Loading ads...</p></div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        // Set default date to today
+        document.getElementById('publishDate').valueAsDate = new Date();
+    </script>
+</body>
+
+</html>
