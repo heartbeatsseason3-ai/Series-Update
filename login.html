@@ -33,7 +33,10 @@
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" placeholder="••••••••" required>
+                <div style="position: relative; display: flex; align-items: center;">
+                    <input type="password" id="password" placeholder="••••••••" required style="width: 100%; padding-right: 40px;">
+                    <span id="toggle-password" style="position: absolute; right: 10px; cursor: pointer; user-select: none;">👁️</span>
+                </div>
             </div>
             <button type="submit" class="btn btn-primary login-btn">
                 <span>🔒</span> Login to Dashboard
@@ -56,6 +59,14 @@
         const loginForm = document.getElementById('login-form');
         const errorMsg = document.getElementById('error-msg');
         const loginBtn = loginForm.querySelector('button[type="submit"]');
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordInput = document.getElementById('password');
+
+        togglePassword.addEventListener('click', function () {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.textContent = type === 'password' ? '👁️' : '🙈';
+        });
 
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
