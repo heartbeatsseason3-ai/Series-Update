@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     
     <style>
         :root {
@@ -16,6 +17,7 @@
             --accent-red: #E50914;
             --btn-grey: #1A1D24;
             --border-color: rgba(255, 255, 255, 0.1);
+            --plyr-color-main: #E50914;
         }
 
         * {
@@ -160,6 +162,12 @@
         .synopsis { font-size: 13px; color: #aaa; line-height: 1.5; margin-bottom: 20px; }
         .divider { width: 100%; height: 1px; background: var(--border-color); margin-bottom: 20px; }
 
+        /* --- Server Selection --- */
+        .server-selector { display: flex; gap: 10px; padding: 12px 20px; background: #0A0C10; justify-content: center; flex-wrap: wrap; }
+        .server-btn { background: var(--btn-grey); color: white; border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .server-btn.active { background: var(--accent-red); border-color: var(--accent-red); }
+        .server-btn:hover:not(.active) { background: rgba(255,255,255,0.1); }
+
         /* --- Next Episode Card --- */
         .next-ep-header { display: flex; align-items: center; font-size: 16px; font-weight: 700; border-left: 3px solid var(--accent-red); padding-left: 8px; margin-bottom: 16px; margin-left: 20px; line-height: 1; }
         
@@ -243,7 +251,7 @@
             .header-icon#back-btn {
                 display: none;
             }
-            .video-container {
+            .player-container {
                 max-width: 1200px;
                 margin: 0 auto;
                 border-radius: 16px;
@@ -328,19 +336,21 @@
                 </button>
             </div>
         </header>
+<div style="display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden;" class="banner-ad">
+    <script>
+        atOptions = {
+            'key' : '41381acd9cf7f2701d35aa2372c93a8f',
+            'format' : 'iframe',
+            'height' : 60,
+            'width' : 468,
+            'params' : {}
+        };
+    </script>
+    <script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script>
+</div>
 
-        <div style="display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden;">
-            <script>
-                atOptions = {
-                    'key' : '41381acd9cf7f2701d35aa2372c93a8f',
-                    'format' : 'iframe',
-                    'height' : 60,
-                    'width' : 468,
-                    'params' : {}
-                };
-            </script>
-            <script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script>
-        </div>
+
+        
 
         <!-- 2. Video Player Container -->
         <div class="player-container" id="player-container">
@@ -349,47 +359,17 @@
                 <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color: #888;">⏳ Loading stream...</div>
             </div>
 
-            <!-- Custom Controls Overlay -->
-            <div class="custom-controls" id="custom-controls">
-                <div class="controls-top">
-                    <button class="header-icon" id="player-back-btn" onclick="window.location.href='index.html'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
-                    <button class="header-icon" id="lock-btn"><svg id="lock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button>
-                </div>
-                <div class="controls-center" id="controls-center">
-                    <button class="skip-btn" id="skip-back-btn">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                        <span style="position:absolute; top:9px;">10</span>
-                    </button>
-                    <div class="play-pause-btn" id="play-pause-btn">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-                    </div>
-                    <button class="skip-btn" id="skip-fwd-btn">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
-                        <span style="position:absolute; top:9px;">10</span>
-                    </button>
-                </div>
-                <div class="controls-bottom" id="controls-bottom">
-                    <span class="time-text" id="time-current">0:00</span>
-                    <input type="range" id="progress-bar" value="0" min="0" step="0.1">
-                    <span class="time-text" id="time-total">0:00</span>
-                    <button class="header-icon" id="fullscreen-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
-                </div>
-            </div>
+            <!-- Custom Controls Overlay Removed (Using Plyr) -->
+
+        </div>
+
+        <!-- Server Selector -->
+        <div class="server-selector" id="server-selector" style="display: none;">
+            <!-- Buttons injected via JS -->
         </div>
 
         <div id="dynamic-meta" style="display: none; flex-direction: column;">
-            <div style="display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden;">
-                <script>
-                    atOptions = {
-                        'key' : '41381acd9cf7f2701d35aa2372c93a8f',
-                        'format' : 'iframe',
-                        'height' : 60,
-                        'width' : 468,
-                        'params' : {}
-                    };
-                </script>
-                <script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script>
-            </div>
+            
             
             <!-- 3. Episode Metadata Section -->
             <div class="metadata-section dimmable-content" id="metadata-section">
@@ -449,21 +429,25 @@
             <div style="display: flex; justify-content: center; margin: 20px 0 80px 0; width: 100%; overflow: hidden;">
                 <script>
                     atOptions = {
-                        'key' : '41381acd9cf7f2701d35aa2372c93a8f',
+                        'key' : 'b695c55c7854dd20a9652ca53aa5c647',
                         'format' : 'iframe',
                         'height' : 60,
                         'width' : 468,
                         'params' : {}
                     };
                 </script>
-                <script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script>
+                <script src="https://www.highperformanceformat.com/b695c55c7854dd20a9652ca53aa5c647/invoke.js"></script>
             </div>
         </div>
 
     </div>
 
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-core@latest/build/p2p-media-loader-core.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-hlsjs@latest/build/p2p-media-loader-hlsjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
-    <script src="supabase-config.js"></script>
+    <script src="supabase-config.js?v=1781308664462"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
@@ -483,13 +467,30 @@
                 return;
             }
 
-            const { data, error } = await supabase.from('content').select('*').eq('id', id).single();
-            if (error || !data) {
-                document.getElementById('video-target').innerHTML = '<div style="color:#e57373; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">Content not found.</div>';
-                return;
+            // Optimize for 10,000+ viewers: Cache DB request locally to heavily reduce Supabase read spikes
+            const cacheKey = `content_cache_${id}`;
+            let data = null;
+            try {
+                const cached = sessionStorage.getItem(cacheKey);
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (Date.now() - parsed.timestamp < 10 * 60 * 1000) { // 10 minute cache TTL
+                        data = parsed.data;
+                    }
+                }
+            } catch(e) {}
+
+            if (!data) {
+                const { data: dbData, error } = await supabase.from('content').select('*').eq('id', id).single();
+                if (error || !dbData) {
+                    document.getElementById('video-target').innerHTML = '<div style="color:#e57373; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">Content not found.</div>';
+                    return;
+                }
+                data = dbData;
+                try { sessionStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data })); } catch(e) {}
             }
 
-            let embedCode = null;
+            let serverLinks = [];
             let downloadLink = null;
             let displayTitle = data.title;
             let subheading = data.type === 'Series' ? `${data.title.toUpperCase()}` : 'MOVIE';
@@ -505,7 +506,13 @@
             if (isSeries && epIndexStr !== null && episodes[epIndexStr]) {
                 currentEpIndex = parseInt(epIndexStr, 10);
                 const epObj = episodes[currentEpIndex];
-                embedCode = epObj.embedCode || epObj.link || epObj.videoUrl;
+                
+                serverLinks = [
+                    epObj.embedCode || epObj.link || epObj.videoUrl || '',
+                    epObj.embedCode2 || epObj.link2 || epObj.videoUrl2 || epObj.server2 || '',
+                    epObj.embedCode3 || epObj.link3 || epObj.videoUrl3 || epObj.server3 || ''
+                ];
+                
                 displayTitle = epObj.title || `Episode ${currentEpIndex + 1}`;
                 downloadLink = epObj.downloadLink;
                 subheading = `${data.title.toUpperCase()} - S1 : E${currentEpIndex + 1}`;
@@ -529,9 +536,16 @@
                     nextBtnBottom.href = nextUrl;
                 }
             } else {
-                embedCode = data.embed_code || data.video_link;
+                serverLinks = [
+                    data.embed_code || data.video_link || '',
+                    data.embed_code2 || data.video_link2 || data.video_link_2 || data.server2 || '',
+                    data.embed_code3 || data.video_link3 || data.video_link_3 || data.server3 || ''
+                ];
                 downloadLink = data.download_link;
             }
+
+            // Clean up empty server links
+            serverLinks = serverLinks.filter(link => link && link.trim() !== '');
 
             // Populate Meta
             document.getElementById('dynamic-meta').style.display = 'flex';
@@ -555,40 +569,133 @@
                 dlBtn.target = '_blank';
             }
 
-            // Inject Video / iFrame
-            if (embedCode && embedCode.trim() !== '') {
-                let finalEmbed = embedCode.trim();
-                let isDirectVideo = false;
-
-                if (!finalEmbed.startsWith('<')) {
-                    if (finalEmbed.includes('youtube.com/watch?v=')) {
-                        try {
-                            const videoId = new URL(finalEmbed).searchParams.get('v');
-                            if (videoId) finalEmbed = `https://www.youtube.com/embed/${videoId}`;
-                        } catch(e) {}
-                    } else if (finalEmbed.includes('youtu.be/')) {
-                        const videoId = finalEmbed.split('youtu.be/')[1]?.split('?')[0];
-                        if (videoId) finalEmbed = `https://www.youtube.com/embed/${videoId}`;
-                    }
+            // Setup server selection UI
+            if (serverLinks.length > 0) {
+                if (serverLinks.length > 1) {
+                    const selector = document.getElementById('server-selector');
+                    selector.style.display = 'flex';
+                    let buttonsHtml = '';
+                    serverLinks.forEach((link, idx) => {
+                        buttonsHtml += `<button class="server-btn ${idx === 0 ? 'active' : ''}" data-idx="${idx}">Server ${idx + 1}</button>`;
+                    });
+                    selector.innerHTML = buttonsHtml;
                     
-                    let posterUrl = data.thumb_landscape || data.thumb_portrait || '';
-                    if (finalEmbed.match(/\.(mp4|webm|ogg|mkv)$/i) || finalEmbed.includes('.mp4')) {
-                        isDirectVideo = true;
-                        finalEmbed = `<video id="main-video" src="${finalEmbed}" poster="${posterUrl}" playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000;"></video>`;
-                    } else {
-                        finalEmbed = `<iframe src="${finalEmbed}" allowfullscreen allow="fullscreen" style="width: 100%; height: 100%; border: none;"></iframe>`;
-                    }
+                    selector.querySelectorAll('.server-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            selector.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
+                            e.target.classList.add('active');
+                            const idx = parseInt(e.target.getAttribute('data-idx'));
+                            loadVideo(serverLinks[idx]);
+                        });
+                    });
                 }
-
-                document.getElementById('video-target').innerHTML = finalEmbed;
-
-                if (isDirectVideo) {
-                    setupCustomControls();
-                } else {
-                    document.getElementById('custom-controls').style.display = 'none';
-                }
+                loadVideo(serverLinks[0]);
             } else {
                 document.getElementById('video-target').innerHTML = '<div style="color:#e57373; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">No video available.</div>';
+            }
+
+            function loadVideo(embedCode) {
+                // Cleanup existing player if any
+                if (window.plyrPlayer) { window.plyrPlayer.destroy(); window.plyrPlayer = null; }
+                if (window.hls) { window.hls.destroy(); window.hls = null; }
+
+                if (embedCode && embedCode.trim() !== '') {
+                    let finalEmbed = embedCode.trim();
+                    let isDirectVideo = false;
+
+                    if (!finalEmbed.startsWith('<')) {
+                        if (finalEmbed.includes('youtube.com/watch?v=')) {
+                            try {
+                                const videoId = new URL(finalEmbed).searchParams.get('v');
+                                if (videoId) finalEmbed = `https://www.youtube.com/embed/${videoId}`;
+                            } catch(e) {}
+                        } else if (finalEmbed.includes('youtu.be/')) {
+                            const videoId = finalEmbed.split('youtu.be/')[1]?.split('?')[0];
+                            if (videoId) finalEmbed = `https://www.youtube.com/embed/${videoId}`;
+                        }
+                        
+                        let posterUrl = data.thumb_landscape || data.thumb_portrait || '';
+                        let videoType = '';
+                        const lowerEmbed = finalEmbed.toLowerCase();
+                        if (lowerEmbed.includes('.m3u8')) videoType = 'type="application/x-mpegURL"';
+                        else if (lowerEmbed.includes('.mp4')) videoType = 'type="video/mp4"';
+                        else if (lowerEmbed.includes('.webm')) videoType = 'type="video/webm"';
+                        else if (lowerEmbed.includes('.ogg')) videoType = 'type="video/ogg"';
+                        else if (lowerEmbed.includes('.mkv')) videoType = 'type="video/webm"';
+
+                        if (finalEmbed.match(/\.(mp4|webm|ogg|mkv|m3u8)$/i) || finalEmbed.includes('.mp4') || finalEmbed.includes('.m3u8')) {
+                            isDirectVideo = true;
+                            // Added preload="none" to prevent thundering herd bandwidth spikes on load
+                            finalEmbed = `<video id="main-video" preload="none" playsinline controls data-poster="${posterUrl}" style="width: 100%; height: 100%; object-fit: contain; background: #000;">
+                                            <source src="${finalEmbed}" ${videoType} />
+                                          </video>`;
+                        } else {
+                            finalEmbed = `<iframe src="${finalEmbed}" allowfullscreen allow="fullscreen" style="width: 100%; height: 100%; border: none;"></iframe>`;
+                        }
+                    }
+
+                    document.getElementById('video-target').innerHTML = finalEmbed;
+
+                    if (isDirectVideo) {
+                        const video = document.getElementById('main-video');
+                        const source = video.querySelector('source').src;
+                        const defaultOptions = {
+                            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
+                            settings: ['captions', 'quality', 'speed', 'loop']
+                        };
+
+                        if (source.includes('.m3u8') && typeof Hls !== 'undefined' && Hls.isSupported()) {
+                            let hlsConfig = {
+                                maxMaxBufferLength: 30, // Limit forward buffer to save bandwidth
+                                enableWorker: true
+                            };
+
+                            let p2pEngine = null;
+                            if (typeof p2pml !== 'undefined' && p2pml.hlsjs.Engine.isSupported()) {
+                                const swarmId = isSeries && currentEpIndex !== null ? `${id}_ep${currentEpIndex}` : id;
+                                p2pEngine = new p2pml.hlsjs.Engine({
+                                    segments: {
+                                        swarmId: swarmId
+                                    }
+                                });
+                                // Merge P2P config with HLS.js config
+                                hlsConfig = Object.assign(hlsConfig, p2pEngine.createHlsJsConfig());
+                            }
+
+                            const hls = new Hls(hlsConfig);
+                            if (p2pEngine) {
+                                p2pEngine.initHlsJsPlayer(hls);
+                            }
+
+                            hls.loadSource(source);
+                            hls.attachMedia(video);
+                            window.hls = hls;
+
+                            hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
+                                const availableQualities = hls.levels.map((l) => l.height);
+                                defaultOptions.quality = {
+                                    default: availableQualities[0],
+                                    options: availableQualities,
+                                    forced: true,
+                                    onChange: (e) => updateQuality(e),
+                                };
+                                window.plyrPlayer = new Plyr(video, defaultOptions);
+                            });
+
+                            function updateQuality(newQuality) {
+                                window.hls.levels.forEach((level, levelIndex) => {
+                                    if (level.height === newQuality) {
+                                        window.hls.currentLevel = levelIndex;
+                                    }
+                                });
+                            }
+                        } else {
+                            window.plyrPlayer = new Plyr(video, defaultOptions);
+                        }
+                    }
+                } else {
+                    document.getElementById('video-target').innerHTML = '<div style="color:#e57373; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">No video available.</div>';
+                }
             }
 
             // Like Button Dummy
@@ -627,145 +734,46 @@
             }
         });
 
-        function setupCustomControls() {
-            const video = document.getElementById('main-video');
-            const controls = document.getElementById('custom-controls');
-            if (!video || !controls) return;
 
-            controls.style.display = 'flex';
-            
-            const playPauseBtn = document.getElementById('play-pause-btn');
-            const skipBackBtn = document.getElementById('skip-back-btn');
-            const skipFwdBtn = document.getElementById('skip-fwd-btn');
-            const progressBar = document.getElementById('progress-bar');
-            const timeCurrent = document.getElementById('time-current');
-            const timeTotal = document.getElementById('time-total');
-            const fullscreenBtn = document.getElementById('fullscreen-btn');
-
-            const formatTime = (seconds) => {
-                if(isNaN(seconds)) return "0:00";
-                const m = Math.floor(seconds / 60);
-                const s = Math.floor(seconds % 60);
-                return `${m}:${s < 10 ? '0'+s : s}`;
-            };
-
-            video.addEventListener('loadedmetadata', () => {
-                progressBar.max = video.duration;
-                timeTotal.textContent = formatTime(video.duration);
-            });
-
-            video.addEventListener('timeupdate', () => {
-                progressBar.value = video.currentTime;
-                timeCurrent.textContent = formatTime(video.currentTime);
-                const value = (progressBar.value / progressBar.max) * 100;
-                progressBar.style.background = `linear-gradient(to right, var(--accent-red) ${value}%, #333 ${value}%)`;
-            });
-
-            const togglePlay = (e) => {
-                if (window.isPlayerLocked) return;
-                if (video.paused) {
-                    video.play();
-                    playPauseBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
-                } else {
-                    video.pause();
-                    playPauseBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
-                }
-            };
-
-            playPauseBtn.addEventListener('click', togglePlay);
-            video.addEventListener('click', togglePlay);
-
-            skipBackBtn.addEventListener('click', () => {
-                if (window.isPlayerLocked) return;
-                video.currentTime = Math.max(0, video.currentTime - 10);
-            });
-            skipFwdBtn.addEventListener('click', () => {
-                if (window.isPlayerLocked) return;
-                video.currentTime = Math.min(video.duration, video.currentTime + 10);
-            });
-
-            progressBar.addEventListener('input', () => {
-                if (window.isPlayerLocked) return;
-                video.currentTime = progressBar.value;
-                const value = (progressBar.value / progressBar.max) * 100;
-                progressBar.style.background = `linear-gradient(to right, var(--accent-red) ${value}%, #333 ${value}%)`;
-            });
-
-            fullscreenBtn.addEventListener('click', () => {
-                if (window.isPlayerLocked) return;
-                const container = document.getElementById('player-container');
-                if (!document.fullscreenElement) {
-                    if (container.requestFullscreen) container.requestFullscreen();
-                    else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
-                } else {
-                    if (document.exitFullscreen) document.exitFullscreen();
-                    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-                }
-            });
-
-            // Lock mode
-            window.isPlayerLocked = false;
-            const lockBtn = document.getElementById('lock-btn');
-            const lockIcon = document.getElementById('lock-icon');
-            const controlsCenter = document.getElementById('controls-center');
-            const controlsBottom = document.getElementById('controls-bottom');
-            const playerBackBtn = document.getElementById('player-back-btn');
-
-            lockBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                window.isPlayerLocked = !window.isPlayerLocked;
-                if (window.isPlayerLocked) {
-                    lockIcon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>';
-                    lockBtn.style.color = 'var(--accent-red)';
-                    if (controlsCenter) controlsCenter.style.visibility = 'hidden';
-                    if (controlsBottom) controlsBottom.style.visibility = 'hidden';
-                    if (playerBackBtn) playerBackBtn.style.visibility = 'hidden';
-                } else {
-                    lockIcon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>';
-                    lockBtn.style.color = 'white';
-                    if (controlsCenter) controlsCenter.style.visibility = 'visible';
-                    if (controlsBottom) controlsBottom.style.visibility = 'visible';
-                    if (playerBackBtn) playerBackBtn.style.visibility = 'visible';
-                }
-            });
-
-            // Auto-hide controls and dim background content when playing on desktop
-            let timeout;
-            const appHeader = document.getElementById('app-header');
-            const metadataSection = document.getElementById('metadata-section');
-            const nextEpContainer = document.getElementById('next-ep-container');
-            const bottomActions = document.getElementById('bottom-actions');
-            
-            const resetTimer = () => {
-                controls.style.opacity = '1';
-                if (window.innerWidth >= 1024) {
-                    if(appHeader) appHeader.style.opacity = '1';
-                    if(metadataSection) metadataSection.style.opacity = '1';
-                    if(nextEpContainer) nextEpContainer.style.opacity = '1';
-                    if(bottomActions) bottomActions.style.opacity = '1';
-                }
-                clearTimeout(timeout);
-                if (!video.paused) {
-                    timeout = setTimeout(() => { 
-                        controls.style.opacity = '0'; 
-                        if (window.innerWidth >= 1024) {
-                            if(appHeader) appHeader.style.opacity = '0.05';
-                            if(metadataSection) metadataSection.style.opacity = '0.05';
-                            if(nextEpContainer) nextEpContainer.style.opacity = '0.05';
-                            if(bottomActions) bottomActions.style.opacity = '0.05';
-                        }
-                    }, 3500);
-                }
-            };
-
-            video.addEventListener('mousemove', resetTimer);
-            controls.addEventListener('mousemove', resetTimer);
-            document.addEventListener('mousemove', resetTimer);
-            video.addEventListener('play', resetTimer);
-            video.addEventListener('pause', resetTimer);
-            video.addEventListener('play', resetTimer);
-            video.addEventListener('pause', () => { controls.style.opacity = '1'; clearTimeout(timeout); });
-        }
     </script>
+
+<div style="display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden;" class="banner-ad">
+    <script>
+        atOptions = {
+            'key' : 'b695c55c7854dd20a9652ca53aa5c647',
+            'format' : 'iframe',
+            'height' : 60,
+            'width' : 468,
+            'params' : {}
+        };
+    </script>
+    <script src="https://www.highperformanceformat.com/b695c55c7854dd20a9652ca53aa5c647/invoke.js"></script>
+</div>
+
+<div style="display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden;" class="banner-ad">
+    <script>
+        atOptions = {
+            'key' : '41381acd9cf7f2701d35aa2372c93a8f',
+            'format' : 'iframe',
+            'height' : 60,
+            'width' : 468,
+            'params' : {}
+        };
+    </script>
+    <script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script>
+</div>
+
+<div style="display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden;" class="banner-ad">
+    <script>
+        atOptions = {
+            'key' : 'b695c55c7854dd20a9652ca53aa5c647',
+            'format' : 'iframe',
+            'height' : 60,
+            'width' : 468,
+            'params' : {}
+        };
+    </script>
+    <script src="https://www.highperformanceformat.com/b695c55c7854dd20a9652ca53aa5c647/invoke.js"></script>
+</div>
 </body>
 </html>

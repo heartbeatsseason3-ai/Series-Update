@@ -51,8 +51,8 @@
 
     <!-- Auth Check -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
-    <script src="supabase-config.js"></script>
-    <script src="script.js"></script>
+    <script src="supabase-config.js?v=1781308664458"></script>
+    <script src="script.js?v=1781307879668"></script>
     <script>
         // Critical: Check auth before rendering the rest of the page
         // We wait for the 'auth.ready' promise to avoid race conditions
@@ -66,7 +66,11 @@
     </script>
 </head>
 
-<body class="admin-body">
+<body
+
+ class="admin-body">
+
+
 
     <!-- Navigation Bar -->
     <nav class="navbar scrolled" id="admin-navbar">
@@ -170,9 +174,15 @@
                         <input type="url" id="downloadLink" placeholder="https://example.com/download.mp4" style="margin-top: 0.5rem;">
                         <span class="form-hint">The direct link for the user to download the content.</span>
 
-                        <label for="embedCode" style="margin-top: 1rem;">Embed Code or Video Link</label>
+                        <label for="embedCode" style="margin-top: 1rem;">Embed Code or Video Link (Server 1)</label>
                         <textarea id="embedCode" rows="3" placeholder="Paste direct link (e.g., YouTube, MP4) or <iframe> code..." style="width: 100%; border-radius: 8px; padding: 0.8rem; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);"></textarea>
                         <span class="form-hint">Paste a video link or the full iframe HTML snippet to play directly on the Watch page.</span>
+
+                        <label for="embedCode2" style="margin-top: 1rem;">Embed Code or Video Link (Server 2) - Optional</label>
+                        <textarea id="embedCode2" rows="2" placeholder="Paste Server 2 direct link or <iframe> code..." style="width: 100%; border-radius: 8px; padding: 0.8rem; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);"></textarea>
+
+                        <label for="embedCode3" style="margin-top: 1rem;">Embed Code or Video Link (Server 3) - Optional</label>
+                        <textarea id="embedCode3" rows="2" placeholder="Paste Server 3 direct link or <iframe> code..." style="width: 100%; border-radius: 8px; padding: 0.8rem; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);"></textarea>
                     </div>
 
                     <div id="series-fields" class="form-group hidden-initial">
@@ -362,6 +372,12 @@
         // Set default date to today
         document.getElementById('publishDate').valueAsDate = new Date();
     </script>
+
+
+
+
+
+
 </body>
 
 </html>
