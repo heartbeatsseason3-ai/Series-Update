@@ -1,37 +1,10 @@
 /**
  * Configuration Settings
  */
-const ad1 = `
-        <script>
-          atOptions = {
-            'key' : '41381acd9cf7f2701d35aa2372c93a8f',
-            'format' : 'iframe',
-            'height' : 60,
-            'width' : 468,
-            'params' : {}
-          };
-        </script>
-        <script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script>
-`;
-
-const ad2 = `
-        <script>
-          atOptions = {
-            'key' : 'b695c55c7854dd20a9652ca53aa5c647',
-            'format' : 'iframe',
-            'height' : 60,
-            'width' : 468,
-            'params' : {}
-          };
-        </script>
-        <script src="https://www.highperformanceformat.com/b695c55c7854dd20a9652ca53aa5c647/invoke.js"></script>
-`;
-
 const CONFIG = {
     destinationUrl: "https://example.com/destination",
     requireAdClick: true,
     countdownSeconds: 5,
-    adContainerCode: Math.random() < 0.5 ? ad1 : ad2,
     preventRapidClicksLimitMs: 1000
 };
 
@@ -62,27 +35,6 @@ let countdownActive = false;
 let lastClickTime = 0;
 
 function init() {
-    // 1. Inject Ad Code
-    adContainer.innerHTML = '';
-    
-    // Convert string to HTML and execute scripts properly
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = CONFIG.adContainerCode;
-    
-    Array.from(tempDiv.childNodes).forEach(node => {
-        if (node.tagName && node.tagName.toLowerCase() === 'script') {
-            const script = document.createElement('script');
-            if (node.src) {
-                script.src = node.src;
-            } else {
-                script.textContent = node.textContent;
-            }
-            adContainer.appendChild(script);
-        } else {
-            adContainer.appendChild(node.cloneNode(true));
-        }
-    });
-
     Analytics.trackPageView();
 
     if (!CONFIG.requireAdClick) {
@@ -91,6 +43,23 @@ function init() {
         startCountdown();
     } else {
         setupAdClickDetection();
+        
+        // Adblock fallback check
+        setTimeout(() => {
+            const iframe = adContainer.querySelector('iframe');
+            if (!iframe) {
+                const fallbackMessage = document.createElement('div');
+                fallbackMessage.style.color = 'var(--text-muted)';
+                fallbackMessage.style.fontSize = '14px';
+                fallbackMessage.style.textAlign = 'center';
+                fallbackMessage.style.width = '100%';
+                fallbackMessage.style.padding = '20px';
+                fallbackMessage.style.cursor = 'pointer';
+                fallbackMessage.textContent = 'Advertisement blocked. Please click here to continue.';
+                adContainer.innerHTML = '';
+                adContainer.appendChild(fallbackMessage);
+            }
+        }, 3000);
     }
 }
 

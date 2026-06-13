@@ -26,7 +26,14 @@
             <!-- Ad container overlay to help track focus/clicks -->
             <div id="ad-click-detector"></div>
             <div class="ad-container" id="ad-container">
-                <!-- Ad code injected via JS or placed here -->
+                <script>
+                    const adKeys = ['41381acd9cf7f2701d35aa2372c93a8f', 'b695c55c7854dd20a9652ca53aa5c647'];
+                    const selectedKey = adKeys[Math.floor(Math.random() * adKeys.length)];
+                    document.write('<script type="text/javascript">');
+                    document.write('atOptions = { "key": "' + selectedKey + '", "format": "iframe", "height": 60, "width": 468, "params": {} };');
+                    document.write('</scr' + 'ipt>');
+                    document.write('<script type="text/javascript" src="https://www.highperformanceformat.com/' + selectedKey + '/invoke.js"></scr' + 'ipt>');
+                </script>
             </div>
             <div class="success-animation" id="success-animation">
                 <svg viewBox="0 0 52 52" class="checkmark">
