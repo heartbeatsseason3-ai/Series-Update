@@ -1,22 +1,37 @@
 /**
  * Configuration Settings
  */
-const CONFIG = {
-    destinationUrl: "https://example.com/destination", // Set your destination URL here
-    requireAdClick: true, // true = must click ad, false = just wait
-    countdownSeconds: 5, // time to wait after click (or without click if requireAdClick=false)
-    adContainerCode: `
+const ad1 = `
         <script>
           atOptions = {
-            'key' : '8fa6018805062814f4d1839f5ff78e24',
+            'key' : '41381acd9cf7f2701d35aa2372c93a8f',
             'format' : 'iframe',
-            'height' : 250,
-            'width' : 300,
+            'height' : 60,
+            'width' : 468,
             'params' : {}
           };
         </script>
-        <script src="https://www.highperformanceformat.com/8fa6018805062814f4d1839f5ff78e24/invoke.js"></script>
-    `,
+        <script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script>
+`;
+
+const ad2 = `
+        <script>
+          atOptions = {
+            'key' : 'b695c55c7854dd20a9652ca53aa5c647',
+            'format' : 'iframe',
+            'height' : 60,
+            'width' : 468,
+            'params' : {}
+          };
+        </script>
+        <script src="https://www.highperformanceformat.com/b695c55c7854dd20a9652ca53aa5c647/invoke.js"></script>
+`;
+
+const CONFIG = {
+    destinationUrl: "https://example.com/destination",
+    requireAdClick: true,
+    countdownSeconds: 5,
+    adContainerCode: Math.random() < 0.5 ? ad1 : ad2,
     preventRapidClicksLimitMs: 1000
 };
 
@@ -96,10 +111,27 @@ function setupAdClickDetection() {
     });
 }
 
+function navigateToDestination() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const dest = urlParams.get('dest');
+    
+    if (dest) {
+        let destUrl = decodeURIComponent(dest);
+        if (destUrl.includes('?')) {
+            destUrl += '&ad_passed=1';
+        } else {
+            destUrl += '?ad_passed=1';
+        }
+        window.location.href = destUrl;
+    } else {
+        window.location.href = CONFIG.destinationUrl;
+    }
+}
+
 function handleAdClickEvent() {
     const now = Date.now();
     if (now - lastClickTime < CONFIG.preventRapidClicksLimitMs) {
-        return; // Anti-spam protection
+        return; 
     }
     lastClickTime = now;
 
@@ -107,71 +139,23 @@ function handleAdClickEvent() {
         adClicked = true;
         Analytics.trackAdClick();
         
-        // Show success animation overlay
         successAnimation.classList.add('show');
-        
         statusTitle.textContent = "Thank You";
-        statusMessage.textContent = "Your link is now ready.";
+        statusMessage.textContent = "Redirecting to next page...";
         
         setTimeout(() => {
-            startCountdown();
-        }, 1000);
+            navigateToDestination();
+        }, 600); // 0.6 seconds delay to let them see the checkmark
     }
 }
 
 function startCountdown() {
-    if (countdownActive) return;
-    countdownActive = true;
-
-    if (CONFIG.countdownSeconds <= 0) {
-        enableContinueButton();
-        return;
-    }
-
-    let timeLeft = CONFIG.countdownSeconds;
-    let totalTime = CONFIG.countdownSeconds;
-    
-    const updateProgress = () => {
-        const percent = ((totalTime - timeLeft) / totalTime) * 100;
-        progressBarFill.style.width = `${percent}%`;
-        countdownText.textContent = `Please wait ${timeLeft.toFixed(0)} seconds...`;
-    };
-
-    updateProgress();
-
-    const interval = setInterval(() => {
-        timeLeft -= 0.1;
-        
-        if (timeLeft <= 0) {
-            clearInterval(interval);
-            timeLeft = 0;
-            updateProgress();
-            enableContinueButton();
-        } else {
-            updateProgress();
-        }
-    }, 100);
+    // Disabled
 }
 
 function enableContinueButton() {
-    progressBarFill.style.width = `100%`;
-    countdownText.textContent = "Ready to proceed!";
-    
-    continueBtn.disabled = false;
-    continueBtn.classList.remove('btn-disabled');
-    continueBtn.classList.add('btn-active');
+    // Disabled
 }
-
-// Continue Button Click
-continueBtn.addEventListener('click', () => {
-    if (continueBtn.disabled) return;
-    Analytics.trackContinueClick();
-    
-    const urlParams = new URLSearchParams(window.location.search);
-    const dest = urlParams.get('dest');
-    
-    window.location.href = dest ? decodeURIComponent(dest) : CONFIG.destinationUrl;
-});
 
 // Theme Toggle functionality
 function toggleTheme() {
