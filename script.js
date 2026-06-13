@@ -530,7 +530,13 @@ class StreamVault {
             console.warn('[Series Update] navigateToWatch called with invalid id:', id);
             return;
         }
-        window.location.href = `watch.html?id=${id}`;
+
+        // 30% probability of showing the ad gate
+        if (Math.random() < 0.3) {
+            window.location.href = `ad-gate/index.html?dest=${encodeURIComponent(`../watch.html?id=${id}`)}`;
+        } else {
+            window.location.href = `watch.html?id=${id}`;
+        }
     }
 
     // Admin List Rendering
