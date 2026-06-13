@@ -1,3 +1,24 @@
+(function() {
+    // Page load Ad-Gate check
+    if (!window.location.pathname.includes('ad-gate') && !window.location.pathname.includes('admin.html')) {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get('ad_passed') === '1') {
+            // User just came from Ad Gate, remove parameter to allow future triggers on refresh
+            const newUrl = new URL(window.location.href);
+            newUrl.searchParams.delete('ad_passed');
+            window.history.replaceState({}, '', newUrl);
+        } else {
+            // Redirect to Ad Gate
+            let dest = encodeURIComponent(window.location.href);
+            let adGatePath = 'ad-gate/index.html';
+            if (window.location.pathname.includes('/ott-premium/')) {
+                adGatePath = '../ad-gate/index.html';
+            }
+            window.location.href = `${adGatePath}?dest=${dest}`;
+        }
+    }
+})();
+
 /**
  * Series Update Core Logic - Supabase Edition
  * Handles dynamic content rendering, persistence, and cinematic redirection.
@@ -531,12 +552,7 @@ class StreamVault {
             return;
         }
 
-        // 30% probability of showing the ad gate
-        if (Math.random() < 0.3) {
-            window.location.href = `ad-gate/index.html?dest=${encodeURIComponent(`../watch.html?id=${id}`)}`;
-        } else {
-            window.location.href = `watch.html?id=${id}`;
-        }
+        window.location.href = `ad-gate/index.html?dest=${encodeURIComponent(`../watch.html?id=${id}`)}`;
     }
 
     // Admin List Rendering
@@ -1202,3 +1218,63 @@ document.addEventListener('DOMContentLoaded', () => {
     window.shop = new ShopVault();
     window.adsManager = new AdVault();
 });
+
+// --- Global Ad-Gate Interceptor ---
+document.addEventListener('click', (e) => {
+    // Prevent intercepting if we are already in the ad-gate or it's the ad-gate overlay
+    if (window.location.pathname.includes('ad-gate') || e.target.closest('.ad-wrapper')) return;
+
+    let targetA = e.target.closest('a');
+    
+    // Intercept standard links
+    if (targetA && targetA.href && !targetA.href.startsWith('javascript:') && !targetA.href.includes('#') && targetA.target !== '_blank') {
+        try {
+            const currentUrl = new URL(window.location.href);
+            const clickUrl = new URL(targetA.href, window.location.href);
+            
+            // If it's an internal link
+            if (currentUrl.origin === clickUrl.origin && (currentUrl.pathname !== clickUrl.pathname || currentUrl.search !== clickUrl.search)) {
+                
+                // Don't intercept ad-gate links
+                if (clickUrl.pathname.includes('ad-gate')) return;
+
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Calculate relative path to ad-gate/index.html
+                let dest = encodeURIComponent(targetA.href);
+                let adGatePath = 'ad-gate/index.html';
+                if (window.location.pathname.includes('/ott-premium/')) {
+                    adGatePath = '../ad-gate/index.html';
+                }
+                
+                window.location.href = `${adGatePath}?dest=${dest}`;
+                return;
+            }
+        } catch(err) {}
+    }
+
+    // Intercept onclick redirecting
+    let targetOnclick = e.target.closest('[onclick]');
+    if (targetOnclick) {
+        const onclickStr = targetOnclick.getAttribute('onclick');
+        if (onclickStr && onclickStr.includes('window.location.href')) {
+            const match = onclickStr.match(/window\.location\.href\s*=\s*['"]([^'"]+)['"]/);
+            if (match && match[1]) {
+                const destUrl = match[1];
+                if (!destUrl.includes('ad-gate')) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    let dest = encodeURIComponent(destUrl);
+                    let adGatePath = 'ad-gate/index.html';
+                    if (window.location.pathname.includes('/ott-premium/')) {
+                        adGatePath = '../ad-gate/index.html';
+                    }
+                    window.location.href = `${adGatePath}?dest=${dest}`;
+                    return;
+                }
+            }
+        }
+    }
+}, true); // Use capture phase to stop propagation of inline handlers
