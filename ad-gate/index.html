@@ -27,12 +27,12 @@
             <div id="ad-click-detector"></div>
             <div class="ad-container" id="ad-container">
                 <script>
-                    const adKeys = ['41381acd9cf7f2701d35aa2372c93a8f', 'b695c55c7854dd20a9652ca53aa5c647'];
-                    const selectedKey = adKeys[Math.floor(Math.random() * adKeys.length)];
-                    document.write('<script type="text/javascript">');
-                    document.write('atOptions = { "key": "' + selectedKey + '", "format": "iframe", "height": 60, "width": 468, "params": {} };');
-                    document.write('</scr' + 'ipt>');
-                    document.write('<script type="text/javascript" src="https://www.highperformanceformat.com/' + selectedKey + '/invoke.js"></scr' + 'ipt>');
+                    const adOptions = [
+                        '<a href="https://www.effectivecpmnetwork.com/a08cd8r4?key=3e0b4a77e2a1c886647bf60843b854ac" target="_blank" rel="noopener noreferrer"><img src="https://i.ibb.co/1YJ19pSh/Chat-GPT-Image-Jun-15-2026-12-58-54-PM.png" alt="Series Update App Download" width="468" height="60" style="display:block;border:0;max-width:100%;height:auto;"></a>',
+                        '<a href="https://www.effectivecpmnetwork.com/bevr4ts2h?key=74d69bbd8b1b3bd6656047848656bb2c" target="_blank" rel="noopener noreferrer"><img src="https://i.ibb.co/1YJ19pSh/Chat-GPT-Image-Jun-15-2026-12-58-54-PM.png" alt="Series Update App Download" width="468" height="60" style="display:block;border:0;max-width:100%;height:auto;"></a>'
+                    ];
+                    const selectedAd = adOptions[Math.floor(Math.random() * adOptions.length)];
+                    document.getElementById('ad-container').innerHTML = selectedAd;
                 </script>
             </div>
             <div class="success-animation" id="success-animation">
