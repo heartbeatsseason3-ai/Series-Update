@@ -84,6 +84,18 @@ header {
     gap: 2px;
 }
 
+/* Constrain logo image on ALL pages */
+.logo-container img,
+.header-logo img,
+.header-logo a img {
+    height: 36px;
+    width: auto;
+    max-width: 180px;
+    object-fit: contain;
+    display: block;
+    flex-shrink: 0;
+}
+
 .logo {
     display: flex;
     align-items: center;
@@ -558,6 +570,12 @@ header {
         flex-direction: row;
         gap: 0;
         align-items: center;
+    }
+    .logo-container img,
+    .header-logo img,
+    .header-logo a img {
+        height: 44px;
+        max-width: 220px;
     }
     .desktop-nav {
         display: flex;

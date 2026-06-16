@@ -1,8 +1,7 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <script src='https://quge5.com/88/tag.min.js' data-zone='250345' async data-cfasync='false'></script>
-    <script src="https://quge5.com/88/tag.min.js" data-zone="250345" async data-cfasync="false"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cinematic Player | Series Update</title>
@@ -49,6 +48,7 @@
         .desktop-nav { display: none; }
         
         .logo-container { display: flex; flex-direction: column; align-items: center; }
+        .logo-container img { height: 36px; width: auto; object-fit: contain; display: block; }
         .logo { display: flex; align-items: center; gap: 6px; font-size: 18px; font-weight: 700; font-style: italic; }
         .star-icon { color: #FF9D00; font-size: 22px; filter: drop-shadow(0 0 8px rgba(255, 157, 0, 0.8)); }
         .header-right { display: flex; gap: 16px; align-items: center; }
@@ -239,6 +239,7 @@
                 gap: 40px;
                 align-items: center;
             }
+        .logo-container img { height: 36px; width: auto; object-fit: contain; display: block; }
             .desktop-nav {
                 display: flex;
                 gap: 32px;
@@ -373,6 +374,7 @@
         }
         
     </style>
+<link rel="stylesheet" href="responsive.css">
 </head>
 <body>
     <!-- Ads Gate Overlay -->
@@ -439,7 +441,7 @@
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
             </button>
             <div class="logo-container">
-     class="extracted-style-49"            <img src="https://i.ibb.co/S4mxsbrc/Chat-GPT-Image-Jun-7-2026-02-04-20-PMG.png" alt="Series Update Logo" >
+                <img src="https://i.ibb.co/S4mxsbrc/Chat-GPT-Image-Jun-7-2026-02-04-20-PMG.png" alt="Series Update Logo">
                 <div class="desktop-nav">
                     <a href="index.html">Home</a>
                     <a href="movie.html">Movies</a>
@@ -483,7 +485,7 @@
         <div class="player-container" id="player-container">
             <div id="video-target">
                 <!-- Video or iframe injected here -->
-     class="extracted-style-54"            <div >⏳ Loading stream...</div>
+     <div class="extracted-style-54" >⏳ Loading stream...</div>
             </div>
 
             <!-- Custom Controls Overlay Removed (Using Plyr) -->
@@ -495,7 +497,7 @@
             <!-- Buttons injected via JS -->
         </div>
 
-     class="extracted-style-56"    <div id="dynamic-meta" >
+     <div class="extracted-style-56" id="dynamic-meta" >
             
             
             <!-- 3. Episode Metadata Section -->
