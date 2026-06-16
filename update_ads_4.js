@@ -9,15 +9,15 @@ function getAdHtml(key) {
     return `
 <div style="display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden;" class="banner-ad">
     <script>
-        atOptions = {
-            'key' : '${key}',
-            'format' : 'iframe',
-            'height' : 60,
-            'width' : 468,
-            'params' : {}
-        };
-    </script>
-    <script src="https://www.highperformanceformat.com/${key}/invoke.js"></script>
+  atOptions = {
+    'key' : '41381acd9cf7f2701d35aa2372c93a8f',
+    'format' : 'iframe',
+    'height' : 60,
+    'width' : 468,
+    'params' : {}
+  };
+</script>
+<script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script>
 </div>
 `;
 }
