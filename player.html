@@ -3,8 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <script src="https://pl29666229.effectivecpmnetwork.com/e7/bf/96/e7bf967711e0e1338508717d6fd0ae3c.js"></script>
-    <script src="https://pl29666237.effectivecpmnetwork.com/3c/c1/22/3cc1222d127827229252dc1faa88dd10.js"></script>
     <title>Cinematic Player | Series Update</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -307,10 +305,117 @@
             }
         }
 
+        /* --- Ads Gate Overlay --- */
+        .ads-gate-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(10, 12, 16, 0.98);
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            overflow-y: auto;
+            padding: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+        .ads-gate-header {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            margin-bottom: 20px;
+            position: sticky;
+            top: 10px;
+            z-index: 100000;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .ads-gate-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .ads-gate-timer {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--accent-red);
+            min-width: 30px;
+            text-align: right;
+        }
+        .ads-gate-close-btn {
+            display: none;
+            background: var(--accent-red);
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .ads-gate-close-btn:active {
+            transform: scale(0.95);
+        }
+        .ads-gate-content {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            max-width: 500px;
+        }
         
     </style>
 </head>
 <body>
+    <!-- Ads Gate Overlay -->
+    <div class="ads-gate-overlay" id="ads-gate">
+        <div class="ads-gate-header">
+            <div class="ads-gate-title">Ads Gate</div>
+            <div class="ads-gate-timer" id="ads-gate-timer">5s</div>
+            <button class="ads-gate-close-btn" id="ads-gate-close" onclick="closeAdsGate()">Continue to Player</button>
+        </div>
+        <div class="ads-gate-content">
+            <!-- 10 Banner Ads -->
+            <div style="display: flex; justify-content: center; width: 100%; overflow: hidden;" class="banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
+            <div style="display: flex; justify-content: center; width: 100%; overflow: hidden;" class="banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
+            <div style="display: flex; justify-content: center; width: 100%; overflow: hidden;" class="banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
+            <div style="display: flex; justify-content: center; width: 100%; overflow: hidden;" class="banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
+            <div style="display: flex; justify-content: center; width: 100%; overflow: hidden;" class="banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
+            <div style="display: flex; justify-content: center; width: 100%; overflow: hidden;" class="banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
+            <div style="display: flex; justify-content: center; width: 100%; overflow: hidden;" class="banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
+            <div style="display: flex; justify-content: center; width: 100%; overflow: hidden;" class="banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
+            <div style="display: flex; justify-content: center; width: 100%; overflow: hidden;" class="banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
+            <div style="display: flex; justify-content: center; width: 100%; overflow: hidden;" class="banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
+        </div>
+    </div>
+
+    <script>
+        let adsTimeLeft = 5;
+        const timerElement = document.getElementById('ads-gate-timer');
+        const closeBtn = document.getElementById('ads-gate-close');
+        
+        const adsInterval = setInterval(() => {
+            adsTimeLeft--;
+            if (adsTimeLeft > 0) {
+                timerElement.textContent = adsTimeLeft + 's';
+            } else {
+                clearInterval(adsInterval);
+                timerElement.style.display = 'none';
+                closeBtn.style.display = 'block';
+            }
+        }, 1000);
+
+        function closeAdsGate() {
+            document.getElementById('ads-gate').style.display = 'none';
+        }
+    </script>
+
 <div style="display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden;" class="banner-ad">
     <script>
   atOptions = {
