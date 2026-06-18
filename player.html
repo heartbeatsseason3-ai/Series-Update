@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <script src='https://quge5.com/88/tag.min.js' data-zone='250345' async data-cfasync='false'></script>
@@ -293,17 +293,24 @@
                 position: static;
                 flex-direction: row;
                 justify-content: flex-start;
-                padding: 20px 0;
+                padding: 20px 40px;
                 background: transparent;
                 border: none;
                 gap: 20px;
                 width: 100%;
+                max-width: 1200px;
+                margin: 0 auto;
             }
-            .bottom-actions .btn {
+            .bottom-actions .btn-action {
                 flex: 0 1 auto;
                 padding: 12px 30px;
             }
-            .next-episode-card {
+            #next-ep-container {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 0 40px;
+            }
+            .next-ep-card {
                 margin: 0;
             }
         }
@@ -665,7 +672,7 @@
             serverLinks = serverLinks.filter(link => link && link.trim() !== '');
 
             // Populate Meta
-            document.getElementById('dynamic-meta').style.display = 'flex';
+            document.getElementById('dynamic-meta').style.display = 'block';
             document.getElementById('meta-subheading').textContent = subheading;
             document.getElementById('meta-title').textContent = displayTitle;
             document.getElementById('meta-desc').textContent = description;
