@@ -1,5 +1,5 @@
 /**
- * HEARTBEAT Core Logic - Supabase Edition
+ * Series Update Core Logic - Supabase Edition
  * Handles dynamic content rendering, persistence, and cinematic redirection.
  */
 
@@ -27,16 +27,21 @@ class StreamVault {
                     <p>Loading content...</p>
                 </div>`;
         }
-        await this.loadContent();
+        
+        const success = await this.loadContent();
         this.setupEventListeners();
-        this.renderAll();
+        
+        if (success) {
+            this.renderAll();
+        }
+        
         this.loadGlobalAds();
     }
 
     // Load Ad Placements
     async loadGlobalAds() {
-        if (!supabase) return;
-        const { data, error } = await supabase.from('ads').select('*').eq('is_active', true);
+        if (!window.supabaseClient) return;
+        const { data, error } = await window.supabaseClient.from('ads').select('*').eq('is_active', true);
         if (data && !error) {
             data.forEach(ad => {
                 // Ensure the slot exists on the current page before injecting
@@ -50,52 +55,57 @@ class StreamVault {
 
     // Load content from Supabase
     async loadContent() {
-        console.log('[HEARTBEAT] Fetching content from Supabase...');
-        const { data, error } = await supabase
-            .from('content')
-            .select('*')
-            .order('created_at', { ascending: false });
+        console.log('[Series Update] Fetching content from Supabase...');
+        try {
+            const client = window.supabaseClient || window.supabase;
+            if (!client) throw new Error("Supabase client is not initialized.");
+            
+            const { data, error } = await client
+                .from('content')
+                .select('*')
+                .order('created_at', { ascending: false });
 
-        if (error) {
-            console.error('[HEARTBEAT] Error loading content:', error.message);
-            // Show error on home page
+            if (error) throw error;
+
+            console.log('[Series Update] Loaded', (data || []).length, 'items from Supabase.');
+
+            // Map snake_case from DB back to camelCase for JS
+            this.content = (data || []).map(item => ({
+                id: item.id,
+                title: item.title,
+                type: item.type,
+                thumbPortrait: item.thumb_portrait,
+                thumbLandscape: item.thumb_landscape,
+                category: item.category,
+                desc: item.description,
+                publishDate: item.publish_date,
+                featured: item.featured,
+                quality: item.quality || '4K Ultra HD',
+                videoLink: item.video_link,
+                downloadLink: item.download_link,
+                embedCode: item.embed_code,
+                episodes: item.episodes || []
+            }));
+
+            this.renderAll();
+            if (document.getElementById('admin-content-list')) {
+                this.renderAdminList();
+                this.loadWithdrawals();
+                this.fetchAdminWallet();
+            }
+            return true;
+        } catch (err) {
+            console.error('[Series Update] Error loading content:', err);
             const container = document.getElementById('content-container');
             if (container) {
                 container.innerHTML = `
                     <div style="text-align:center; padding: 4rem 2rem; color:#e57373;">
                         <div style="font-size:2rem; margin-bottom:1rem;">⚠️</div>
                         <p><strong>Could not load content.</strong></p>
-                        <p style="font-size:0.85rem; color:#aaa; margin-top:0.5rem;">${error.message}</p>
+                        <p style="font-size:0.85rem; color:#aaa; margin-top:0.5rem;">${err.message || err}</p>
                     </div>`;
             }
-            return;
-        }
-
-        console.log('[HEARTBEAT] Loaded', data.length, 'items from Supabase.');
-
-        // Map snake_case from DB back to camelCase for JS
-        this.content = data.map(item => ({
-            id: item.id,
-            title: item.title,
-            type: item.type,
-            thumbPortrait: item.thumb_portrait,
-            thumbLandscape: item.thumb_landscape,
-            category: item.category,
-            desc: item.description,
-            publishDate: item.publish_date,
-            featured: item.featured,
-            quality: item.quality || '4K Ultra HD',
-            videoLink: item.video_link,
-            downloadLink: item.download_link,
-            embedCode: item.embed_code,
-            episodes: item.episodes || []
-        }));
-
-        this.renderAll();
-        if (document.getElementById('admin-content-list')) {
-            this.renderAdminList();
-            this.loadWithdrawals();
-            this.fetchAdminWallet();
+            return false;
         }
     }
 
@@ -114,13 +124,15 @@ class StreamVault {
             video_link: newItem.videoLink,
             download_link: newItem.downloadLink,
             embed_code: newItem.embedCode,
+            embed_code2: newItem.embedCode2,
+            embed_code3: newItem.embedCode3,
             episodes: newItem.episodes
         };
 
         if (this.editMode && this.currentEditId) {
             // Update mode
-            const { error } = await supabase
-                .from('content')
+            const { error } = await (window.supabaseClient || window.supabase)
+.from('content')
                 .update(dbItem)
                 .eq('id', this.currentEditId);
             
@@ -133,11 +145,11 @@ class StreamVault {
             // Create mode
             // If featured, unfeature all other items first
             if (newItem.featured) {
-                await supabase.from('content').update({ featured: false }).eq('featured', true);
+                await window.supabaseClient.from('content').update({ featured: false }).eq('featured', true);
             }
 
-            const { error } = await supabase
-                .from('content')
+            const { error } = await (window.supabaseClient || window.supabase)
+.from('content')
                 .insert([dbItem]);
 
             if (error) {
@@ -152,8 +164,8 @@ class StreamVault {
 
     // Delete content
     async deleteContent(id) {
-        const { error } = await supabase
-            .from('content')
+        const { error } = await (window.supabaseClient || window.supabase)
+.from('content')
             .delete()
             .eq('id', id);
 
@@ -235,7 +247,7 @@ class StreamVault {
         } else {
              // Search/Filter Header
              const hdrMap = {
-                Movie:    { icon: '🎬', title: 'Movies',    sub: 'All movies in the HEARTBEAT library' },
+                Movie:    { icon: '🎬', title: 'Movies',    sub: 'All movies in the Series Update library' },
                 Series:   { icon: '📺', title: 'Series',    sub: 'Binge-worthy series, season by season' },
                 Trending: { icon: '🔥', title: 'Trending',  sub: 'What everyone is watching right now' }
             };
@@ -444,9 +456,15 @@ class StreamVault {
                     rows.forEach(row => {
                         const title = row.querySelector('.ep-title-input').value;
                         const link = row.querySelector('.ep-link-input').value;
+                        const link2 = row.querySelector('.ep-link2-input') ? row.querySelector('.ep-link2-input').value : '';
+                        const link3 = row.querySelector('.ep-link3-input') ? row.querySelector('.ep-link3-input').value : '';
                         const downloadLink = row.querySelector('.ep-download-input').value;
                         const embedCode = row.querySelector('.ep-embed-input').value;
-                        if (title && (link || embedCode)) episodes.push({ title, link, downloadLink, embedCode });
+                        const embedCode2 = row.querySelector('.ep-embed2-input') ? row.querySelector('.ep-embed2-input').value : '';
+                        const embedCode3 = row.querySelector('.ep-embed3-input') ? row.querySelector('.ep-embed3-input').value : '';
+                        if (title && (link || embedCode)) {
+                            episodes.push({ title, link, link2, link3, downloadLink, embedCode, embedCode2, embedCode3 });
+                        }
                     });
                 }
 
@@ -463,6 +481,8 @@ class StreamVault {
                     videoLink: document.getElementById('videoLink').value,
                     downloadLink: document.getElementById('downloadLink').value,
                     embedCode: document.getElementById('embedCode').value || '',
+                    embedCode2: document.getElementById('embedCode2') ? document.getElementById('embedCode2').value : '',
+                    embedCode3: document.getElementById('embedCode3') ? document.getElementById('embedCode3').value : '',
                     episodes: episodes
                 };
                 
@@ -507,9 +527,10 @@ class StreamVault {
 
     navigateToWatch(id) {
         if (!id || id === 'undefined' || id === 'null') {
-            console.warn('[HEARTBEAT] navigateToWatch called with invalid id:', id);
+            console.warn('[Series Update] navigateToWatch called with invalid id:', id);
             return;
         }
+
         window.location.href = `watch.html?id=${id}`;
     }
 
@@ -559,7 +580,7 @@ class StreamVault {
         const display = document.getElementById('admin-display-balance');
         if(!display) return;
         
-        const { data, error } = await supabase.from('wallet_balance').select('balance').eq('id', 1).single();
+        const { data, error } = await window.supabaseClient.from('wallet_balance').select('balance').eq('id', 1).single();
         if (data) {
             display.textContent = `₹${data.balance}`;
             display.dataset.balance = data.balance;
@@ -586,7 +607,7 @@ class StreamVault {
             }
         }
 
-        const { error } = await supabase.from('withdrawals').insert([data]);
+        const { error } = await window.supabaseClient.from('withdrawals').insert([data]);
 
         if (error) {
             console.error('Withdrawal error:', error);
@@ -600,7 +621,7 @@ class StreamVault {
             if (display && display.dataset.balance) {
                 const currentBal = parseFloat(display.dataset.balance);
                 const newBal = currentBal - data.amount;
-                await supabase.from('wallet_balance').update({ balance: newBal }).eq('id', 1);
+                await window.supabaseClient.from('wallet_balance').update({ balance: newBal }).eq('id', 1);
                 this.fetchAdminWallet(); // Refresh display
             }
 
@@ -615,8 +636,8 @@ class StreamVault {
         const listContainer = document.getElementById('withdrawal-history-list');
         if (!listContainer) return;
 
-        const { data, error } = await supabase
-            .from('withdrawals')
+        const { data, error } = await (window.supabaseClient || window.supabase)
+.from('withdrawals')
             .select('*')
             .order('created_at', { ascending: false });
 
@@ -673,6 +694,8 @@ class StreamVault {
         document.getElementById('videoLink').value = item.videoLink || '';
         document.getElementById('downloadLink').value = item.downloadLink || '';
         document.getElementById('embedCode').value = item.embedCode || '';
+        if (document.getElementById('embedCode2')) document.getElementById('embedCode2').value = item.embed_code2 || '';
+        if (document.getElementById('embedCode3')) document.getElementById('embedCode3').value = item.embed_code3 || '';
 
         // Handle Episodes
         const container = document.getElementById('episodes-container');
@@ -728,7 +751,7 @@ class StreamVault {
         }
     }
 
-    addEpisodeRow(data = { title: '', link: '', downloadLink: '', embedCode: '' }) {
+    addEpisodeRow(data = { title: '', link: '', downloadLink: '', embedCode: '', embedCode2: '', embedCode3: '', link2: '', link3: '' }) {
         const container = document.getElementById('episodes-container');
         const row = document.createElement('div');
         row.className = 'episode-row';
@@ -744,9 +767,21 @@ class StreamVault {
                 <input type="text" placeholder="Ep Title (e.g. S1 E1)" value="${data.title || ''}" class="ep-title-input" required style="flex: 1; margin: 0; margin-right: 1rem;">
                 <button type="button" class="btn btn-secondary btn-small" onclick="this.closest('.episode-row').remove()" style="padding: 0.4rem 0.8rem; background: #e57373; color: white; border: none; min-width: auto; height: auto;">Remove</button>
             </div>
-            <input type="url" placeholder="Watch Now Link (Stream URL)" value="${data.link || ''}" class="ep-link-input" style="margin-bottom: 0.8rem; width: 100%;">
+            
+            <label style="font-size:0.8rem; color:#aaa;">Server 1 (Default)</label>
+            <input type="url" placeholder="Watch Now Link (Stream URL)" value="${data.link || ''}" class="ep-link-input" style="margin-bottom: 0.4rem; width: 100%;">
+            <textarea placeholder="Embed Code or Video Link (Server 1)" class="ep-embed-input" rows="2" style="margin-bottom: 0.8rem; width: 100%; border-radius: 8px; padding: 0.8rem; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); font-family: monospace;">${data.embedCode || ''}</textarea>
+            
+            <label style="font-size:0.8rem; color:#aaa;">Server 2 (Optional)</label>
+            <input type="url" placeholder="Server 2 Link" value="${data.link2 || ''}" class="ep-link2-input" style="margin-bottom: 0.4rem; width: 100%;">
+            <textarea placeholder="Server 2 Embed Code" class="ep-embed2-input" rows="2" style="margin-bottom: 0.8rem; width: 100%; border-radius: 8px; padding: 0.8rem; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); font-family: monospace;">${data.embedCode2 || ''}</textarea>
+
+            <label style="font-size:0.8rem; color:#aaa;">Server 3 (Optional)</label>
+            <input type="url" placeholder="Server 3 Link" value="${data.link3 || ''}" class="ep-link3-input" style="margin-bottom: 0.4rem; width: 100%;">
+            <textarea placeholder="Server 3 Embed Code" class="ep-embed3-input" rows="2" style="margin-bottom: 0.8rem; width: 100%; border-radius: 8px; padding: 0.8rem; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); font-family: monospace;">${data.embedCode3 || ''}</textarea>
+
+            <label style="font-size:0.8rem; color:#aaa;">Download</label>
             <input type="url" placeholder="Download Link (Optional)" value="${data.downloadLink || ''}" class="ep-download-input" style="margin-bottom: 0.8rem; width: 100%;">
-            <textarea placeholder="Embed Code or Video Link (e.g. YouTube, MP4, <iframe>)" class="ep-embed-input" rows="2" style="margin-bottom: 0; width: 100%; border-radius: 8px; padding: 0.8rem; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); font-family: monospace;">${data.embedCode || ''}</textarea>
         `;
         container.appendChild(row);
     }
@@ -759,11 +794,11 @@ class Auth {
     }
 
     async init() {
-        const { data: { session } } = await supabase.auth.getSession();
+        const { data: { session } } = await window.supabaseClient.auth.getSession();
         this.session = session;
 
         // Listen for changes
-        supabase.auth.onAuthStateChange((_event, session) => {
+        window.supabaseClient.auth.onAuthStateChange((_event, session) => {
             this.session = session;
         });
 
@@ -771,10 +806,10 @@ class Auth {
     }
 
     async login(email, password) {
-        if (!supabase) {
+        if (!window.supabaseClient) {
             return { success: false, message: 'Supabase client not initialized. Check console for details.' };
         }
-        const { data, error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await window.supabaseClient.auth.signInWithPassword({
             email,
             password
         });
@@ -789,7 +824,7 @@ class Auth {
     }
 
     async logout() {
-        await supabase.auth.signOut();
+        await window.supabaseClient.auth.signOut();
         window.location.href = 'index.html';
     }
 
@@ -815,12 +850,12 @@ class ShopVault {
     }
 
     async loadProducts() {
-        if (!supabase) return;
+        if (!window.supabaseClient) return;
         const listContainer = document.getElementById('admin-product-list');
         if (listContainer) listContainer.innerHTML = '<p class="loading-status">Loading products...</p>';
 
-        const { data, error } = await supabase
-            .from('products')
+        const { data, error } = await (window.supabaseClient || window.supabase)
+.from('products')
             .select('*')
             .order('created_at', { ascending: false });
 
@@ -908,7 +943,7 @@ class ShopVault {
 
     async saveProduct(data) {
         if (this.editMode && this.currentEditId) {
-            const { error } = await supabase.from('products').update(data).eq('id', this.currentEditId);
+            const { error } = await window.supabaseClient.from('products').update(data).eq('id', this.currentEditId);
             if (error) {
                 alert('Error updating product: ' + error.message);
                 return;
@@ -918,7 +953,7 @@ class ShopVault {
             if (data.featured) {
                 // Keep multiple featured products or just one? Let's keep multiple. No unfeature logic needed.
             }
-            const { error } = await supabase.from('products').insert([data]);
+            const { error } = await window.supabaseClient.from('products').insert([data]);
             if (error) {
                 alert('Error publishing product: ' + error.message);
                 return;
@@ -969,7 +1004,7 @@ class ShopVault {
 
     async deleteProduct(id) {
         if (confirm('Delete this product permanently?')) {
-            const { error } = await supabase.from('products').delete().eq('id', id);
+            const { error } = await window.supabaseClient.from('products').delete().eq('id', id);
             if (error) {
                 alert('Error deleting product: ' + error.message);
                 return;
@@ -999,9 +1034,9 @@ class AdVault {
     }
 
     async loadGlobalAds() {
-        if (!supabase) return;
-        const { data, error } = await supabase
-            .from('ads')
+        if (!window.supabaseClient) return;
+        const { data, error } = await (window.supabaseClient || window.supabase)
+.from('ads')
             .select('*')
             .eq('status', true)
             .order('display_order', { ascending: true });
@@ -1080,11 +1115,11 @@ class AdVault {
 
     async saveAd(data) {
         if (this.editMode && this.currentEditId) {
-            const { error } = await supabase.from('ads').update(data).eq('id', this.currentEditId);
+            const { error } = await window.supabaseClient.from('ads').update(data).eq('id', this.currentEditId);
             if (error) { alert('Error updating ad: ' + error.message); return; }
             alert('Ad Updated!');
         } else {
-            const { error } = await supabase.from('ads').insert([data]);
+            const { error } = await window.supabaseClient.from('ads').insert([data]);
             if (error) { alert('Error creating ad: ' + error.message); return; }
             alert('Ad Created!');
         }
@@ -1096,7 +1131,7 @@ class AdVault {
         const listContainer = document.getElementById('admin-ad-list');
         if (!listContainer) return;
 
-        supabase.from('ads').select('*').order('display_order', { ascending: true }).then(({data, error}) => {
+        window.supabaseClient.from('ads').select('*').order('display_order', { ascending: true }).then(({data, error}) => {
             if (error || !data || data.length === 0) {
                 listContainer.innerHTML = '<p class="loading-status">No ads found.</p>';
                 return;
@@ -1149,7 +1184,7 @@ class AdVault {
 
     async deleteAd(id) {
         if (confirm('Delete this ad permanently?')) {
-            await supabase.from('ads').delete().eq('id', id);
+            await window.supabaseClient.from('ads').delete().eq('id', id);
             this.renderAdminList();
         }
     }
