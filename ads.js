@@ -1,5 +1,5 @@
 /**
- * Series Update OTT - Ultra-Fast Ad Management & Anti-Adblock System
+ * HEARTBEAT OTT - Ultra-Fast Ad Management & Anti-Adblock System
  * 
  * Performance Optimized: Uses Preconnect and Instant Injection.
  * Protection: Detects active Adblockers and prompts user.
@@ -21,7 +21,7 @@ const hbAds = {
     },
 
     init: function() {
-        console.log('[Series Update] Ad Network Tuning: Turbo Mode Engaged.');
+        console.log('[HEARTBEAT] Ad Network Tuning: Turbo Mode Engaged.');
         
         // 1. Fire global ads (Now handled directly in HTML for max speed)
         
@@ -60,7 +60,7 @@ const hbAds = {
                               window.getComputedStyle(detector).visibility === 'hidden';
             
             if (isBlocked) {
-                console.warn('[Series Update] Adblock detected. Restricting features.');
+                console.warn('[HEARTBEAT] Adblock detected. Restricting features.');
                 document.getElementById('adblock-notice')?.classList.remove('hidden');
             }
             detector.remove();
