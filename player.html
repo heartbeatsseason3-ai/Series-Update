@@ -1,14 +1,12 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src='https://quge5.com/88/tag.min.js' data-zone='250345' async data-cfasync='false'></script>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cinematic Player | Series Update</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cinematic Player | My Star Plus</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
     
     <style>
         :root {
@@ -18,7 +16,6 @@
             --accent-red: #E50914;
             --btn-grey: #1A1D24;
             --border-color: rgba(255, 255, 255, 0.1);
-            --plyr-color-main: #E50914;
         }
 
         * {
@@ -48,7 +45,6 @@
         .desktop-nav { display: none; }
         
         .logo-container { display: flex; flex-direction: column; align-items: center; }
-        .logo-container img { height: 36px; width: auto; object-fit: contain; display: block; }
         .logo { display: flex; align-items: center; gap: 6px; font-size: 18px; font-weight: 700; font-style: italic; }
         .star-icon { color: #FF9D00; font-size: 22px; filter: drop-shadow(0 0 8px rgba(255, 157, 0, 0.8)); }
         .header-right { display: flex; gap: 16px; align-items: center; }
@@ -66,10 +62,6 @@
             height: 100%;
             position: absolute;
             inset: 0;
-        }
-        #video-target .plyr, #video-target .plyr__video-wrapper {
-            width: 100%;
-            height: 100%;
         }
         #video-target video, #video-target iframe {
             width: 100%;
@@ -103,7 +95,7 @@
             width: 64px; height: 64px;
             border: 2px solid white; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.4); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
             cursor: pointer;
             transition: transform 0.1s;
         }
@@ -122,7 +114,7 @@
         
         /* Progress Bar */
         input[type=range] {
-            -webkit--webkit-appearance: none; appearance: none;
+            -webkit-appearance: none;
             width: 100%;
             height: 4px;
             background: #333;
@@ -168,12 +160,6 @@
         .synopsis { font-size: 13px; color: #aaa; line-height: 1.5; margin-bottom: 20px; }
         .divider { width: 100%; height: 1px; background: var(--border-color); margin-bottom: 20px; }
 
-        /* --- Server Selection --- */
-        .server-selector { display: flex; gap: 10px; padding: 12px 20px; background: #0A0C10; justify-content: center; flex-wrap: wrap; }
-        .server-btn { background: var(--btn-grey); color: white; border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-        .server-btn.active { background: var(--accent-red); border-color: var(--accent-red); }
-        .server-btn:hover:not(.active) { background: rgba(255,255,255,0.1); }
-
         /* --- Next Episode Card --- */
         .next-ep-header { display: flex; align-items: center; font-size: 16px; font-weight: 700; border-left: 3px solid var(--accent-red); padding-left: 8px; margin-bottom: 16px; margin-left: 20px; line-height: 1; }
         
@@ -195,7 +181,7 @@
         .next-ep-details { flex: 1; display: flex; flex-direction: column; justify-content: center; }
         .next-ep-sub { color: var(--accent-red); font-size: 10px; font-weight: bold; margin-bottom: 2px; }
         .next-ep-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-        .next-ep-desc { font-size: 11px; color: #888; display: -webkit-box; -webkit--webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px; }
+        .next-ep-desc { font-size: 11px; color: #888; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-bottom: 4px; }
         .next-ep-dur { font-size: 11px; color: #666; }
         .next-ep-arrow { color: #888; }
 
@@ -239,7 +225,6 @@
                 gap: 40px;
                 align-items: center;
             }
-        .logo-container img { height: 36px; width: auto; object-fit: contain; display: block; }
             .desktop-nav {
                 display: flex;
                 gap: 32px;
@@ -258,7 +243,7 @@
             .header-icon#back-btn {
                 display: none;
             }
-            .player-container {
+            .video-container {
                 max-width: 1200px;
                 margin: 0 auto;
                 border-radius: 16px;
@@ -308,197 +293,104 @@
             }
         }
 
-        /* --- Ads Gate Overlay --- */
-        .ads-gate-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(10, 12, 16, 0.98);
-            z-index: 999999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: flex-start;
-            overflow-y: auto;
-            padding: 20px 0;
-            -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
-        }
-        .ads-gate-header {
-            width: 100%;
-            max-width: 500px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 12px;
-            margin-bottom: 20px;
-            position: sticky;
-            top: 10px;
-            z-index: 100000;
-            border: 1px solid rgba(255,255,255,0.05);
-        }
-        .ads-gate-title {
-            font-size: 16px;
-            font-weight: 700;
-        }
-        .ads-gate-timer {
-            font-size: 100px;
-            font-weight: 1000;
-            color: var(--accent-red);
-            min-width: 70px;
-            text-align: right;
-        }
-        .ads-gate-close-btn {
-            display: none;
-            background: var(--accent-red);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .ads-gate-close-btn:active {
-            transform: scale(0.95);
-        }
-        .ads-gate-content {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            width: 100%;
-            max-width: 500px;
-        }
         
     </style>
-<link rel="stylesheet" href="responsive.css">
+    <script src="https://pl29644894.effectivecpmnetwork.com/25/d0/f4/25d0f4d72cc48ac5075ca8bf4f577510.js"></script>
 </head>
 <body>
-    <!-- Ads Gate Overlay -->
-    <div class="ads-gate-overlay" id="ads-gate">
-        <div class="ads-gate-header">
-            <div class="ads-gate-title">Ads Gate</div>
-            <div class="ads-gate-timer" id="ads-gate-timer">5s</div>
-            <button class="ads-gate-close-btn" id="ads-gate-close" onclick="closeAdsGate()">Continue to Player</button>
-        </div>
-        <div class="ads-gate-content">
-            <!-- 10 Banner Ads -->
-            <div  class="extracted-style-38 banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
-            <div  class="extracted-style-39 banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
-            <div  class="extracted-style-40 banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
-            <div  class="extracted-style-41 banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
-            <div  class="extracted-style-42 banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
-            <div  class="extracted-style-43 banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
-            <div  class="extracted-style-44 banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
-            <div  class="extracted-style-45 banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
-            <div  class="extracted-style-46 banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
-            <div  class="extracted-style-47 banner-ad"><script>atOptions = {'key':'41381acd9cf7f2701d35aa2372c93a8f','format':'iframe','height':60,'width':468,'params':{}};</script><script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script></div>
-        </div>
-    </div>
-
-    <script>
-        let adsTimeLeft = 5;
-        const timerElement = document.getElementById('ads-gate-timer');
-        const closeBtn = document.getElementById('ads-gate-close');
-        
-        const adsInterval = setInterval(() => {
-            adsTimeLeft--;
-            if (adsTimeLeft > 0) {
-                timerElement.textContent = adsTimeLeft + 's';
-            } else {
-                clearInterval(adsInterval);
-                timerElement.style.display = 'none';
-                closeBtn.style.display = 'block';
-            }
-        }, 1000);
-
-        function closeAdsGate() {
-            document.getElementById('ads-gate').style.display = 'none';
-        }
-    </script>
-
-<div  class="extracted-style-48 banner-ad">
-    <script>
-  atOptions = {
-    'key' : '41381acd9cf7f2701d35aa2372c93a8f',
-    'format' : 'iframe',
-    'height' : 60,
-    'width' : 468,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script>
-</div>
-
     <div class="mobile-frame">
 
         <!-- App Header -->
         <header class="dimmable-content" id="app-header">
-            <button aria-label="Action" class="header-icon" id="back-btn" onclick="window.location.href='index.html'">
+            <button class="header-icon" id="back-btn" onclick="window.location.href='index.html'">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
             </button>
             <div class="logo-container">
-                <img src="https://i.ibb.co/S4mxsbrc/Chat-GPT-Image-Jun-7-2026-02-04-20-PMG.png" alt="Series Update Logo">
+                <img src="https://i.ibb.co/8JWh91Z/Untitled-design.png" alt="My Star Plus Logo" style="height: 36px; object-fit: contain;">
                 <div class="desktop-nav">
                     <a href="index.html">Home</a>
                     <a href="movie.html">Movies</a>
                     <a href="tvshow.html">TV Shows</a>
                 </div>
             </div>
-            <div class="extracted-style-50 header-right" >
-                <button aria-label="Action" class="header-icon" onclick="window.location.href='tvshow.html'">
+            <div class="header-right" style="display:flex; gap:16px;">
+                <button class="header-icon" onclick="window.location.href='tvshow.html'">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
                 </button>
-                <button aria-label="Action" class="header-icon" onclick="window.location.href='movie.html'">
+                <button class="header-icon" onclick="window.location.href='movie.html'">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="17" x2="22" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/></svg>
                 </button>
-                <button aria-label="Action" class="header-icon" onclick="window.location.href='mylist.html'">
+                <button class="header-icon" onclick="window.location.href='mylist.html'">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                 </button>
-                <button aria-label="Action" class="extracted-style-51 header-icon bell-container" onclick="window.location.href='notifications.html'" >
+                <button class="header-icon bell-container" onclick="window.location.href='notifications.html'" style="position:relative;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-                    <div class="extracted-style-52 notification-dot" id="nav-notif-dot" ></div>
+                    <div class="notification-dot" id="nav-notif-dot" style="display:none; width: 8px; height: 8px; background-color: var(--accent-red); border-radius: 50%; position: absolute; top: 0; right: 0;"></div>
                 </button>
             </div>
         </header>
-<div  class="extracted-style-53 banner-ad">
-    <script>
-  atOptions = {
-    'key' : '41381acd9cf7f2701d35aa2372c93a8f',
-    'format' : 'iframe',
-    'height' : 60,
-    'width' : 468,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script>
-</div>
 
-
-
-        
+        <div style="display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden;">
+            <script>
+                atOptions = {
+                    'key' : 'b695c55c7854dd20a9652ca53aa5c647',
+                    'format' : 'iframe',
+                    'height' : 60,
+                    'width' : 468,
+                    'params' : {}
+                };
+            </script>
+            <script src="https://www.highperformanceformat.com/b695c55c7854dd20a9652ca53aa5c647/invoke.js"></script>
+        </div>
 
         <!-- 2. Video Player Container -->
         <div class="player-container" id="player-container">
             <div id="video-target">
                 <!-- Video or iframe injected here -->
-     <div class="extracted-style-54" >⏳ Loading stream...</div>
+                <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color: #888;">⏳ Loading stream...</div>
             </div>
 
-            <!-- Custom Controls Overlay Removed (Using Plyr) -->
-
+            <!-- Custom Controls Overlay -->
+            <div class="custom-controls" id="custom-controls">
+                <div class="controls-top">
+                    <button class="header-icon" id="player-back-btn" onclick="window.location.href='index.html'"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+                    <button class="header-icon" id="lock-btn"><svg id="lock-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button>
+                </div>
+                <div class="controls-center" id="controls-center">
+                    <button class="skip-btn" id="skip-back-btn">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                        <span style="position:absolute; top:9px;">10</span>
+                    </button>
+                    <div class="play-pause-btn" id="play-pause-btn">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    </div>
+                    <button class="skip-btn" id="skip-fwd-btn">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5"><path d="M21 12a9 9 0 1 1-9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg>
+                        <span style="position:absolute; top:9px;">10</span>
+                    </button>
+                </div>
+                <div class="controls-bottom" id="controls-bottom">
+                    <span class="time-text" id="time-current">0:00</span>
+                    <input type="range" id="progress-bar" value="0" min="0" step="0.1">
+                    <span class="time-text" id="time-total">0:00</span>
+                    <button class="header-icon" id="fullscreen-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg></button>
+                </div>
+            </div>
         </div>
 
-        <!-- Server Selector -->
-        <div class="extracted-style-55 server-selector" id="server-selector" >
-            <!-- Buttons injected via JS -->
-        </div>
-
-     <div class="extracted-style-56" id="dynamic-meta" >
-            
+        <div id="dynamic-meta" style="display: none; flex-direction: column;">
+            <div style="display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden;">
+                <script>
+                    atOptions = {
+                        'key' : 'b695c55c7854dd20a9652ca53aa5c647',
+                        'format' : 'iframe',
+                        'height' : 60,
+                        'width' : 468,
+                        'params' : {}
+                    };
+                </script>
+                <script src="https://www.highperformanceformat.com/b695c55c7854dd20a9652ca53aa5c647/invoke.js"></script>
+            </div>
             
             <!-- 3. Episode Metadata Section -->
             <div class="metadata-section dimmable-content" id="metadata-section">
@@ -518,7 +410,7 @@
             </div>
 
             <!-- 4. Next Episode Card -->
-            <div class="extracted-style-57 dimmable-content" id="next-ep-container" >
+            <div class="dimmable-content" id="next-ep-container" style="display: none;">
                 <div class="next-ep-header">Next Episode</div>
                 <div class="next-ep-card" id="next-ep-btn-card">
                     <div class="next-ep-thumb">
@@ -541,7 +433,7 @@
 
             <!-- 5. Bottom Action Buttons -->
             <div class="bottom-actions dimmable-content" id="bottom-actions">
-                <a href="#" class="extracted-style-58 btn-action btn-red" id="dl-btn" >
+                <a href="#" class="btn-action btn-red" id="dl-btn" style="display: none;">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                     DOWNLOAD VIDEO
                 </a>
@@ -549,22 +441,30 @@
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg>
                     ADD TO WATCHLIST
                 </button>
-                <a href="#" class="extracted-style-59 btn-action btn-red" id="next-btn-bottom" >
+                <a href="#" class="btn-action btn-red" id="next-btn-bottom" style="display: none;">
                     NEXT EPISODE
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19" stroke-width="3"/></svg>
                 </a>
             </div>
 
-                    </div>
+            <div style="display: flex; justify-content: center; margin: 20px 0 80px 0; width: 100%; overflow: hidden;">
+                <script>
+                    atOptions = {
+                        'key' : 'b695c55c7854dd20a9652ca53aa5c647',
+                        'format' : 'iframe',
+                        'height' : 60,
+                        'width' : 468,
+                        'params' : {}
+                    };
+                </script>
+                <script src="https://www.highperformanceformat.com/b695c55c7854dd20a9652ca53aa5c647/invoke.js"></script>
+            </div>
+        </div>
 
     </div>
 
-    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-core@latest/build/p2p-media-loader-core.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/p2p-media-loader-hlsjs@latest/build/p2p-media-loader-hlsjs.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
-    <script src="supabase-config.js?v=1781308664462"></script>
+    <script src="supabase-config.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
@@ -584,30 +484,13 @@
                 return;
             }
 
-            // Optimize for 10,000+ viewers: Cache DB request locally to heavily reduce Supabase read spikes
-            const cacheKey = `content_cache_${id}`;
-            let data = null;
-            try {
-                const cached = sessionStorage.getItem(cacheKey);
-                if (cached) {
-                    const parsed = JSON.parse(cached);
-                    if (Date.now() - parsed.timestamp < 10 * 60 * 1000) { // 10 minute cache TTL
-                        data = parsed.data;
-                    }
-                }
-            } catch(e) {}
-
-            if (!data) {
-                const { data: dbData, error } = await supabase.from('content').select('*').eq('id', id).single();
-                if (error || !dbData) {
-                    document.getElementById('video-target').innerHTML = '<div style="color:#e57373; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">Content not found.</div>';
-                    return;
-                }
-                data = dbData;
-                try { sessionStorage.setItem(cacheKey, JSON.stringify({ timestamp: Date.now(), data })); } catch(e) {}
+            const { data, error } = await supabase.from('content').select('*').eq('id', id).single();
+            if (error || !data) {
+                document.getElementById('video-target').innerHTML = '<div style="color:#e57373; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">Content not found.</div>';
+                return;
             }
 
-            let serverLinks = [];
+            let embedCode = null;
             let downloadLink = null;
             let displayTitle = data.title;
             let subheading = data.type === 'Series' ? `${data.title.toUpperCase()}` : 'MOVIE';
@@ -623,13 +506,7 @@
             if (isSeries && epIndexStr !== null && episodes[epIndexStr]) {
                 currentEpIndex = parseInt(epIndexStr, 10);
                 const epObj = episodes[currentEpIndex];
-                
-                serverLinks = [
-                    epObj.embedCode || epObj.link || epObj.videoUrl || '',
-                    epObj.embedCode2 || epObj.link2 || epObj.videoUrl2 || epObj.server2 || '',
-                    epObj.embedCode3 || epObj.link3 || epObj.videoUrl3 || epObj.server3 || ''
-                ];
-                
+                embedCode = epObj.embedCode || epObj.link || epObj.videoUrl;
                 displayTitle = epObj.title || `Episode ${currentEpIndex + 1}`;
                 downloadLink = epObj.downloadLink;
                 subheading = `${data.title.toUpperCase()} - S1 : E${currentEpIndex + 1}`;
@@ -653,16 +530,9 @@
                     nextBtnBottom.href = nextUrl;
                 }
             } else {
-                serverLinks = [
-                    data.embed_code || data.video_link || '',
-                    data.embed_code2 || data.video_link2 || data.video_link_2 || data.server2 || '',
-                    data.embed_code3 || data.video_link3 || data.video_link_3 || data.server3 || ''
-                ];
+                embedCode = data.embed_code || data.video_link;
                 downloadLink = data.download_link;
             }
-
-            // Clean up empty server links
-            serverLinks = serverLinks.filter(link => link && link.trim() !== '');
 
             // Populate Meta
             document.getElementById('dynamic-meta').style.display = 'flex';
@@ -686,133 +556,40 @@
                 dlBtn.target = '_blank';
             }
 
-            // Setup server selection UI
-            if (serverLinks.length > 0) {
-                if (serverLinks.length > 1) {
-                    const selector = document.getElementById('server-selector');
-                    selector.style.display = 'flex';
-                    let buttonsHtml = '';
-                    serverLinks.forEach((link, idx) => {
-                        buttonsHtml += `<button class="server-btn ${idx === 0 ? 'active' : ''}" data-idx="${idx}">Server ${idx + 1}</button>`;
-                    });
-                    selector.innerHTML = buttonsHtml;
+            // Inject Video / iFrame
+            if (embedCode && embedCode.trim() !== '') {
+                let finalEmbed = embedCode.trim();
+                let isDirectVideo = false;
+
+                if (!finalEmbed.startsWith('<')) {
+                    if (finalEmbed.includes('youtube.com/watch?v=')) {
+                        try {
+                            const videoId = new URL(finalEmbed).searchParams.get('v');
+                            if (videoId) finalEmbed = `https://www.youtube.com/embed/${videoId}`;
+                        } catch(e) {}
+                    } else if (finalEmbed.includes('youtu.be/')) {
+                        const videoId = finalEmbed.split('youtu.be/')[1]?.split('?')[0];
+                        if (videoId) finalEmbed = `https://www.youtube.com/embed/${videoId}`;
+                    }
                     
-                    selector.querySelectorAll('.server-btn').forEach(btn => {
-                        btn.addEventListener('click', (e) => {
-                            selector.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
-                            e.target.classList.add('active');
-                            const idx = parseInt(e.target.getAttribute('data-idx'));
-                            loadVideo(serverLinks[idx]);
-                        });
-                    });
+                    let posterUrl = data.thumb_landscape || data.thumb_portrait || '';
+                    if (finalEmbed.match(/\.(mp4|webm|ogg|mkv)$/i) || finalEmbed.includes('.mp4')) {
+                        isDirectVideo = true;
+                        finalEmbed = `<video id="main-video" src="${finalEmbed}" poster="${posterUrl}" playsinline style="width: 100%; height: 100%; object-fit: contain; background: #000;"></video>`;
+                    } else {
+                        finalEmbed = `<iframe src="${finalEmbed}" allowfullscreen allow="fullscreen" style="width: 100%; height: 100%; border: none;"></iframe>`;
+                    }
                 }
-                loadVideo(serverLinks[0]);
+
+                document.getElementById('video-target').innerHTML = finalEmbed;
+
+                if (isDirectVideo) {
+                    setupCustomControls();
+                } else {
+                    document.getElementById('custom-controls').style.display = 'none';
+                }
             } else {
                 document.getElementById('video-target').innerHTML = '<div style="color:#e57373; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">No video available.</div>';
-            }
-
-            function loadVideo(embedCode) {
-                // Cleanup existing player if any
-                if (window.plyrPlayer) { window.plyrPlayer.destroy(); window.plyrPlayer = null; }
-                if (window.hls) { window.hls.destroy(); window.hls = null; }
-
-                if (embedCode && embedCode.trim() !== '') {
-                    let finalEmbed = embedCode.trim();
-                    let isDirectVideo = false;
-
-                    if (!finalEmbed.startsWith('<')) {
-                        if (finalEmbed.includes('youtube.com/watch?v=')) {
-                            try {
-                                const videoId = new URL(finalEmbed).searchParams.get('v');
-                                if (videoId) finalEmbed = `https://www.youtube.com/embed/${videoId}`;
-                            } catch(e) {}
-                        } else if (finalEmbed.includes('youtu.be/')) {
-                            const videoId = finalEmbed.split('youtu.be/')[1]?.split('?')[0];
-                            if (videoId) finalEmbed = `https://www.youtube.com/embed/${videoId}`;
-                        }
-                        
-                        let posterUrl = data.thumb_landscape || data.thumb_portrait || '';
-                        let videoType = '';
-                        const lowerEmbed = finalEmbed.toLowerCase();
-                        if (lowerEmbed.includes('.m3u8')) videoType = 'type="application/x-mpegURL"';
-                        else if (lowerEmbed.includes('.mp4')) videoType = 'type="video/mp4"';
-                        else if (lowerEmbed.includes('.webm')) videoType = 'type="video/webm"';
-                        else if (lowerEmbed.includes('.ogg')) videoType = 'type="video/ogg"';
-                        else if (lowerEmbed.includes('.mkv')) videoType = 'type="video/webm"';
-
-                        if (finalEmbed.match(/\.(mp4|webm|ogg|mkv|m3u8)$/i) || finalEmbed.includes('.mp4') || finalEmbed.includes('.m3u8')) {
-                            isDirectVideo = true;
-                            // Added preload="none" to prevent thundering herd bandwidth spikes on load
-                            finalEmbed = `<video id="main-video" preload="none" playsinline controls data-poster="${posterUrl}" style="width: 100%; height: 100%; object-fit: contain; background: #000;">
-                                            <source src="${finalEmbed}" ${videoType} />
-                                          </video>`;
-                        } else {
-                            finalEmbed = `<iframe src="${finalEmbed}" allowfullscreen allow="fullscreen" style="width: 100%; height: 100%; border: none;"></iframe>`;
-                        }
-                    }
-
-                    document.getElementById('video-target').innerHTML = finalEmbed;
-
-                    if (isDirectVideo) {
-                        const video = document.getElementById('main-video');
-                        const source = video.querySelector('source').src;
-                        const defaultOptions = {
-                            controls: ['play-large', 'play', 'progress', 'current-time', 'mute', 'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'],
-                            settings: ['captions', 'quality', 'speed', 'loop']
-                        };
-
-                        if (source.includes('.m3u8') && typeof Hls !== 'undefined' && Hls.isSupported()) {
-                            let hlsConfig = {
-                                maxMaxBufferLength: 30, // Limit forward buffer to save bandwidth
-                                enableWorker: true
-                            };
-
-                            let p2pEngine = null;
-                            if (typeof p2pml !== 'undefined' && p2pml.hlsjs.Engine.isSupported()) {
-                                const swarmId = isSeries && currentEpIndex !== null ? `${id}_ep${currentEpIndex}` : id;
-                                p2pEngine = new p2pml.hlsjs.Engine({
-                                    segments: {
-                                        swarmId: swarmId
-                                    }
-                                });
-                                // Merge P2P config with HLS.js config
-                                hlsConfig = Object.assign(hlsConfig, p2pEngine.createHlsJsConfig());
-                            }
-
-                            const hls = new Hls(hlsConfig);
-                            if (p2pEngine) {
-                                p2pEngine.initHlsJsPlayer(hls);
-                            }
-
-                            hls.loadSource(source);
-                            hls.attachMedia(video);
-                            window.hls = hls;
-
-                            hls.on(Hls.Events.MANIFEST_PARSED, function (event, data) {
-                                const availableQualities = hls.levels.map((l) => l.height);
-                                defaultOptions.quality = {
-                                    default: availableQualities[0],
-                                    options: availableQualities,
-                                    forced: true,
-                                    onChange: (e) => updateQuality(e),
-                                };
-                                window.plyrPlayer = new Plyr(video, defaultOptions);
-                            });
-
-                            function updateQuality(newQuality) {
-                                window.hls.levels.forEach((level, levelIndex) => {
-                                    if (level.height === newQuality) {
-                                        window.hls.currentLevel = levelIndex;
-                                    }
-                                });
-                            }
-                        } else {
-                            window.plyrPlayer = new Plyr(video, defaultOptions);
-                        }
-                    }
-                } else {
-                    document.getElementById('video-target').innerHTML = '<div style="color:#e57373; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);">No video available.</div>';
-                }
             }
 
             // Like Button Dummy
@@ -851,37 +628,145 @@
             }
         });
 
+        function setupCustomControls() {
+            const video = document.getElementById('main-video');
+            const controls = document.getElementById('custom-controls');
+            if (!video || !controls) return;
 
+            controls.style.display = 'flex';
+            
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            const skipBackBtn = document.getElementById('skip-back-btn');
+            const skipFwdBtn = document.getElementById('skip-fwd-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const timeCurrent = document.getElementById('time-current');
+            const timeTotal = document.getElementById('time-total');
+            const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+            const formatTime = (seconds) => {
+                if(isNaN(seconds)) return "0:00";
+                const m = Math.floor(seconds / 60);
+                const s = Math.floor(seconds % 60);
+                return `${m}:${s < 10 ? '0'+s : s}`;
+            };
+
+            video.addEventListener('loadedmetadata', () => {
+                progressBar.max = video.duration;
+                timeTotal.textContent = formatTime(video.duration);
+            });
+
+            video.addEventListener('timeupdate', () => {
+                progressBar.value = video.currentTime;
+                timeCurrent.textContent = formatTime(video.currentTime);
+                const value = (progressBar.value / progressBar.max) * 100;
+                progressBar.style.background = `linear-gradient(to right, var(--accent-red) ${value}%, #333 ${value}%)`;
+            });
+
+            const togglePlay = (e) => {
+                if (window.isPlayerLocked) return;
+                if (video.paused) {
+                    video.play();
+                    playPauseBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+                } else {
+                    video.pause();
+                    playPauseBtn.innerHTML = '<svg width="24" height="24" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>';
+                }
+            };
+
+            playPauseBtn.addEventListener('click', togglePlay);
+            video.addEventListener('click', togglePlay);
+
+            skipBackBtn.addEventListener('click', () => {
+                if (window.isPlayerLocked) return;
+                video.currentTime = Math.max(0, video.currentTime - 10);
+            });
+            skipFwdBtn.addEventListener('click', () => {
+                if (window.isPlayerLocked) return;
+                video.currentTime = Math.min(video.duration, video.currentTime + 10);
+            });
+
+            progressBar.addEventListener('input', () => {
+                if (window.isPlayerLocked) return;
+                video.currentTime = progressBar.value;
+                const value = (progressBar.value / progressBar.max) * 100;
+                progressBar.style.background = `linear-gradient(to right, var(--accent-red) ${value}%, #333 ${value}%)`;
+            });
+
+            fullscreenBtn.addEventListener('click', () => {
+                if (window.isPlayerLocked) return;
+                const container = document.getElementById('player-container');
+                if (!document.fullscreenElement) {
+                    if (container.requestFullscreen) container.requestFullscreen();
+                    else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+                } else {
+                    if (document.exitFullscreen) document.exitFullscreen();
+                    else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+                }
+            });
+
+            // Lock mode
+            window.isPlayerLocked = false;
+            const lockBtn = document.getElementById('lock-btn');
+            const lockIcon = document.getElementById('lock-icon');
+            const controlsCenter = document.getElementById('controls-center');
+            const controlsBottom = document.getElementById('controls-bottom');
+            const playerBackBtn = document.getElementById('player-back-btn');
+
+            lockBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                window.isPlayerLocked = !window.isPlayerLocked;
+                if (window.isPlayerLocked) {
+                    lockIcon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>';
+                    lockBtn.style.color = 'var(--accent-red)';
+                    if (controlsCenter) controlsCenter.style.visibility = 'hidden';
+                    if (controlsBottom) controlsBottom.style.visibility = 'hidden';
+                    if (playerBackBtn) playerBackBtn.style.visibility = 'hidden';
+                } else {
+                    lockIcon.innerHTML = '<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>';
+                    lockBtn.style.color = 'white';
+                    if (controlsCenter) controlsCenter.style.visibility = 'visible';
+                    if (controlsBottom) controlsBottom.style.visibility = 'visible';
+                    if (playerBackBtn) playerBackBtn.style.visibility = 'visible';
+                }
+            });
+
+            // Auto-hide controls and dim background content when playing on desktop
+            let timeout;
+            const appHeader = document.getElementById('app-header');
+            const metadataSection = document.getElementById('metadata-section');
+            const nextEpContainer = document.getElementById('next-ep-container');
+            const bottomActions = document.getElementById('bottom-actions');
+            
+            const resetTimer = () => {
+                controls.style.opacity = '1';
+                if (window.innerWidth >= 1024) {
+                    if(appHeader) appHeader.style.opacity = '1';
+                    if(metadataSection) metadataSection.style.opacity = '1';
+                    if(nextEpContainer) nextEpContainer.style.opacity = '1';
+                    if(bottomActions) bottomActions.style.opacity = '1';
+                }
+                clearTimeout(timeout);
+                if (!video.paused) {
+                    timeout = setTimeout(() => { 
+                        controls.style.opacity = '0'; 
+                        if (window.innerWidth >= 1024) {
+                            if(appHeader) appHeader.style.opacity = '0.05';
+                            if(metadataSection) metadataSection.style.opacity = '0.05';
+                            if(nextEpContainer) nextEpContainer.style.opacity = '0.05';
+                            if(bottomActions) bottomActions.style.opacity = '0.05';
+                        }
+                    }, 3500);
+                }
+            };
+
+            video.addEventListener('mousemove', resetTimer);
+            controls.addEventListener('mousemove', resetTimer);
+            document.addEventListener('mousemove', resetTimer);
+            video.addEventListener('play', resetTimer);
+            video.addEventListener('pause', resetTimer);
+            video.addEventListener('play', resetTimer);
+            video.addEventListener('pause', () => { controls.style.opacity = '1'; clearTimeout(timeout); });
+        }
     </script>
-
-
-
-
-<div  class="extracted-style-60 banner-ad">
-    <script>
-  atOptions = {
-    'key' : '41381acd9cf7f2701d35aa2372c93a8f',
-    'format' : 'iframe',
-    'height' : 60,
-    'width' : 468,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script>
-</div>
-
-<div  class="extracted-style-61 banner-ad">
-    <script>
-  atOptions = {
-    'key' : '41381acd9cf7f2701d35aa2372c93a8f',
-    'format' : 'iframe',
-    'height' : 60,
-    'width' : 468,
-    'params' : {}
-  };
-</script>
-<script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script>
-</div>
-<script>(function(s){s.dataset.zone='11155537',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 </body>
 </html>
