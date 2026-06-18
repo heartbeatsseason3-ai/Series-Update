@@ -24,10 +24,7 @@ header img {
 
 /* ---------- 3. BANNER ADS — RESPONSIVE ---------- */
 .banner-ad,
-[class*="extracted-style-"][class*="banner-ad"],
-div[class*="extracted-style-1"],
-div[class*="extracted-style-5"],
-div[class*="extracted-style-6"] {
+[class*="extracted-style-"][class*="banner-ad"] {
     display: flex !important;
     justify-content: center !important;
     width: 100% !important;
