@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <script src='https://quge5.com/88/tag.min.js' data-zone='250345' async data-cfasync='false'></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Series Update - Details</title>
@@ -341,8 +340,161 @@
             }
         }
 
-        
+        /* --- Choose Your Device To Watch UI --- */
+        .device-select-container {
+            background: #0B0E14 !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            border-radius: 20px !important;
+            padding: 24px 20px !important;
+            margin: 24px 0 !important;
+            width: 100 !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+        }
+
+        .device-select-title {
+            font-size: 20px !important;
+            font-weight: 700 !important;
+            color: #FFFFFF !important;
+            text-align: center !important;
+            margin-bottom: 6px !important;
+        }
+
+        .device-select-subtitle {
+            font-size: 13px !important;
+            color: #9BA1A6 !important;
+            text-align: center !important;
+            margin-bottom: 20px !important;
+        }
+
+        .device-options-list {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 14px !important;
+            width: 100% !important;
+        }
+
+        .device-card {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 16px 20px !important;
+            border-radius: 16px !important;
+            cursor: pointer !important;
+            text-decoration: none !important;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+
+        .device-card:hover {
+            transform: translateY(-2px) !important;
+        }
+
+        .device-card-android {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, rgba(15, 28, 18, 0.7) 100%) !important;
+            border: 1px solid rgba(76, 175, 80, 0.4) !important;
+            box-shadow: 0 4px 20px rgba(76, 175, 80, 0.1) !important;
+        }
+
+        .device-card-ios {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(28, 15, 38, 0.7) 100%) !important;
+            border: 1px solid rgba(168, 85, 247, 0.4) !important;
+            box-shadow: 0 4px 20px rgba(168, 85, 247, 0.1) !important;
+        }
+
+        .device-card-web {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.08) 0%, rgba(15, 25, 38, 0.7) 100%) !important;
+            border: 1px solid rgba(33, 150, 243, 0.4) !important;
+            box-shadow: 0 4px 20px rgba(33, 150, 243, 0.1) !important;
+        }
+
+        .device-left {
+            display: flex !important;
+            align-items: center !important;
+            gap: 16px !important;
+        }
+
+        .device-icon-circle {
+            width: 48px !important;
+            height: 48px !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+        }
+
+        .device-icon-android {
+            background: rgba(76, 175, 80, 0.15) !important;
+            border: 1px solid rgba(76, 175, 80, 0.3) !important;
+            color: #4CAF50 !important;
+        }
+
+        .device-icon-ios {
+            background: rgba(168, 85, 247, 0.15) !important;
+            border: 1px solid rgba(168, 85, 247, 0.3) !important;
+            color: #A855F7 !important;
+        }
+
+        .device-icon-web {
+            background: rgba(33, 150, 243, 0.15) !important;
+            border: 1px solid rgba(33, 150, 243, 0.3) !important;
+            color: #2196F3 !important;
+        }
+
+        .device-info {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            text-align: left !important;
+        }
+
+        .device-name {
+            font-size: 16px !important;
+            font-weight: 700 !important;
+            color: #FFFFFF !important;
+            line-height: 1.2 !important;
+        }
+
+        .device-sub {
+            font-size: 12px !important;
+            color: #9BA1A6 !important;
+            margin-top: 3px !important;
+            line-height: 1.2 !important;
+        }
+
+        .device-arrow-circle {
+            width: 38px !important;
+            height: 38px !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+            margin-left: auto !important;
+        }
+
+        .device-btn-android {
+            background: rgba(76, 175, 80, 0.2) !important;
+            border: 1px solid rgba(76, 175, 80, 0.4) !important;
+            color: #4CAF50 !important;
+        }
+
+        .device-btn-ios {
+            background: rgba(168, 85, 247, 0.2) !important;
+            border: 1px solid rgba(168, 85, 247, 0.4) !important;
+            color: #A855F7 !important;
+        }
+
+        .device-btn-web {
+            background: rgba(33, 150, 243, 0.2) !important;
+            border: 1px solid rgba(33, 150, 243, 0.4) !important;
+            color: #2196F3 !important;
+        }
     </style>
+<link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="responsive.css">
 </head>
 <body>
@@ -536,6 +688,76 @@
             renderRecommendations(recs);
         });
 
+        function getDeviceSelectHtml(item) {
+            const androidUrl = item.androidLink || item.downloadLink || 'ad-gate/index.html';
+            const iosUrl = item.iosLink || item.downloadLink || 'ad-gate/index.html';
+            const webUrl = item.videoLink ? item.videoLink : `player.html?id=${item.id}`;
+
+            return `
+                <div class="device-select-container" id="device-select-section" style="background:#0B0E14; border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:24px 20px; margin:24px 0; width:100%; box-sizing:border-box; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+                    <h3 class="device-select-title" style="font-size:20px; font-weight:700; color:#FFFFFF; text-align:center; margin-bottom:6px; font-family:'Poppins', sans-serif;">Choose your device to watch</h3>
+                    <p class="device-select-subtitle" style="font-size:13px; color:#9BA1A6; text-align:center; margin-bottom:20px; font-family:'Poppins', sans-serif;">Select your device type to get the app</p>
+                    <div class="device-options-list" style="display:flex; flex-direction:column; gap:14px; width:100%;">
+                        
+                        <!-- Android Option -->
+                        <div class="device-card device-card-android" onclick="window.location.href='${androidUrl}'" style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-radius:16px; background:linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, rgba(15, 28, 18, 0.7) 100%); border:1px solid rgba(76, 175, 80, 0.4); cursor:pointer; text-decoration:none; box-shadow:0 4px 20px rgba(76,175,80,0.1); width:100%; box-sizing:border-box;">
+                            <div class="device-left" style="display:flex; align-items:center; gap:16px;">
+                                <div class="device-icon-circle device-icon-android" style="width:48px; height:48px; border-radius:50%; background:rgba(76, 175, 80, 0.15); border:1px solid rgba(76, 175, 80, 0.3); color:#4CAF50; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M17.523 15.3414C17.06 15.3414 16.691 14.9658 16.691 14.5028C16.691 14.0398 17.06 13.6642 17.523 13.6642C17.986 13.6642 18.355 14.0398 18.355 14.5028C18.355 14.9658 17.986 15.3414 17.523 15.3414ZM6.477 15.3414C6.014 15.3414 5.645 14.9658 5.645 14.5028C5.645 14.0398 6.014 13.6642 6.477 13.6642C6.94 13.6642 7.309 14.0398 7.309 14.5028C7.309 14.9658 6.94 15.3414 6.477 15.3414ZM17.842 10.7414L19.539 7.78442C19.664 7.56842 19.589 7.29142 19.373 7.16642C19.157 7.04142 18.88 7.11642 18.755 7.33242L17.027 10.3474C15.541 9.66842 13.829 9.28442 12 9.28442C10.171 9.28442 8.459 9.66842 6.973 10.3474L5.245 7.33242C5.12 7.11642 4.843 7.04142 4.627 7.16642C4.411 7.29142 4.336 7.56842 4.461 7.78442L6.158 10.7414C2.684 12.6394 0.323 16.1434 0 20.2844H24C23.677 16.1434 21.316 12.6394 17.842 10.7414Z"/>
+                                    </svg>
+                                </div>
+                                <div class="device-info" style="display:flex; flex-direction:column; align-items:flex-start; text-align:left;">
+                                    <span class="device-name" style="font-size:16px; font-weight:700; color:#FFFFFF; line-height:1.2; font-family:'Poppins', sans-serif;">Watch on Android</span>
+                                    <span class="device-sub" style="font-size:12px; color:#9BA1A6; margin-top:3px; line-height:1.2; font-family:'Poppins', sans-serif;">Download our Android app</span>
+                                </div>
+                            </div>
+                            <div class="device-arrow-circle device-btn-android" style="width:38px; height:38px; border-radius:50%; background:rgba(76, 175, 80, 0.2); border:1px solid rgba(76, 175, 80, 0.4); color:#4CAF50; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-left:auto;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            </div>
+                        </div>
+
+                        <!-- iOS Option -->
+                        <div class="device-card device-card-ios" onclick="window.location.href='${iosUrl}'" style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-radius:16px; background:linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(28, 15, 38, 0.7) 100%); border:1px solid rgba(168, 85, 247, 0.4); cursor:pointer; text-decoration:none; box-shadow:0 4px 20px rgba(168,85,247,0.1); width:100%; box-sizing:border-box;">
+                            <div class="device-left" style="display:flex; align-items:center; gap:16px;">
+                                <div class="device-icon-circle device-icon-ios" style="width:48px; height:48px; border-radius:50%; background:rgba(168, 85, 247, 0.15); border:1px solid rgba(168, 85, 247, 0.3); color:#A855F7; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.78c.66-.8 1.11-1.92.99-3.03-.96.04-2.12.64-2.81 1.44-.61.71-1.14 1.85-.99 2.94 1.07.08 2.15-.55 2.81-1.35z"/>
+                                    </svg>
+                                </div>
+                                <div class="device-info" style="display:flex; flex-direction:column; align-items:flex-start; text-align:left;">
+                                    <span class="device-name" style="font-size:16px; font-weight:700; color:#FFFFFF; line-height:1.2; font-family:'Poppins', sans-serif;">Watch on iOS</span>
+                                    <span class="device-sub" style="font-size:12px; color:#9BA1A6; margin-top:3px; line-height:1.2; font-family:'Poppins', sans-serif;">Download our iOS app</span>
+                                </div>
+                            </div>
+                            <div class="device-arrow-circle device-btn-ios" style="width:38px; height:38px; border-radius:50%; background:rgba(168, 85, 247, 0.2); border:1px solid rgba(168, 85, 247, 0.4); color:#A855F7; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-left:auto;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            </div>
+                        </div>
+
+                        <!-- Web Option -->
+                        <div class="device-card device-card-web" onclick="window.location.href='${webUrl}'" style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-radius:16px; background:linear-gradient(135deg, rgba(33, 150, 243, 0.08) 0%, rgba(15, 25, 38, 0.7) 100%); border:1px solid rgba(33, 150, 243, 0.4); cursor:pointer; text-decoration:none; box-shadow:0 4px 20px rgba(33,150,243,0.1); width:100%; box-sizing:border-box;">
+                            <div class="device-left" style="display:flex; align-items:center; gap:16px;">
+                                <div class="device-icon-circle device-icon-web" style="width:48px; height:48px; border-radius:50%; background:rgba(33, 150, 243, 0.15); border:1px solid rgba(33, 150, 243, 0.3); color:#2196F3; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                    </svg>
+                                </div>
+                                <div class="device-info" style="display:flex; flex-direction:column; align-items:flex-start; text-align:left;">
+                                    <span class="device-name" style="font-size:16px; font-weight:700; color:#FFFFFF; line-height:1.2; font-family:'Poppins', sans-serif;">Watch on Web</span>
+                                    <span class="device-sub" style="font-size:12px; color:#9BA1A6; margin-top:3px; line-height:1.2; font-family:'Poppins', sans-serif;">Continue to watch in browser</span>
+                                </div>
+                            </div>
+                            <div class="device-arrow-circle device-btn-web" style="width:38px; height:38px; border-radius:50%; background:rgba(33, 150, 243, 0.2); border:1px solid rgba(33, 150, 243, 0.4); color:#2196F3; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-left:auto;">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            `;
+        }
+
         function renderSeriesUI(item) {
             const year = item.publishDate ? new Date(item.publishDate).getFullYear() : '2026';
             const genres = (item.category || 'Action').split(',').map(g => g.trim()).join(' <span>•</span> ');
@@ -575,7 +797,7 @@
                 <div class="series-hero">
                     <div class="series-poster">
                         <img src="${item.thumbPortrait}" class="series-poster-img">
-                        <div class="series-poster-play" onclick="window.location.href='${(episodes.length > 0 && episodes[0].link) ? episodes[0].link : `player.html?id=${item.id}${episodes.length > 0 ? '&ep=0' : ''}`}'">
+                        <div class="series-poster-play" onclick="document.getElementById('device-select-section').scrollIntoView({behavior: 'smooth'})">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                         </div>
                     </div>
@@ -598,6 +820,8 @@
                         </button>
                     </div>
                 </div>
+
+                ${getDeviceSelectHtml(item)}
 
                 ${episodes.length > 0 ? `
                 <div class="episodes-section">
@@ -624,7 +848,7 @@
                     <div class="movie-details">
                         <h1 class="movie-title">${item.title}</h1>
                         <div class="movie-tags">
-                            <span class="badge-grey">1080p Full HD</span>
+                            <span class="badge-grey">${item.quality || '1080p Full HD'}</span>
                             <span style="color: #2196F3; font-size: 13px;">Published: June 5, ${year}</span>
                             <span class="badge-grey">${item.category || 'Action'}</span>
                         </div>
@@ -645,14 +869,14 @@
                         </div>
 
                         <div class="movie-actions">
-                            <button class="btn-primary" onclick="window.location.href='${item.videoLink ? item.videoLink : `player.html?id=${item.id}`}'">
+                            <button class="btn-primary" onclick="document.getElementById('device-select-section').scrollIntoView({behavior: 'smooth'})">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Watch Now
                             </button>
                             <div style="display:flex; gap:12px; width: 100%;">
                                 <button class="btn-secondary" id="add-list-btn-${item.id}" onclick="addToList('${item.id}', '${item.title.replace(/'/g, "\\'")}', '${item.category || item.type}', '${item.thumbPortrait}')">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Add to List
                                 </button>
-                                <button class="btn-secondary">
+                                <button class="btn-secondary" onclick="window.location.href='${item.downloadLink || 'ad-gate/index.html'}'">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Download
                                 </button>
                             </div>
@@ -661,6 +885,8 @@
                         <p class="movie-synopsis">
                             ${item.desc || 'No description available.'} <a href="#" style="color:var(--accent-red); text-decoration:none;">... Read more</a>
                         </p>
+
+                        ${getDeviceSelectHtml(item)}
                     </div>
                 </div>
             `;
@@ -744,6 +970,5 @@
 </script>
 <script src="https://www.highperformanceformat.com/41381acd9cf7f2701d35aa2372c93a8f/invoke.js"></script>
 </div>
-<script>(function(s){s.dataset.zone='11155537',s.src='https://n6wxm.com/vignette.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))</script>
 </body>
 </html>

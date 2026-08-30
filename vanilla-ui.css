@@ -986,3 +986,152 @@ header {
 .extracted-style-154 { display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden; }
 .extracted-style-155 { display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden; }
 .extracted-style-156 { display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden; }
+
+/* --- CHOOSE YOUR DEVICE TO WATCH UI --- */
+.device-select-container {
+    background: #0B0E14 !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 20px !important;
+    padding: 24px 20px !important;
+    margin: 24px 0 !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+.device-select-title {
+    font-size: 20px !important;
+    font-weight: 700 !important;
+    color: #FFFFFF !important;
+    text-align: center !important;
+    margin-bottom: 6px !important;
+}
+
+.device-select-subtitle {
+    font-size: 13px !important;
+    color: #9BA1A6 !important;
+    text-align: center !important;
+    margin-bottom: 20px !important;
+}
+
+.device-options-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    width: 100% !important;
+}
+
+.device-card {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 16px 20px !important;
+    border-radius: 16px !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.device-card-android {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, rgba(15, 28, 18, 0.7) 100%) !important;
+    border: 1px solid rgba(76, 175, 80, 0.4) !important;
+    box-shadow: 0 4px 20px rgba(76, 175, 80, 0.1) !important;
+}
+
+.device-card-ios {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(28, 15, 38, 0.7) 100%) !important;
+    border: 1px solid rgba(168, 85, 247, 0.4) !important;
+    box-shadow: 0 4px 20px rgba(168, 85, 247, 0.1) !important;
+}
+
+.device-card-web {
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.08) 0%, rgba(15, 25, 38, 0.7) 100%) !important;
+    border: 1px solid rgba(33, 150, 243, 0.4) !important;
+    box-shadow: 0 4px 20px rgba(33, 150, 243, 0.1) !important;
+}
+
+.device-left {
+    display: flex !important;
+    align-items: center !important;
+    gap: 16px !important;
+}
+
+.device-icon-circle {
+    width: 48px !important;
+    height: 48px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+}
+
+.device-icon-android {
+    background: rgba(76, 175, 80, 0.15) !important;
+    border: 1px solid rgba(76, 175, 80, 0.3) !important;
+    color: #4CAF50 !important;
+}
+
+.device-icon-ios {
+    background: rgba(168, 85, 247, 0.15) !important;
+    border: 1px solid rgba(168, 85, 247, 0.3) !important;
+    color: #A855F7 !important;
+}
+
+.device-icon-web {
+    background: rgba(33, 150, 243, 0.15) !important;
+    border: 1px solid rgba(33, 150, 243, 0.3) !important;
+    color: #2196F3 !important;
+}
+
+.device-info {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    text-align: left !important;
+}
+
+.device-name {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #FFFFFF !important;
+    line-height: 1.2 !important;
+}
+
+.device-sub {
+    font-size: 12px !important;
+    color: #9BA1A6 !important;
+    margin-top: 3px !important;
+    line-height: 1.2 !important;
+}
+
+.device-arrow-circle {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    margin-left: auto !important;
+}
+
+.device-btn-android {
+    background: rgba(76, 175, 80, 0.2) !important;
+    border: 1px solid rgba(76, 175, 80, 0.4) !important;
+    color: #4CAF50 !important;
+}
+
+.device-btn-ios {
+    background: rgba(168, 85, 247, 0.2) !important;
+    border: 1px solid rgba(168, 85, 247, 0.4) !important;
+    color: #A855F7 !important;
+}
+
+.device-btn-web {
+    background: rgba(33, 150, 243, 0.2) !important;
+    border: 1px solid rgba(33, 150, 243, 0.4) !important;
+    color: #2196F3 !important;
+}

@@ -1906,3 +1906,232 @@ body {
 .hidden {
     display: none !important;
 }
+
+/* =============================================
+   CHOOSE YOUR DEVICE TO WATCH UI & UX
+   ============================================= */
+.device-select-container {
+    background: #0B0E14;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 20px;
+    padding: 24px 20px;
+    margin: 20px 0;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.device-select-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #FFFFFF;
+    text-align: center;
+    margin-bottom: 6px;
+}
+
+.device-select-subtitle {
+    font-size: 13px;
+    color: #9BA1A6;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.device-options-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.device-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-radius: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.device-card:hover {
+    transform: translateY(-2px);
+}
+
+.device-card:active {
+    transform: scale(0.98);
+}
+
+/* Android Card Theme */
+.device-card-android {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, rgba(15, 28, 18, 0.6) 100%);
+    border: 1px solid rgba(76, 175, 80, 0.4);
+    box-shadow: 0 4px 20px rgba(76, 175, 80, 0.1);
+}
+
+.device-card-android:hover {
+    border-color: rgba(76, 175, 80, 0.8);
+    box-shadow: 0 6px 25px rgba(76, 175, 80, 0.25);
+}
+
+.device-icon-android {
+    background: rgba(76, 175, 80, 0.15);
+    border: 1px solid rgba(76, 175, 80, 0.3);
+    color: #4CAF50;
+}
+
+.device-btn-android {
+    background: rgba(76, 175, 80, 0.2);
+    border: 1px solid rgba(76, 175, 80, 0.4);
+    color: #4CAF50;
+}
+
+/* iOS Card Theme */
+.device-card-ios {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(28, 15, 38, 0.6) 100%);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    box-shadow: 0 4px 20px rgba(168, 85, 247, 0.1);
+}
+
+.device-card-ios:hover {
+    border-color: rgba(168, 85, 247, 0.8);
+    box-shadow: 0 6px 25px rgba(168, 85, 247, 0.25);
+}
+
+.device-icon-ios {
+    background: rgba(168, 85, 247, 0.15);
+    border: 1px solid rgba(168, 85, 247, 0.3);
+    color: #A855F7;
+}
+
+.device-btn-ios {
+    background: rgba(168, 85, 247, 0.2);
+    border: 1px solid rgba(168, 85, 247, 0.4);
+    color: #A855F7;
+}
+
+/* Web Card Theme */
+.device-card-web {
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.08) 0%, rgba(15, 25, 38, 0.6) 100%);
+    border: 1px solid rgba(33, 150, 243, 0.4);
+    box-shadow: 0 4px 20px rgba(33, 150, 243, 0.1);
+}
+
+.device-card-web:hover {
+    border-color: rgba(33, 150, 243, 0.8);
+    box-shadow: 0 6px 25px rgba(33, 150, 243, 0.25);
+}
+
+.device-icon-web {
+    background: rgba(33, 150, 243, 0.15);
+    border: 1px solid rgba(33, 150, 243, 0.3);
+    color: #2196F3;
+}
+
+.device-btn-web {
+    background: rgba(33, 150, 243, 0.2);
+    border: 1px solid rgba(33, 150, 243, 0.4);
+    color: #2196F3;
+}
+
+/* Shared Inner Elements */
+.device-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.device-icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.device-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.device-name {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFFFFF;
+}
+
+.device-sub {
+    font-size: 12px;
+    color: #9BA1A6;
+    margin-top: 2px;
+}
+
+.device-arrow-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.device-card:hover .device-arrow-circle {
+    transform: translateX(3px);
+}
+
+/* Global Modal Overlay for Device Selector */
+.device-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    background: rgba(0, 0, 0, 0.85);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    animation: fadeInModal 0.3s ease;
+}
+
+.device-modal-content {
+    background: #0B0E14;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 24px;
+    width: 100%;
+    max-width: 460px;
+    padding: 24px 20px;
+    position: relative;
+    box-shadow: 0 25px 50px rgba(0,0,0,0.8);
+}
+
+.device-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.2s;
+}
+
+.device-modal-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+@keyframes fadeInModal {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
