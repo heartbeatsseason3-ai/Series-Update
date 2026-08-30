@@ -133,15 +133,26 @@ class StreamVault {
             episodes: newItem.episodes
         };
 
+        const client = window.supabaseClient || window.supabase;
+
         if (this.editMode && this.currentEditId) {
             // Update mode
-            const { error } = await (window.supabaseClient || window.supabase)
-.from('content')
-                .update(dbItem)
-                .eq('id', this.currentEditId);
+            let res = await client.from('content').update(dbItem).eq('id', this.currentEditId);
             
-            if (error) {
-                alert('Error updating: ' + error.message);
+            // Auto-retry if columns are missing from PostgREST schema cache
+            while (res.error && res.error.message && res.error.message.includes("Could not find the '")) {
+                const match = res.error.message.match(/Could not find the '(.*?)' column/i);
+                if (match && match[1] && dbItem.hasOwnProperty(match[1])) {
+                    console.warn(`[Supabase] Column '${match[1]}' missing in table 'content'. Stripping field and retrying...`);
+                    delete dbItem[match[1]];
+                    res = await client.from('content').update(dbItem).eq('id', this.currentEditId);
+                } else {
+                    break;
+                }
+            }
+
+            if (res.error) {
+                alert('Error updating: ' + res.error.message);
                 return;
             }
             this.exitEditMode();
@@ -149,15 +160,25 @@ class StreamVault {
             // Create mode
             // If featured, unfeature all other items first
             if (newItem.featured) {
-                await window.supabaseClient.from('content').update({ featured: false }).eq('featured', true);
+                await client.from('content').update({ featured: false }).eq('featured', true);
             }
 
-            const { error } = await (window.supabaseClient || window.supabase)
-.from('content')
-                .insert([dbItem]);
+            let res = await client.from('content').insert([dbItem]);
 
-            if (error) {
-                alert('Error publishing: ' + error.message);
+            // Auto-retry if columns are missing from PostgREST schema cache
+            while (res.error && res.error.message && res.error.message.includes("Could not find the '")) {
+                const match = res.error.message.match(/Could not find the '(.*?)' column/i);
+                if (match && match[1] && dbItem.hasOwnProperty(match[1])) {
+                    console.warn(`[Supabase] Column '${match[1]}' missing in table 'content'. Stripping field and retrying...`);
+                    delete dbItem[match[1]];
+                    res = await client.from('content').insert([dbItem]);
+                } else {
+                    break;
+                }
+            }
+
+            if (res.error) {
+                alert('Error publishing: ' + res.error.message);
                 return;
             }
         }
@@ -553,8 +574,8 @@ class StreamVault {
             return;
         }
 
-        const androidUrl = item.androidLink || item.downloadLink || 'ad-gate/index.html';
-        const iosUrl = item.iosLink || item.downloadLink || 'ad-gate/index.html';
+        const androidUrl = item.androidLink || item.downloadLink || `player.html?id=${item.id}`;
+        const iosUrl = item.iosLink || item.downloadLink || `player.html?id=${item.id}`;
         const webUrl = item.videoLink ? item.videoLink : `player.html?id=${item.id}`;
 
         const existingModal = document.getElementById('global-device-modal');
