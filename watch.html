@@ -662,6 +662,9 @@
                 publishDate: dbItem.publish_date,
                 featured: dbItem.featured,
                 videoLink: dbItem.video_link,
+                androidLink: dbItem.android_link,
+                iosLink: dbItem.ios_link,
+                downloadLink: dbItem.download_link,
                 episodes: dbItem.episodes
             };
 
@@ -691,7 +694,7 @@
         function getDeviceSelectHtml(item) {
             const androidUrl = item.androidLink || item.downloadLink || `player.html?id=${item.id}`;
             const iosUrl = item.iosLink || item.downloadLink || `player.html?id=${item.id}`;
-            const webUrl = item.videoLink ? item.videoLink : `player.html?id=${item.id}`;
+            const webUrl = `player.html?id=${item.id}`;
 
             return `
                 <div class="device-select-container" id="device-select-section" style="background:#0B0E14; border:1px solid rgba(255,255,255,0.08); border-radius:20px; padding:24px 20px; margin:24px 0; width:100%; box-sizing:border-box; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
@@ -766,11 +769,12 @@
             try { episodes = typeof item.episodes === 'string' ? JSON.parse(item.episodes) : item.episodes; } catch(e) {}
             if(!episodes || episodes.length === 0) episodes = [];
 
+            window.currentWatchItem = item;
             let epsHtml = '';
             episodes.forEach((ep, idx) => {
                 const isActive = idx === 0;
                 epsHtml += `
-                    <div class="ep-card ${isActive ? 'active' : ''}" onclick="window.location.href='${ep.link ? ep.link : `player.html?id=${item.id}&ep=${idx}`}'">
+                    <div class="ep-card ${isActive ? 'active' : ''}" onclick="showEpisodeDeviceModal(${idx})">
                         <div class="ep-thumb">
                             <img src="${item.thumbLandscape || item.thumbPortrait}" alt="Episode ${idx+1}">
                             ${isActive ? '<div class="ep-now-playing">Now Playing</div>' : ''}
@@ -941,6 +945,104 @@
         window.isItemInList = function(id) {
             const myList = JSON.parse(localStorage.getItem('myList') || '[]');
             return myList.some(i => String(i.id) === String(id));
+        };
+
+        window.showEpisodeDeviceModal = function(epIdx) {
+            const item = window.currentWatchItem;
+            if(!item) return;
+            if(window.app && window.app.showDeviceModal) {
+                window.app.showDeviceModal(item, epIdx);
+            } else {
+                let episodes = [];
+                try { episodes = typeof item.episodes === 'string' ? JSON.parse(item.episodes) : item.episodes; } catch(e) {}
+                const epObj = (episodes && episodes[epIdx]) ? episodes[epIdx] : {};
+
+                const epQuery = `&ep=${epIdx}`;
+                const androidUrl = epObj.androidLink || item.androidLink || epObj.downloadLink || item.downloadLink || `player.html?id=${item.id}${epQuery}`;
+                const iosUrl = epObj.iosLink || item.iosLink || epObj.downloadLink || item.downloadLink || `player.html?id=${item.id}${epQuery}`;
+                const webUrl = `player.html?id=${item.id}${epQuery}`;
+
+                const existingModal = document.getElementById('global-device-modal');
+                if (existingModal) existingModal.remove();
+
+                const modalOverlay = document.createElement('div');
+                modalOverlay.id = 'global-device-modal';
+                modalOverlay.className = 'device-modal-overlay';
+                modalOverlay.style.cssText = 'position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,0.85); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:center; padding:16px;';
+                
+                modalOverlay.innerHTML = `
+                    <div class="device-modal-content" style="background:#0B0E14; border:1px solid rgba(255,255,255,0.12); border-radius:24px; width:100%; max-width:460px; padding:24px 20px; position:relative; box-shadow:0 25px 50px rgba(0,0,0,0.8); box-sizing:border-box;">
+                        <button class="device-modal-close" onclick="document.getElementById('global-device-modal').remove()" style="position:absolute; top:16px; right:16px; background:rgba(255,255,255,0.1); border:none; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px;">✕</button>
+                        <div style="display:flex; align-items:center; gap:14px; margin-bottom:20px;">
+                            <img src="${item.thumbPortrait}" style="width:55px; height:80px; object-fit:cover; border-radius:10px;" />
+                            <div style="display:flex; flex-direction:column; align-items:flex-start; text-align:left;">
+                                <h4 style="color:#fff; font-size:18px; font-weight:700; margin-bottom:4px; line-height:1.2;">${item.title} - EP${epIdx + 1}</h4>
+                                <span style="font-size:12px; color:#9BA1A6;">Series • ${item.category || 'Action'}</span>
+                            </div>
+                        </div>
+
+                        <h3 class="device-select-title" style="font-size:20px; font-weight:700; color:#FFFFFF; text-align:center; margin-bottom:6px; font-family:'Poppins', sans-serif;">Choose your device to watch</h3>
+                        <p class="device-select-subtitle" style="font-size:13px; color:#9BA1A6; text-align:center; margin-bottom:20px; font-family:'Poppins', sans-serif;">Select your device type to get the app</p>
+                        
+                        <div class="device-options-list" style="display:flex; flex-direction:column; gap:14px; width:100%;">
+                            <!-- Android Option -->
+                            <div class="device-card device-card-android" onclick="window.location.href='${androidUrl}'" style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-radius:16px; background:linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, rgba(15, 28, 18, 0.7) 100%); border:1px solid rgba(76, 175, 80, 0.4); cursor:pointer; text-decoration:none; box-shadow:0 4px 20px rgba(76,175,80,0.1); width:100%; box-sizing:border-box;">
+                                <div class="device-left" style="display:flex; align-items:center; gap:16px;">
+                                    <div class="device-icon-circle device-icon-android" style="width:48px; height:48px; border-radius:50%; background:rgba(76, 175, 80, 0.15); border:1px solid rgba(76, 175, 80, 0.3); color:#4CAF50; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                        <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M17.523 15.3414C17.06 15.3414 16.691 14.9658 16.691 14.5028C16.691 14.0398 17.06 13.6642 17.523 13.6642C17.986 13.6642 18.355 14.0398 18.355 14.5028C18.355 14.9658 17.986 15.3414 17.523 15.3414ZM6.477 15.3414C6.014 15.3414 5.645 14.9658 5.645 14.5028C5.645 14.0398 6.014 13.6642 6.477 13.6642C6.94 13.6642 7.309 14.0398 7.309 14.5028C7.309 14.9658 6.94 15.3414 6.477 15.3414ZM17.842 10.7414L19.539 7.78442C19.664 7.56842 19.589 7.29142 19.373 7.16642C19.157 7.04142 18.88 7.11642 18.755 7.33242L17.027 10.3474C15.541 9.66842 13.829 9.28442 12 9.28442C10.171 9.28442 8.459 9.66842 6.973 10.3474L5.245 7.33242C5.12 7.11642 4.843 7.04142 4.627 7.16642C4.411 7.29142 4.336 7.56842 4.461 7.78442L6.158 10.7414C2.684 12.6394 0.323 16.1434 0 20.2844H24C23.677 16.1434 21.316 12.6394 17.842 10.7414Z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="device-info" style="display:flex; flex-direction:column; align-items:flex-start; text-align:left;">
+                                        <span class="device-name" style="font-size:16px; font-weight:700; color:#FFFFFF; line-height:1.2; font-family:'Poppins', sans-serif;">Watch on Android</span>
+                                        <span class="device-sub" style="font-size:12px; color:#9BA1A6; margin-top:3px; line-height:1.2; font-family:'Poppins', sans-serif;">Download our Android app</span>
+                                    </div>
+                                </div>
+                                <div class="device-arrow-circle device-btn-android" style="width:38px; height:38px; border-radius:50%; background:rgba(76, 175, 80, 0.2); border:1px solid rgba(76, 175, 80, 0.4); color:#4CAF50; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-left:auto;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </div>
+                            </div>
+
+                            <!-- iOS Option -->
+                            <div class="device-card device-card-ios" onclick="window.location.href='${iosUrl}'" style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-radius:16px; background:linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(28, 15, 38, 0.7) 100%); border:1px solid rgba(168, 85, 247, 0.4); cursor:pointer; text-decoration:none; box-shadow:0 4px 20px rgba(168,85,247,0.1); width:100%; box-sizing:border-box;">
+                                <div class="device-left" style="display:flex; align-items:center; gap:16px;">
+                                    <div class="device-icon-circle device-icon-ios" style="width:48px; height:48px; border-radius:50%; background:rgba(168, 85, 247, 0.15); border:1px solid rgba(168, 85, 247, 0.3); color:#A855F7; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.78c.66-.8 1.11-1.92.99-3.03-.96.04-2.12.64-2.81 1.44-.61.71-1.14 1.85-.99 2.94 1.07.08 2.15-.55 2.81-1.35z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="device-info" style="display:flex; flex-direction:column; align-items:flex-start; text-align:left;">
+                                        <span class="device-name" style="font-size:16px; font-weight:700; color:#FFFFFF; line-height:1.2; font-family:'Poppins', sans-serif;">Watch on iOS</span>
+                                        <span class="device-sub" style="font-size:12px; color:#9BA1A6; margin-top:3px; line-height:1.2; font-family:'Poppins', sans-serif;">Download our iOS app</span>
+                                    </div>
+                                </div>
+                                <div class="device-arrow-circle device-btn-ios" style="width:38px; height:38px; border-radius:50%; background:rgba(168, 85, 247, 0.2); border:1px solid rgba(168, 85, 247, 0.4); color:#A855F7; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-left:auto;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </div>
+                            </div>
+
+                            <!-- Web Option -->
+                            <div class="device-card device-card-web" onclick="window.location.href='${webUrl}'" style="display:flex; align-items:center; justify-content:space-between; padding:16px 20px; border-radius:16px; background:linear-gradient(135deg, rgba(33, 150, 243, 0.08) 0%, rgba(15, 25, 38, 0.7) 100%); border:1px solid rgba(33, 150, 243, 0.4); cursor:pointer; text-decoration:none; box-shadow:0 4px 20px rgba(33,150,243,0.1); width:100%; box-sizing:border-box;">
+                                <div class="device-left" style="display:flex; align-items:center; gap:16px;">
+                                    <div class="device-icon-circle device-icon-web" style="width:48px; height:48px; border-radius:50%; background:rgba(33, 150, 243, 0.15); border:1px solid rgba(33, 150, 243, 0.3); color:#2196F3; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                                        </svg>
+                                    </div>
+                                    <div class="device-info" style="display:flex; flex-direction:column; align-items:flex-start; text-align:left;">
+                                        <span class="device-name" style="font-size:16px; font-weight:700; color:#FFFFFF; line-height:1.2; font-family:'Poppins', sans-serif;">Watch on Web</span>
+                                        <span class="device-sub" style="font-size:12px; color:#9BA1A6; margin-top:3px; line-height:1.2; font-family:'Poppins', sans-serif;">Continue to watch in browser</span>
+                                    </div>
+                                </div>
+                                <div class="device-arrow-circle device-btn-web" style="width:38px; height:38px; border-radius:50%; background:rgba(33, 150, 243, 0.2); border:1px solid rgba(33, 150, 243, 0.4); color:#2196F3; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-left:auto;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modalOverlay);
+            }
         };
 
         // Horizontal scroll script

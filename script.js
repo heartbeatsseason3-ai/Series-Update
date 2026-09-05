@@ -483,12 +483,14 @@ class StreamVault {
                         const link = row.querySelector('.ep-link-input').value;
                         const link2 = row.querySelector('.ep-link2-input') ? row.querySelector('.ep-link2-input').value : '';
                         const link3 = row.querySelector('.ep-link3-input') ? row.querySelector('.ep-link3-input').value : '';
+                        const androidLink = row.querySelector('.ep-android-input') ? row.querySelector('.ep-android-input').value : '';
+                        const iosLink = row.querySelector('.ep-ios-input') ? row.querySelector('.ep-ios-input').value : '';
                         const downloadLink = row.querySelector('.ep-download-input').value;
                         const embedCode = row.querySelector('.ep-embed-input').value;
                         const embedCode2 = row.querySelector('.ep-embed2-input') ? row.querySelector('.ep-embed2-input').value : '';
                         const embedCode3 = row.querySelector('.ep-embed3-input') ? row.querySelector('.ep-embed3-input').value : '';
-                        if (title && (link || embedCode)) {
-                            episodes.push({ title, link, link2, link3, downloadLink, embedCode, embedCode2, embedCode3 });
+                        if (title && (link || embedCode || androidLink || iosLink)) {
+                            episodes.push({ title, link, link2, link3, downloadLink, androidLink, iosLink, embedCode, embedCode2, embedCode3 });
                         }
                     });
                 }
@@ -561,7 +563,7 @@ class StreamVault {
         window.location.href = `watch.html?id=${id}`;
     }
 
-    showDeviceModal(idOrItem) {
+    showDeviceModal(idOrItem, epIndex = null) {
         let item = null;
         if (typeof idOrItem === 'object' && idOrItem !== null) {
             item = idOrItem;
@@ -570,13 +572,21 @@ class StreamVault {
         }
 
         if (!item) {
-            window.location.href = `watch.html?id=${idOrItem}`;
+            const epQuery = (epIndex !== null && epIndex !== undefined) ? `&ep=${epIndex}` : '';
+            window.location.href = `watch.html?id=${idOrItem}${epQuery}`;
             return;
         }
 
-        const androidUrl = item.androidLink || item.downloadLink || `player.html?id=${item.id}`;
-        const iosUrl = item.iosLink || item.downloadLink || `player.html?id=${item.id}`;
-        const webUrl = item.videoLink ? item.videoLink : `player.html?id=${item.id}`;
+        let epObj = null;
+        if (epIndex !== null && epIndex !== undefined && item.episodes) {
+            let eps = typeof item.episodes === 'string' ? JSON.parse(item.episodes) : item.episodes;
+            if (eps && eps[epIndex]) epObj = eps[epIndex];
+        }
+
+        const epQuery = (epIndex !== null && epIndex !== undefined) ? `&ep=${epIndex}` : '';
+        const androidUrl = (epObj && epObj.androidLink) || item.androidLink || (epObj && epObj.downloadLink) || item.downloadLink || `player.html?id=${item.id}${epQuery}`;
+        const iosUrl = (epObj && epObj.iosLink) || item.iosLink || (epObj && epObj.downloadLink) || item.downloadLink || `player.html?id=${item.id}${epQuery}`;
+        const webUrl = `player.html?id=${item.id}${epQuery}`;
 
         const existingModal = document.getElementById('global-device-modal');
         if (existingModal) existingModal.remove();
@@ -586,14 +596,16 @@ class StreamVault {
         modalOverlay.className = 'device-modal-overlay';
         modalOverlay.style.cssText = 'position:fixed; inset:0; z-index:10000; background:rgba(0,0,0,0.85); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:center; padding:16px;';
         
+        const epLabel = (epIndex !== null && epIndex !== undefined) ? ` - EP${epIndex + 1}` : '';
+
         modalOverlay.innerHTML = `
             <div class="device-modal-content" style="background:#0B0E14; border:1px solid rgba(255,255,255,0.12); border-radius:24px; width:100%; max-width:460px; padding:24px 20px; position:relative; box-shadow:0 25px 50px rgba(0,0,0,0.8); box-sizing:border-box;">
                 <button class="device-modal-close" onclick="document.getElementById('global-device-modal').remove()" style="position:absolute; top:16px; right:16px; background:rgba(255,255,255,0.1); border:none; color:#fff; width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer; font-size:16px;">✕</button>
                 <div style="display:flex; align-items:center; gap:14px; margin-bottom:20px;">
                     <img src="${item.thumbPortrait}" style="width:55px; height:80px; object-fit:cover; border-radius:10px;" />
                     <div style="display:flex; flex-direction:column; align-items:flex-start; text-align:left;">
-                        <h4 style="color:#fff; font-size:18px; font-weight:700; margin-bottom:4px; line-height:1.2;">${item.title}</h4>
-                        <span style="font-size:12px; color:#9BA1A6;">${item.type || 'Movie'} • ${item.category || 'Action'}</span>
+                        <h4 style="color:#fff; font-size:18px; font-weight:700; margin-bottom:4px; line-height:1.2;">${item.title}${epLabel}</h4>
+                        <span style="font-size:12px; color:#9BA1A6;">${item.type || 'Series'} • ${item.category || 'Action'}</span>
                     </div>
                 </div>
 
@@ -606,7 +618,7 @@ class StreamVault {
                         <div class="device-left" style="display:flex; align-items:center; gap:16px;">
                             <div class="device-icon-circle device-icon-android" style="width:48px; height:48px; border-radius:50%; background:rgba(76, 175, 80, 0.15); border:1px solid rgba(76, 175, 80, 0.3); color:#4CAF50; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
                                 <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M17.523 15.3414C17.06 15.3414 16.691 14.9658 16.691 14.5028C16.691 14.0398 17.06 13.6642 17.523 13.6642C17.986 13.6642 18.355 14.0398 18.355 14.5028C18.355 14.9658 17.986 15.3414 17.523 15.3414ZM6.477 15.3414C6.014 15.3414 5.645 14.9658 5.645 14.5028C5.645 14.0398 6.014 13.6642 6.477 13.6642C6.94 13.6642 7.309 14.0398 7.309 14.5028C7.309 14.9658 6.94 15.3414 6.477 15.3414ZM17.842 10.7414L19.539 7.78442C19.664 7.56842 19.589 7.29142 19.373 7.16642C19.157 7.04142 18.88 7.11642 18.755 7.33242L17.027 10.3474C15.541 9.66842 13.829 9.28442 12 9.28442C10.171 9.28442 8.459 9.66842 6.973 10.3474L5.245 7.33242C5.12 7.11642 4.843 7.04142 4.627 7.16642C4.411 7.29142 4.336 7.56842 4.461 7.78442L6.158 10.7414C2.684 12.6394 0.323 16.1434 0 20.2844H24C23.677 16.1434 21.316 12.6394 17.842 10.7414Z"/>
+                                    <path d="M17.523 15.3414C17.06 15.3414 16.691 14.9658 16.691 14.5028C16.691 14.0398 17.06 13.6642 17.523 13.6642C17.986 13.6642 18.355 14.0398 18.355 14.5028C18.355 14.9658 17.986 15.3414 17.523 15.3414ZM6.477 15.3414C6.014 15.3414 5.645 14.9658 5.645 14.5028C5.645 14.0398 6.014 13.6642 6.477 13.6642C6.94 13.6642 7.309 14.0398 7.309 14.5028C7.309 14.9658 6.94 15.3414 6.477 15.3414ZM17.842 10.7414L19.539 7.78442C19.664 7.56842 19.589 7.29142 19.373 7.16642C19.157 7.04142 18.88 7.11642 18.755 7.33242L17.027 10.3474C15.541 9.66842 13.829 9.28442 6.973 10.3474L5.245 7.33242C5.12 7.11642 4.843 7.04142 4.627 7.16642C4.411 7.29142 4.336 7.56842 4.461 7.78442L6.158 10.7414C2.684 12.6394 0.323 16.1434 0 20.2844H24C23.677 16.1434 21.316 12.6394 17.842 10.7414Z"/>
                                 </svg>
                             </div>
                             <div class="device-info" style="display:flex; flex-direction:column; align-items:flex-start; text-align:left;">
@@ -884,7 +896,7 @@ class StreamVault {
         }
     }
 
-    addEpisodeRow(data = { title: '', link: '', downloadLink: '', embedCode: '', embedCode2: '', embedCode3: '', link2: '', link3: '' }) {
+    addEpisodeRow(data = { title: '', link: '', downloadLink: '', androidLink: '', iosLink: '', embedCode: '', embedCode2: '', embedCode3: '', link2: '', link3: '' }) {
         const container = document.getElementById('episodes-container');
         const row = document.createElement('div');
         row.className = 'episode-row';
@@ -913,7 +925,13 @@ class StreamVault {
             <input type="url" placeholder="Server 3 Link" value="${data.link3 || ''}" class="ep-link3-input" style="margin-bottom: 0.4rem; width: 100%;">
             <textarea placeholder="Server 3 Embed Code" class="ep-embed3-input" rows="2" style="margin-bottom: 0.8rem; width: 100%; border-radius: 8px; padding: 0.8rem; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2); font-family: monospace;">${data.embedCode3 || ''}</textarea>
 
-            <label style="font-size:0.8rem; color:#aaa;">Download</label>
+            <label style="font-size:0.8rem; color:#4CAF50;">🤖 Watch on Android App Link (Optional)</label>
+            <input type="url" placeholder="Android App Link for this episode" value="${data.androidLink || ''}" class="ep-android-input" style="margin-bottom: 0.8rem; width: 100%;">
+
+            <label style="font-size:0.8rem; color:#A855F7;">🍎 Watch on iOS App Link (Optional)</label>
+            <input type="url" placeholder="iOS App Link for this episode" value="${data.iosLink || ''}" class="ep-ios-input" style="margin-bottom: 0.8rem; width: 100%;">
+
+            <label style="font-size:0.8rem; color:#aaa;">📥 Download Link (Optional)</label>
             <input type="url" placeholder="Download Link (Optional)" value="${data.downloadLink || ''}" class="ep-download-input" style="margin-bottom: 0.8rem; width: 100%;">
         `;
         container.appendChild(row);
