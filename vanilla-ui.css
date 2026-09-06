@@ -131,6 +131,43 @@ header {
     position: relative;
 }
 
+/* Fullscreen Mode Button Styling */
+.fullscreen-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 50%;
+    transition: all 0.25s ease-in-out;
+}
+
+.fullscreen-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--accent, #00d4ff);
+    transform: scale(1.1);
+}
+
+.fullscreen-btn.active {
+    color: var(--accent, #00d4ff);
+    background: rgba(0, 212, 255, 0.18);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+}
+
+/* Document level Fullscreen class */
+html.is-fullscreen-mode, body.is-fullscreen-mode {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+html.is-fullscreen-mode header,
+body.is-fullscreen-mode header {
+    box-shadow: 0 4px 20px rgba(0, 212, 255, 0.2);
+}
+
 .notification-badge {
     position: absolute;
     top: -4px;
@@ -372,16 +409,28 @@ header {
     flex-shrink: 0;
     scroll-snap-align: start;
     cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
 }
 
 .category-icon {
-    width: 70px;
-    height: 70px;
+    width: 68px;
+    height: 68px;
     border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+    position: relative;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.35), inset 0 -3px 6px rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.category-card:hover .category-icon {
+    box-shadow: 0 14px 28px rgba(0, 0, 0, 0.6), inset 0 1px 2px rgba(255, 255, 255, 0.5);
 }
 
 .category-icon svg {
@@ -392,15 +441,40 @@ header {
     fill: none;
 }
 
-.category-name {
-    font-size: 12px;
-    font-weight: 500;
+.category-emoji {
+    font-size: 32px;
+    line-height: 1;
+    display: inline-block;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45));
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-.cat-comedy { background: linear-gradient(135deg, #ff416c, #ff4b2b); }
-.cat-action { background: linear-gradient(135deg, #f7971e, #ffd200); }
-.cat-drama { background: linear-gradient(135deg, #8a2387, #e94057, #f27121); }
-.cat-romance { background: linear-gradient(135deg, #00c6ff, #0072ff); }
+.category-card:hover .category-emoji {
+    transform: scale(1.2) rotate(-4deg);
+}
+
+.category-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.9);
+    letter-spacing: 0.2px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+/* 3D Gradients for 13 Categories */
+.cat-action { background: linear-gradient(135deg, #FF416C 0%, #FF4B2B 100%); }
+.cat-adventure { background: linear-gradient(135deg, #F7971E 0%, #FFD200 100%); }
+.cat-comedy { background: linear-gradient(135deg, #FFB703 0%, #FB8500 100%); }
+.cat-drama { background: linear-gradient(135deg, #8A2387 0%, #E94057 50%, #F27121 100%); }
+.cat-thriller { background: linear-gradient(135deg, #4776E6 0%, #8E54E9 100%); }
+.cat-suspense { background: linear-gradient(135deg, #11998E 0%, #38EF7D 100%); }
+.cat-horror { background: linear-gradient(135deg, #430089 0%, #82009F 100%); }
+.cat-supernatural { background: linear-gradient(135deg, #654EA3 0%, #EAAFC8 100%); }
+.cat-scifi { background: linear-gradient(135deg, #00C6FF 0%, #0072FF 100%); }
+.cat-fantasy { background: linear-gradient(135deg, #DA22FF 0%, #9733EE 100%); }
+.cat-romance { background: linear-gradient(135deg, #FF758C 0%, #FF7EB3 100%); }
+.cat-mystery { background: linear-gradient(135deg, #2C3E50 0%, #4CA1AF 100%); }
+.cat-crime { background: linear-gradient(135deg, #EB3349 0%, #F45C43 100%); }
 .cat-family { background: linear-gradient(135deg, #11998e, #38ef7d); }
 .cat-more { background: linear-gradient(135deg, #141e30, #243b55); }
 

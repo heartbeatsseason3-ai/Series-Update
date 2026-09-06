@@ -241,7 +241,7 @@ class StreamVault {
         if (filter === 'all') {
             this.updateHero(); // we'll append the hero div to container inside updateHero
             
-            // Append static categories icons row
+            // Append static categories icons row with 3D Emojis
             const catHtml = `
             <section class="categories-section">
                 <div class="section-header">
@@ -249,20 +249,44 @@ class StreamVault {
                     <a href="#" onclick="window.app.renderAll('Movie'); return false;" class="view-all">View all <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></a>
                 </div>
                 <div class="categories-scroll hide-scroll">
-                    <div class="category-card" onclick="window.app.renderAll('search:comedy')">
-                        <div class="category-icon cat-comedy"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Z"/><path d="M8 9h.01M16 9h.01M8 14c1.33 2 4.67 2 8 0"/></svg></div><span class="category-name">Comedy</span>
-                    </div>
                     <div class="category-card" onclick="window.app.renderAll('search:action')">
-                        <div class="category-icon cat-action"><svg viewBox="0 0 24 24"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.4-2.2 1.5-2.5l13.5-4c1.1-.3 2.2.4 2.5 1.5l.6 2.4z"/><path d="m9.6 4.7 1.9 5.3M14.6 3.2l1.9 5.3"/><path d="M2 13h20v8H2z"/></svg></div><span class="category-name">Action</span>
+                        <div class="category-icon cat-action"><span class="category-emoji">💥</span></div><span class="category-name">Action</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:adventure')">
+                        <div class="category-icon cat-adventure"><span class="category-emoji">🤠</span></div><span class="category-name">Adventure</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:comedy')">
+                        <div class="category-icon cat-comedy"><span class="category-emoji">😂</span></div><span class="category-name">Comedy</span>
                     </div>
                     <div class="category-card" onclick="window.app.renderAll('search:drama')">
-                        <div class="category-icon cat-drama"><svg viewBox="0 0 24 24"><path d="M2 12a5 5 0 0 0 5 5h14a5 5 0 0 0-5-5H2z"/><path d="M6 12a5 5 0 0 1 5-5h14a5 5 0 0 1-5 5H6z"/></svg></div><span class="category-name">Drama</span>
+                        <div class="category-icon cat-drama"><span class="category-emoji">🎭</span></div><span class="category-name">Drama</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:thriller')">
+                        <div class="category-icon cat-thriller"><span class="category-emoji">⚡</span></div><span class="category-name">Thriller</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:suspense')">
+                        <div class="category-icon cat-suspense"><span class="category-emoji">🫣</span></div><span class="category-name">Suspense</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:horror')">
+                        <div class="category-icon cat-horror"><span class="category-emoji">👻</span></div><span class="category-name">Horror</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:supernatural')">
+                        <div class="category-icon cat-supernatural"><span class="category-emoji">🔮</span></div><span class="category-name">Supernatural</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:sci-fi')">
+                        <div class="category-icon cat-scifi"><span class="category-emoji">🚀</span></div><span class="category-name">Sci-Fi</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:fantasy')">
+                        <div class="category-icon cat-fantasy"><span class="category-emoji">🪄</span></div><span class="category-name">Fantasy</span>
                     </div>
                     <div class="category-card" onclick="window.app.renderAll('search:romance')">
-                        <div class="category-icon cat-romance"><svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div><span class="category-name">Romance</span>
+                        <div class="category-icon cat-romance"><span class="category-emoji">💖</span></div><span class="category-name">Romance</span>
                     </div>
-                    <div class="category-card" onclick="window.app.renderAll('search:family')">
-                        <div class="category-icon cat-family"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="category-name">Family</span>
+                    <div class="category-card" onclick="window.app.renderAll('search:mystery')">
+                        <div class="category-icon cat-mystery"><span class="category-emoji">🔍</span></div><span class="category-name">Mystery</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:crime')">
+                        <div class="category-icon cat-crime"><span class="category-emoji">🚨</span></div><span class="category-name">Crime</span>
                     </div>
                 </div>
             </section>`;
@@ -305,8 +329,9 @@ class StreamVault {
         if (filter === 'Trending' || filter.startsWith('search:')) {
              this.appendCardGrid(container, items, filter === 'Trending' ? 'Trending Results' : 'Search Results');
         } else {
-             // Group by category
-             const categories = filter === 'all' ? ['Trending Now', ...new Set(items.map(i => i.category))] : [...new Set(items.map(i => i.category))];
+             // Group by category, ensuring Trending Now is never duplicated
+             const uniqueCategories = [...new Set(items.map(i => i.category))].filter(c => c && c !== 'Trending Now');
+             const categories = filter === 'all' ? ['Trending Now', ...uniqueCategories] : uniqueCategories;
              
              categories.forEach(cat => {
                  let catItems = items;
@@ -1385,3 +1410,181 @@ document.addEventListener('DOMContentLoaded', () => {
     window.shop = new ShopVault();
     window.adsManager = new AdVault();
 });
+
+/* ==========================================
+   FULLSCREEN MODE & SCROLL CONTROL SYSTEM
+   - Top Bar Fullscreen Button
+   - Scroll UP -> Full Screen Mode
+   - Scroll DOWN -> Normal Mode
+   ========================================== */
+(function() {
+    'use strict';
+
+    function getNativeFullscreenElement() {
+        return document.fullscreenElement ||
+               document.webkitFullscreenElement ||
+               document.mozFullScreenElement ||
+               document.msFullscreenElement;
+    }
+
+    function isFullscreenActive() {
+        return !!getNativeFullscreenElement() || document.documentElement.classList.contains('is-fullscreen-mode');
+    }
+
+    function updateIcons(active) {
+        const buttons = document.querySelectorAll('.fullscreen-btn, #fullscreen-btn');
+        buttons.forEach(btn => {
+            const enterSvg = btn.querySelector('.fs-icon-enter');
+            const exitSvg = btn.querySelector('.fs-icon-exit');
+            if (active) {
+                btn.classList.add('active');
+                btn.setAttribute('title', 'Exit Full Screen');
+                if (enterSvg) {
+                    enterSvg.style.setProperty('display', 'none', 'important');
+                    enterSvg.classList.add('hidden');
+                }
+                if (exitSvg) {
+                    exitSvg.style.setProperty('display', 'inline-block', 'important');
+                    exitSvg.classList.remove('hidden');
+                }
+            } else {
+                btn.classList.remove('active');
+                btn.setAttribute('title', 'Full Screen');
+                if (enterSvg) {
+                    enterSvg.style.setProperty('display', 'inline-block', 'important');
+                    enterSvg.classList.remove('hidden');
+                }
+                if (exitSvg) {
+                    exitSvg.style.setProperty('display', 'none', 'important');
+                    exitSvg.classList.add('hidden');
+                }
+            }
+        });
+    }
+
+    function requestFullscreenMode() {
+        const docEl = document.documentElement;
+        if (!getNativeFullscreenElement()) {
+            if (docEl.requestFullscreen) {
+                docEl.requestFullscreen().catch(() => {});
+            } else if (docEl.webkitRequestFullscreen) {
+                docEl.webkitRequestFullscreen();
+            } else if (docEl.mozRequestFullScreen) {
+                docEl.mozRequestFullScreen();
+            } else if (docEl.msRequestFullscreen) {
+                docEl.msRequestFullscreen();
+            }
+        }
+        document.documentElement.classList.add('is-fullscreen-mode');
+        document.body.classList.add('is-fullscreen-mode');
+        updateIcons(true);
+    }
+
+    function exitFullscreenMode() {
+        if (getNativeFullscreenElement()) {
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        }
+        document.documentElement.classList.remove('is-fullscreen-mode');
+        document.body.classList.remove('is-fullscreen-mode');
+        updateIcons(false);
+    }
+
+    function toggleFullscreenMode() {
+        if (isFullscreenActive()) {
+            exitFullscreenMode();
+        } else {
+            requestFullscreenMode();
+        }
+    }
+
+    function initHeaderButton() {
+        let buttons = document.querySelectorAll('.fullscreen-btn, #fullscreen-btn');
+        if (buttons.length === 0) {
+            const containers = document.querySelectorAll('.header-actions, .header-right, .nav-right');
+            containers.forEach(container => {
+                const btn = document.createElement('button');
+                btn.id = 'fullscreen-btn';
+                btn.className = 'header-icon icon-btn fullscreen-btn';
+                btn.setAttribute('aria-label', 'Toggle Fullscreen');
+                btn.setAttribute('title', 'Toggle Full Screen');
+                btn.innerHTML = `
+                    <svg class="fs-icon-enter" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+                    </svg>
+                    <svg class="fs-icon-exit" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
+                    </svg>`;
+                container.insertBefore(btn, container.firstChild);
+            });
+            buttons = document.querySelectorAll('.fullscreen-btn, #fullscreen-btn');
+        }
+
+        buttons.forEach(btn => {
+            if (!btn.dataset.fsBound) {
+                btn.dataset.fsBound = 'true';
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleFullscreenMode();
+                });
+            }
+        });
+        updateIcons(isFullscreenActive());
+    }
+
+    // Scroll Direction Detection: Scroll UP -> Full Screen | Scroll DOWN -> Normal Mode
+    let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
+    let isTicking = false;
+
+    function onScrollHandler() {
+        const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
+        const delta = currentScrollY - lastScrollY;
+        const minDelta = 12; // 12px threshold to ignore tiny movements
+
+        if (Math.abs(delta) >= minDelta) {
+            if (delta < 0) {
+                // User is scrolling UP -> Take Full Screen
+                requestFullscreenMode();
+            } else if (delta > 0) {
+                // User is scrolling DOWN -> Normal mode
+                exitFullscreenMode();
+            }
+            lastScrollY = currentScrollY <= 0 ? 0 : currentScrollY;
+        }
+        isTicking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+        if (!isTicking) {
+            window.requestAnimationFrame(onScrollHandler);
+            isTicking = true;
+        }
+    }, { passive: true });
+
+    // Sync icons when native fullscreen state changes (ESC key, browser UI)
+    ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(evt => {
+        document.addEventListener(evt, function() {
+            const active = !!getNativeFullscreenElement();
+            if (!active) {
+                document.documentElement.classList.remove('is-fullscreen-mode');
+                document.body.classList.remove('is-fullscreen-mode');
+            }
+            updateIcons(isFullscreenActive());
+        });
+    });
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHeaderButton);
+    } else {
+        initHeaderButton();
+    }
+})();
+

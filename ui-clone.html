@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
         <meta charset="UTF-8">
@@ -560,6 +560,10 @@
         </div>
 
         <div class="header-actions">
+            <button aria-label="Toggle Fullscreen" class="header-icon icon-btn fullscreen-btn" id="fullscreen-btn" title="Toggle Full Screen">
+                <svg class="fs-icon-enter" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                <svg class="fs-icon-exit" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
+            </button>
             <button aria-label="Action" class="header-icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             </button>
@@ -622,40 +626,56 @@
         </div>
         <div class="categories-scroll hide-scroll">
             <div class="category-card">
-                <div class="category-icon cat-comedy">
-                    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8Z"/><path d="M8 9h.01M16 9h.01M8 14c1.33 2 4.67 2 8 0"/></svg>
-                </div>
-                <span class="category-name">Comedy</span>
-            </div>
-            <div class="category-card">
-                <div class="category-icon cat-action">
-                    <svg viewBox="0 0 24 24"><path d="M20.2 6 3 11l-.9-2.4c-.3-1.1.4-2.2 1.5-2.5l13.5-4c1.1-.3 2.2.4 2.5 1.5l.6 2.4z"/><path d="m9.6 4.7 1.9 5.3M14.6 3.2l1.9 5.3"/><path d="M2 13h20v8H2z"/></svg>
-                </div>
+                <div class="category-icon cat-action"><span class="category-emoji">💥</span></div>
                 <span class="category-name">Action</span>
             </div>
             <div class="category-card">
-                <div class="category-icon cat-drama">
-                    <svg viewBox="0 0 24 24"><path d="M2 12a5 5 0 0 0 5 5h14a5 5 0 0 0-5-5H2z"/><path d="M6 12a5 5 0 0 1 5-5h14a5 5 0 0 1-5 5H6z"/></svg>
-                </div>
+                <div class="category-icon cat-adventure"><span class="category-emoji">🤠</span></div>
+                <span class="category-name">Adventure</span>
+            </div>
+            <div class="category-card">
+                <div class="category-icon cat-comedy"><span class="category-emoji">😂</span></div>
+                <span class="category-name">Comedy</span>
+            </div>
+            <div class="category-card">
+                <div class="category-icon cat-drama"><span class="category-emoji">🎭</span></div>
                 <span class="category-name">Drama</span>
             </div>
             <div class="category-card">
-                <div class="category-icon cat-romance">
-                    <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                </div>
+                <div class="category-icon cat-thriller"><span class="category-emoji">⚡</span></div>
+                <span class="category-name">Thriller</span>
+            </div>
+            <div class="category-card">
+                <div class="category-icon cat-suspense"><span class="category-emoji">🫣</span></div>
+                <span class="category-name">Suspense</span>
+            </div>
+            <div class="category-card">
+                <div class="category-icon cat-horror"><span class="category-emoji">👻</span></div>
+                <span class="category-name">Horror</span>
+            </div>
+            <div class="category-card">
+                <div class="category-icon cat-supernatural"><span class="category-emoji">🔮</span></div>
+                <span class="category-name">Supernatural</span>
+            </div>
+            <div class="category-card">
+                <div class="category-icon cat-scifi"><span class="category-emoji">🚀</span></div>
+                <span class="category-name">Sci-Fi</span>
+            </div>
+            <div class="category-card">
+                <div class="category-icon cat-fantasy"><span class="category-emoji">🪄</span></div>
+                <span class="category-name">Fantasy</span>
+            </div>
+            <div class="category-card">
+                <div class="category-icon cat-romance"><span class="category-emoji">💖</span></div>
                 <span class="category-name">Romance</span>
             </div>
             <div class="category-card">
-                <div class="category-icon cat-family">
-                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-                </div>
-                <span class="category-name">Family</span>
+                <div class="category-icon cat-mystery"><span class="category-emoji">🔍</span></div>
+                <span class="category-name">Mystery</span>
             </div>
             <div class="category-card">
-                <div class="category-icon cat-more">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                </div>
-                <span class="category-name">More</span>
+                <div class="category-icon cat-crime"><span class="category-emoji">🚨</span></div>
+                <span class="category-name">Crime</span>
             </div>
         </div>
     </section>
@@ -763,5 +783,7 @@
             clickedItem.classList.add('active');
         }
     </script>
+    <script src="fullscreen-handler.js"></script>
+    <script src="theme-handler.js"></script>
 </body>
 </html>

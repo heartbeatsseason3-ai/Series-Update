@@ -83,6 +83,43 @@ body {
     gap: 2rem;
 }
 
+/* Fullscreen Mode Button Styling */
+.fullscreen-btn {
+    background: transparent;
+    border: none;
+    color: white;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px;
+    border-radius: 50%;
+    transition: all 0.25s ease-in-out;
+}
+
+.fullscreen-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--accent, #00d4ff);
+    transform: scale(1.1);
+}
+
+.fullscreen-btn.active {
+    color: var(--accent, #00d4ff);
+    background: rgba(0, 212, 255, 0.18);
+    box-shadow: 0 0 10px rgba(0, 212, 255, 0.4);
+}
+
+/* Document level Fullscreen class */
+html.is-fullscreen-mode, body.is-fullscreen-mode {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+html.is-fullscreen-mode header,
+body.is-fullscreen-mode header {
+    box-shadow: 0 4px 20px rgba(0, 212, 255, 0.2);
+}
+
 .search-box {
     display: flex;
     align-items: center;
