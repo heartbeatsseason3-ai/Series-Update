@@ -29,6 +29,17 @@
             padding: 0.6rem 1rem !important;
         }
 
+        .form-label-spaced {
+            margin-top: 1rem;
+            display: block;
+        }
+
+        .btn-cancel-edit {
+            width: 100%;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
         @media (max-width: 650px) {
             #admin-navbar {
                 height: auto !important;
@@ -180,26 +191,26 @@
                         <input type="url" id="videoLink" placeholder="https://example.com/stream-movie.mp4">
                         <span class="form-hint">The primary stream URL used when 'Watch on Web' is clicked.</span>
 
-                        <label for="androidLink" style="margin-top: 1rem; display: block;">🤖 Watch on Android App Link (Optional)</label>
+                        <label for="androidLink" class="form-label-spaced">🤖 Watch on Android App Link (Optional)</label>
                         <input type="url" id="androidLink" placeholder="https://example.com/app-release.apk">
                         <span class="form-hint">Custom link opened when 'Watch on Android' is clicked (defaults to app download page).</span>
 
-                        <label for="iosLink" style="margin-top: 1rem; display: block;">🍎 Watch on iOS App Link (Optional)</label>
+                        <label for="iosLink" class="form-label-spaced">🍎 Watch on iOS App Link (Optional)</label>
                         <input type="url" id="iosLink" placeholder="https://apps.apple.com/app/id123456789">
                         <span class="form-hint">Custom link opened when 'Watch on iOS' is clicked (defaults to iOS app page).</span>
 
-                        <label class="extracted-style-135" for="downloadLink" style="margin-top: 1rem; display: block;">📥 Download Link (Optional)</label>
+                        <label class="extracted-style-135 form-label-spaced" for="downloadLink">📥 Download Link (Optional)</label>
                         <input class="extracted-style-136" type="url" id="downloadLink" placeholder="https://example.com/download.mp4" >
                         <span class="form-hint">The direct link for the user to download the content.</span>
 
-                        <label class="extracted-style-137" for="embedCode" style="margin-top: 1rem; display: block;">Embed Code or Video Link (Server 1)</label>
+                        <label class="extracted-style-137 form-label-spaced" for="embedCode">Embed Code or Video Link (Server 1)</label>
                         <textarea class="extracted-style-138" id="embedCode" rows="3" placeholder="Paste direct link (e.g., YouTube, MP4) or <iframe> code..." ></textarea>
                         <span class="form-hint">Paste a video link or the full iframe HTML snippet to play directly on the Watch page.</span>
 
-                        <label class="extracted-style-139" for="embedCode2" style="margin-top: 1rem; display: block;">Embed Code or Video Link (Server 2) - Optional</label>
+                        <label class="extracted-style-139 form-label-spaced" for="embedCode2">Embed Code or Video Link (Server 2) - Optional</label>
                         <textarea class="extracted-style-140" id="embedCode2" rows="2" placeholder="Paste Server 2 direct link or <iframe> code..." ></textarea>
 
-                        <label class="extracted-style-141" for="embedCode3" style="margin-top: 1rem; display: block;">Embed Code or Video Link (Server 3) - Optional</label>
+                        <label class="extracted-style-141 form-label-spaced" for="embedCode3">Embed Code or Video Link (Server 3) - Optional</label>
                         <textarea class="extracted-style-142" id="embedCode3" rows="2" placeholder="Paste Server 3 direct link or <iframe> code..." ></textarea>
                     </div>
 
@@ -222,8 +233,7 @@
                     <button type="submit" id="submit-btn" class="btn btn-primary publish-submit-btn">
                         🚀 Publish to Website
                     </button>
-                    <button type="button" id="cancel-edit-btn" class="btn btn-secondary"
-                        style="width: 100%; margin-top: 0.5rem; display: none;">
+                    <button type="button" id="cancel-edit-btn" class="btn btn-secondary btn-cancel-edit">
                         Cancel Editing
                     </button>
                 </form>
@@ -310,8 +320,7 @@
                     <button type="submit" id="prod-submit-btn" class="btn btn-primary publish-submit-btn">
                         🚀 Publish Product
                     </button>
-                    <button type="button" id="prod-cancel-edit-btn" class="btn btn-secondary"
-                        style="width: 100%; margin-top: 0.5rem; display: none;">
+                    <button type="button" id="prod-cancel-edit-btn" class="btn btn-secondary btn-cancel-edit">
                         Cancel Editing
                     </button>
                 </form>

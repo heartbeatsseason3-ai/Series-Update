@@ -253,6 +253,7 @@ body.is-fullscreen-mode header {
 .mobile-exact-logo .logo-text {
     background: linear-gradient(90deg, #fff 0%, #fff 50%, #00D4FF 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 10px rgba(0,212,255,0.2);
 }
@@ -489,7 +490,6 @@ body.is-fullscreen-mode header {
     overflow-x: auto;
     gap: 1rem;
     padding: 1rem 4%;
-    scrollbar-width: none; /* Firefox */
 }
 
 .categories-scroll::-webkit-scrollbar {
@@ -634,7 +634,6 @@ body.is-fullscreen-mode header {
     overflow-x: auto;
     gap: 1.5rem;
     padding-bottom: 1rem;
-    scrollbar-width: none; /* Firefox */
 }
 
 .row-cards::-webkit-scrollbar {
@@ -991,6 +990,12 @@ body.is-fullscreen-mode header {
     margin-bottom: 0 !important;
 }
 
+.anime-loading-state {
+    text-align: center;
+    padding: 40px;
+    color: #888;
+}
+
 .loading-status {
     text-align: center;
     padding: 2rem;
@@ -1317,8 +1322,6 @@ body.is-fullscreen-mode header {
         gap: 0.7rem;
         padding: 0.4rem 4% 0.8rem;
         scroll-snap-type: x mandatory;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none; /* Firefox */
     }
 
     .row-cards::-webkit-scrollbar {

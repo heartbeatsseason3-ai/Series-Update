@@ -215,7 +215,6 @@ svg[style*="display:none"] {
     display: flex !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
-    -webkit-overflow-scrolling: touch !important;
     scroll-snap-type: x mandatory !important;
     scroll-padding-left: 20px !important;
     gap: 14px !important;
@@ -223,7 +222,6 @@ svg[style*="display:none"] {
     padding-right: 20px !important;
     padding-top: 4px !important;
     padding-bottom: 16px !important;
-    scrollbar-width: none !important;
 }
 .cards-scroll::-webkit-scrollbar,
 .trending-scroll::-webkit-scrollbar,
