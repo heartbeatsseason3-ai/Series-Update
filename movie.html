@@ -139,19 +139,24 @@
             align-items: center;
             gap: 8px;
             background-color: #1a1c23;
+            color: #ffffff;
             padding: 10px 16px;
             border-radius: 20px;
             white-space: nowrap;
             font-size: 13px;
             font-weight: 500;
-            border: 1px solid transparent;
+            border: 1px solid rgba(255,255,255,0.08);
             scroll-snap-align: start;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
         .genre-pill.active {
+            background-color: var(--accent-red);
+            color: #ffffff;
             border-color: var(--accent-red);
+            box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
         }
-        .genre-pill svg { width: 14px; height: 14px; }
+        .genre-pill svg { width: 14px; height: 14px; stroke: currentColor; }
 
         /* 5. Content Rows */
         .content-section {

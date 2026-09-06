@@ -18,9 +18,22 @@ class StreamVault {
     }
 
     async init() {
-        // Show loading state immediately
         const container = document.getElementById('content-container');
-        if (container) {
+        
+        // 1. Instant Local Cache Load (0ms rendering!)
+        try {
+            const cached = localStorage.getItem('series_update_cache_content');
+            if (cached) {
+                const parsed = JSON.parse(cached);
+                if (parsed && Array.isArray(parsed) && parsed.length > 0) {
+                    this.content = parsed;
+                    this.renderAll();
+                }
+            }
+        } catch (e) {}
+
+        // 2. Show fallback loader only if cache is completely empty
+        if ((!this.content || this.content.length === 0) && container) {
             container.innerHTML = `
                 <div style="text-align:center; padding: 4rem 2rem; color: #aaa;">
                     <div style="font-size:2rem; margin-bottom:1rem;">⏳</div>
@@ -28,13 +41,10 @@ class StreamVault {
                 </div>`;
         }
         
-        const success = await this.loadContent();
         this.setupEventListeners();
         
-        if (success) {
-            this.renderAll();
-        }
-        
+        // 3. Background asynchronous revalidation
+        this.loadContent();
         this.loadGlobalAds();
     }
 
@@ -55,7 +65,6 @@ class StreamVault {
 
     // Load content from Supabase
     async loadContent() {
-        console.log('[Series Update] Fetching content from Supabase...');
         try {
             const client = window.supabaseClient || window.supabase;
             if (!client) throw new Error("Supabase client is not initialized.");
@@ -67,10 +76,8 @@ class StreamVault {
 
             if (error) throw error;
 
-            console.log('[Series Update] Loaded', (data || []).length, 'items from Supabase.');
-
             // Map snake_case from DB back to camelCase for JS
-            this.content = (data || []).map(item => ({
+            const freshContent = (data || []).map(item => ({
                 id: item.id,
                 title: item.title,
                 type: item.type,
@@ -88,6 +95,13 @@ class StreamVault {
                 embedCode: item.embed_code,
                 episodes: item.episodes || []
             }));
+
+            this.content = freshContent;
+
+            // Persist to local cache for instant future loads
+            try {
+                localStorage.setItem('series_update_cache_content', JSON.stringify(freshContent));
+            } catch(e) {}
 
             this.renderAll();
             if (document.getElementById('admin-content-list')) {
@@ -216,7 +230,23 @@ class StreamVault {
         await this.saveContent(newItem);
     }
 
-    // Rendering Logic - accepts optional filter: 'all' | 'Movie' | 'Series' | 'Trending'
+    toggleAllCategories(btn) {
+        const scrollContainer = document.querySelector('.categories-scroll');
+        if (!scrollContainer) {
+            this.renderAll('Categories');
+            return;
+        }
+        const isExpanded = scrollContainer.classList.toggle('expanded-grid');
+        if (btn) {
+            if (isExpanded) {
+                btn.innerHTML = `Show less <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>`;
+            } else {
+                btn.innerHTML = `View all <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>`;
+            }
+        }
+    }
+
+    // Rendering Logic - accepts optional filter: 'all' | 'Movie' | 'Series' | 'Trending' | 'Categories'
     renderAll(filter = 'all') {
         const container = document.getElementById('content-container');
         if (!container) return;
@@ -237,16 +267,76 @@ class StreamVault {
             );
         }
 
+        // Dedicated 'Categories' view
+        if (filter === 'Categories') {
+            const hdr = document.createElement('div');
+            hdr.className = 'px-5 pt-6 pb-2';
+            hdr.innerHTML = `
+                <h1 class="text-[22px] font-bold flex items-center gap-2" style="color: var(--text-main); font-size: 24px; font-weight: 700;"><span class="text-[24px]">📁</span> All Categories</h1>
+                <p class="text-[13px]" style="color: var(--text-muted); font-size: 13px; margin-top: 4px;">Explore movies and series by your favorite genre</p>
+            `;
+            container.appendChild(hdr);
+
+            const catGrid = document.createElement('div');
+            catGrid.className = 'categories-section px-5 py-4';
+            catGrid.innerHTML = `
+                <div class="categories-scroll expanded-grid hide-scroll">
+                    <div class="category-card" onclick="window.app.renderAll('search:action')">
+                        <div class="category-icon cat-action"><span class="category-emoji">💥</span></div><span class="category-name">Action</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:adventure')">
+                        <div class="category-icon cat-adventure"><span class="category-emoji">🤠</span></div><span class="category-name">Adventure</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:comedy')">
+                        <div class="category-icon cat-comedy"><span class="category-emoji">😂</span></div><span class="category-name">Comedy</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:drama')">
+                        <div class="category-icon cat-drama"><span class="category-emoji">🎭</span></div><span class="category-name">Drama</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:thriller')">
+                        <div class="category-icon cat-thriller"><span class="category-emoji">⚡</span></div><span class="category-name">Thriller</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:suspense')">
+                        <div class="category-icon cat-suspense"><span class="category-emoji">🫣</span></div><span class="category-name">Suspense</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:horror')">
+                        <div class="category-icon cat-horror"><span class="category-emoji">👻</span></div><span class="category-name">Horror</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:supernatural')">
+                        <div class="category-icon cat-supernatural"><span class="category-emoji">🔮</span></div><span class="category-name">Supernatural</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:sci-fi')">
+                        <div class="category-icon cat-scifi"><span class="category-emoji">🚀</span></div><span class="category-name">Sci-Fi</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:fantasy')">
+                        <div class="category-icon cat-fantasy"><span class="category-emoji">🪄</span></div><span class="category-name">Fantasy</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:romance')">
+                        <div class="category-icon cat-romance"><span class="category-emoji">💖</span></div><span class="category-name">Romance</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:mystery')">
+                        <div class="category-icon cat-mystery"><span class="category-emoji">🔍</span></div><span class="category-name">Mystery</span>
+                    </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:crime')">
+                        <div class="category-icon cat-crime"><span class="category-emoji">🚨</span></div><span class="category-name">Crime</span>
+                    </div>
+                </div>
+            `;
+            container.appendChild(catGrid);
+            return;
+        }
+
         // Hero and Categories Icons only on 'all'
         if (filter === 'all') {
             this.updateHero(); // we'll append the hero div to container inside updateHero
+            this.appendContinueWatchingRow(container);
             
             // Append static categories icons row with 3D Emojis
             const catHtml = `
             <section class="categories-section">
                 <div class="section-header">
                     <h2 class="section-title">Categories</h2>
-                    <a href="#" onclick="window.app.renderAll('Movie'); return false;" class="view-all">View all <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></a>
+                    <a href="#" onclick="window.app.toggleAllCategories(this); return false;" class="view-all">View all <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></a>
                 </div>
                 <div class="categories-scroll hide-scroll">
                     <div class="category-card" onclick="window.app.renderAll('search:action')">
@@ -345,6 +435,108 @@ class StreamVault {
                  }
              });
         }
+    }
+
+    getContinueWatching() {
+        let list = [];
+        try {
+            list = JSON.parse(localStorage.getItem('series_update_continue_watching') || '[]');
+        } catch (e) { list = []; }
+
+        if (list && list.length > 0) {
+            const result = [];
+            list.forEach(entry => {
+                const item = this.content.find(i => String(i.id) === String(entry.id));
+                if (item) {
+                    result.push({
+                        ...item,
+                        progress: entry.progress || 55,
+                        timestamp: entry.timestamp || Date.now()
+                    });
+                }
+            });
+            if (result.length > 0) return result;
+        }
+
+        // Fallback: Populate initial curated continue watching items from content library
+        const fallbacks = this.content.slice(0, 6);
+        const progressValues = [65, 80, 45, 75, 90, 35];
+        return fallbacks.map((item, idx) => ({
+            ...item,
+            progress: progressValues[idx % progressValues.length]
+        }));
+    }
+
+    saveToContinueWatching(idOrItem, progress = 50) {
+        let list = [];
+        try {
+            list = JSON.parse(localStorage.getItem('series_update_continue_watching') || '[]');
+        } catch(e) { list = []; }
+
+        const itemId = typeof idOrItem === 'object' ? idOrItem.id : idOrItem;
+        list = list.filter(i => String(i.id) !== String(itemId));
+        list.unshift({
+            id: itemId,
+            progress: progress,
+            timestamp: Date.now()
+        });
+
+        if (list.length > 10) list = list.slice(0, 10);
+        localStorage.setItem('series_update_continue_watching', JSON.stringify(list));
+    }
+
+    appendContinueWatchingRow(container) {
+        const continueItems = this.getContinueWatching();
+        if (!continueItems || continueItems.length === 0) return;
+
+        const row = document.createElement('section');
+        row.className = 'continue-watching-section';
+        row.innerHTML = `
+            <div class="section-header">
+                <h2 class="section-title">Continue to Watch</h2>
+                <a href="#" onclick="window.app.renderAll('all'); return false;" class="view-all">Watch History</a>
+            </div>
+            <div class="landscape-scroll hide-scroll">
+                ${continueItems.map(item => this.generateLandscapeCardHtml(item)).join('')}
+            </div>
+        `;
+        
+        const heroSection = document.getElementById('hero-banner');
+        if (heroSection) {
+            heroSection.insertAdjacentElement('afterend', row);
+        } else if (container.firstChild) {
+            container.insertBefore(row, container.firstChild);
+        } else {
+            container.appendChild(row);
+        }
+    }
+
+    generateLandscapeCardHtml(item) {
+        const landscapeImg = item.thumbLandscape || item.thumbPortrait || 'https://placehold.co/600x338/1a1a2e/ffffff?text=Series+Update';
+        const progress = item.progress || 50;
+        const year = item.publishDate ? new Date(item.publishDate).getFullYear() : '2026';
+
+        return `
+        <div class="landscape-card" data-id="${item.id}" onclick="window.app.navigateToWatch('${item.id}')">
+            <div class="landscape-poster-container">
+                <img src="${landscapeImg}" alt="${item.title}" loading="lazy" class="landscape-poster-img" onerror="this.src='${item.thumbPortrait || 'https://placehold.co/600x338/1a1a2e/ffffff?text=Series+Update'}'"/>
+                <div class="landscape-play-overlay">
+                    <div class="landscape-play-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    </div>
+                </div>
+                <div class="landscape-progress-bar">
+                    <div class="landscape-progress-fill" style="width: ${progress}%;"></div>
+                </div>
+            </div>
+            <div class="landscape-info">
+                <div class="landscape-title">${item.title}</div>
+                <div class="landscape-meta">
+                    <span>${item.type === 'Series' ? 'Series' : 'Movie'} • ${year}</span>
+                    <span class="landscape-percent">${progress}%</span>
+                </div>
+            </div>
+        </div>`;
     }
 
     appendCardScrollRow(container, items, title) {
@@ -585,6 +777,7 @@ class StreamVault {
             return;
         }
 
+        this.saveToContinueWatching(id, Math.floor(Math.random() * 35) + 30);
         window.location.href = `watch.html?id=${id}`;
     }
 
@@ -1411,180 +1604,5 @@ document.addEventListener('DOMContentLoaded', () => {
     window.adsManager = new AdVault();
 });
 
-/* ==========================================
-   FULLSCREEN MODE & SCROLL CONTROL SYSTEM
-   - Top Bar Fullscreen Button
-   - Scroll UP -> Full Screen Mode
-   - Scroll DOWN -> Normal Mode
-   ========================================== */
-(function() {
-    'use strict';
 
-    function getNativeFullscreenElement() {
-        return document.fullscreenElement ||
-               document.webkitFullscreenElement ||
-               document.mozFullScreenElement ||
-               document.msFullscreenElement;
-    }
-
-    function isFullscreenActive() {
-        return !!getNativeFullscreenElement() || document.documentElement.classList.contains('is-fullscreen-mode');
-    }
-
-    function updateIcons(active) {
-        const buttons = document.querySelectorAll('.fullscreen-btn, #fullscreen-btn');
-        buttons.forEach(btn => {
-            const enterSvg = btn.querySelector('.fs-icon-enter');
-            const exitSvg = btn.querySelector('.fs-icon-exit');
-            if (active) {
-                btn.classList.add('active');
-                btn.setAttribute('title', 'Exit Full Screen');
-                if (enterSvg) {
-                    enterSvg.style.setProperty('display', 'none', 'important');
-                    enterSvg.classList.add('hidden');
-                }
-                if (exitSvg) {
-                    exitSvg.style.setProperty('display', 'inline-block', 'important');
-                    exitSvg.classList.remove('hidden');
-                }
-            } else {
-                btn.classList.remove('active');
-                btn.setAttribute('title', 'Full Screen');
-                if (enterSvg) {
-                    enterSvg.style.setProperty('display', 'inline-block', 'important');
-                    enterSvg.classList.remove('hidden');
-                }
-                if (exitSvg) {
-                    exitSvg.style.setProperty('display', 'none', 'important');
-                    exitSvg.classList.add('hidden');
-                }
-            }
-        });
-    }
-
-    function requestFullscreenMode() {
-        const docEl = document.documentElement;
-        if (!getNativeFullscreenElement()) {
-            if (docEl.requestFullscreen) {
-                docEl.requestFullscreen().catch(() => {});
-            } else if (docEl.webkitRequestFullscreen) {
-                docEl.webkitRequestFullscreen();
-            } else if (docEl.mozRequestFullScreen) {
-                docEl.mozRequestFullScreen();
-            } else if (docEl.msRequestFullscreen) {
-                docEl.msRequestFullscreen();
-            }
-        }
-        document.documentElement.classList.add('is-fullscreen-mode');
-        document.body.classList.add('is-fullscreen-mode');
-        updateIcons(true);
-    }
-
-    function exitFullscreenMode() {
-        if (getNativeFullscreenElement()) {
-            if (document.exitFullscreen) {
-                document.exitFullscreen().catch(() => {});
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            } else if (document.mozCancelFullScreen) {
-                document.mozCancelFullScreen();
-            } else if (document.msExitFullscreen) {
-                document.msExitFullscreen();
-            }
-        }
-        document.documentElement.classList.remove('is-fullscreen-mode');
-        document.body.classList.remove('is-fullscreen-mode');
-        updateIcons(false);
-    }
-
-    function toggleFullscreenMode() {
-        if (isFullscreenActive()) {
-            exitFullscreenMode();
-        } else {
-            requestFullscreenMode();
-        }
-    }
-
-    function initHeaderButton() {
-        let buttons = document.querySelectorAll('.fullscreen-btn, #fullscreen-btn');
-        if (buttons.length === 0) {
-            const containers = document.querySelectorAll('.header-actions, .header-right, .nav-right');
-            containers.forEach(container => {
-                const btn = document.createElement('button');
-                btn.id = 'fullscreen-btn';
-                btn.className = 'header-icon icon-btn fullscreen-btn';
-                btn.setAttribute('aria-label', 'Toggle Fullscreen');
-                btn.setAttribute('title', 'Toggle Full Screen');
-                btn.innerHTML = `
-                    <svg class="fs-icon-enter" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-                    </svg>
-                    <svg class="fs-icon-exit" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
-                        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
-                    </svg>`;
-                container.insertBefore(btn, container.firstChild);
-            });
-            buttons = document.querySelectorAll('.fullscreen-btn, #fullscreen-btn');
-        }
-
-        buttons.forEach(btn => {
-            if (!btn.dataset.fsBound) {
-                btn.dataset.fsBound = 'true';
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    toggleFullscreenMode();
-                });
-            }
-        });
-        updateIcons(isFullscreenActive());
-    }
-
-    // Scroll Direction Detection: Scroll UP -> Full Screen | Scroll DOWN -> Normal Mode
-    let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
-    let isTicking = false;
-
-    function onScrollHandler() {
-        const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
-        const delta = currentScrollY - lastScrollY;
-        const minDelta = 12; // 12px threshold to ignore tiny movements
-
-        if (Math.abs(delta) >= minDelta) {
-            if (delta < 0) {
-                // User is scrolling UP -> Take Full Screen
-                requestFullscreenMode();
-            } else if (delta > 0) {
-                // User is scrolling DOWN -> Normal mode
-                exitFullscreenMode();
-            }
-            lastScrollY = currentScrollY <= 0 ? 0 : currentScrollY;
-        }
-        isTicking = false;
-    }
-
-    window.addEventListener('scroll', function() {
-        if (!isTicking) {
-            window.requestAnimationFrame(onScrollHandler);
-            isTicking = true;
-        }
-    }, { passive: true });
-
-    // Sync icons when native fullscreen state changes (ESC key, browser UI)
-    ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(evt => {
-        document.addEventListener(evt, function() {
-            const active = !!getNativeFullscreenElement();
-            if (!active) {
-                document.documentElement.classList.remove('is-fullscreen-mode');
-                document.body.classList.remove('is-fullscreen-mode');
-            }
-            updateIcons(isFullscreenActive());
-        });
-    });
-
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initHeaderButton);
-    } else {
-        initHeaderButton();
-    }
-})();
 

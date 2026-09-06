@@ -52,7 +52,7 @@
         /* --- Movie UI Layout (KARA style) --- */
         .movie-hero { display: flex; flex-direction: column; align-items: center; padding: 20px; }
         .movie-poster { width: 320px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-        .movie-title { font-size: 32px; font-weight: 800; margin-top: 24px; text-align: center; }
+        .movie-title { font-size: 26px; font-weight: 600; margin-top: 24px; text-align: center; letter-spacing: -0.3px; -webkit-font-smoothing: antialiased; }
         .movie-tags { display: flex; gap: 12px; margin-top: 10px; justify-content: center; align-items: center; }
         .movie-meta { display: flex; justify-content: space-between; background: var(--btn-grey); padding: 16px 20px; border-radius: 12px; width: 100%; max-width: 340px; margin-top: 20px; border: 1px solid var(--border-color); }
         .movie-actions { width: 100%; max-width: 340px; margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
@@ -65,7 +65,7 @@
         .series-poster-img { width: 100%; border-radius: 12px; display: block; }
         .series-poster-play { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; height: 40px; border: 2px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.5); -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px); cursor: pointer; }
         .series-details { flex: 1; display: flex; flex-direction: column; }
-        .series-title { font-size: 26px; font-weight: bold; line-height: 1.2; margin-bottom: 8px; }
+        .series-title { font-size: 24px; font-weight: 600; line-height: 1.25; margin-bottom: 8px; letter-spacing: -0.3px; -webkit-font-smoothing: antialiased; }
         .series-badges { display: flex; gap: 6px; margin-bottom: 8px; }
         .s-badge-red { background: var(--accent-red); color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
         .s-badge-outline { border: 1px solid rgba(255,255,255,0.3); color: #ccc; padding: 2px 6px; border-radius: 4px; font-size: 11px; font-weight: bold; }
@@ -96,17 +96,24 @@
         .ep-duration { font-size: 10px; color: #888; margin-top: auto; }
 
         /* --- More Like This Section --- */
-        .more-like-this { margin-top: 10px; }
+        .more-like-this { margin-top: 24px; margin-bottom: 20px; }
         .section-header-mlt { display: flex; justify-content: space-between; align-items: center; padding: 0 20px; margin-bottom: 16px; }
-        .section-title-mlt { display: flex; align-items: center; font-size: 16px; font-weight: 700; border-left: 3px solid var(--accent-red); padding-left: 8px; line-height: 1; }
-        .view-all-mlt { color: var(--text-muted); font-size: 12px; text-decoration: none; }
-        .mlt-scroll { display: flex; gap: 12px; overflow-x: auto; padding: 0 20px 20px; scroll-snap-type: x mandatory; }
+        .section-title-mlt { display: flex; align-items: center; font-size: 18px; font-weight: 600; border-left: 3px solid var(--accent-red); padding-left: 10px; line-height: 1.2; color: var(--text-main); letter-spacing: -0.3px; -webkit-font-smoothing: antialiased; }
+        .view-all-mlt { color: var(--text-muted); font-size: 12px; text-decoration: none; font-weight: 500; display: flex; align-items: center; gap: 4px; }
+        .view-all-mlt:hover { color: var(--accent-red); }
+        .mlt-scroll { display: flex; gap: 14px; overflow-x: auto; padding: 4px 20px 20px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
         .mlt-scroll::-webkit-scrollbar { display: none; }
-        .mlt-card { flex-shrink: 0; width: 110px; scroll-snap-align: start; text-align: center; cursor: pointer; transition: transform 0.2s; }
-        .mlt-card:active { transform: scale(0.95); }
-        .mlt-card img { width: 100%; height: 160px; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
-        .mlt-rating { font-size: 11px; font-weight: bold; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 4px; color: white; }
-        .mlt-rating span { color: var(--accent-red); }
+        .mlt-card { flex: 0 0 130px; width: 130px; scroll-snap-align: start; cursor: pointer; transition: transform 0.25s ease; display: flex; flex-direction: column; text-decoration: none; }
+        .mlt-card:hover { transform: translateY(-4px); }
+        .mlt-poster-wrap { width: 100%; height: 185px; border-radius: 14px; overflow: hidden; position: relative; box-shadow: 0 6px 16px rgba(0,0,0,0.4); background: #12151c; }
+        .mlt-poster-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease; }
+        .mlt-card:hover .mlt-poster-wrap img { transform: scale(1.06); }
+        .mlt-info { margin-top: 8px; display: flex; flex-direction: column; gap: 3px; text-align: left; }
+        .mlt-title { font-size: 13px; font-weight: 500; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .mlt-meta { display: flex; align-items: center; justify-content: space-between; font-size: 11px; color: var(--text-muted); }
+        .mlt-rating { font-size: 11px; font-weight: 600; color: var(--text-main); display: flex; align-items: center; gap: 3px; }
+        .mlt-rating span { color: #ffc107; }
+        .mlt-year { font-size: 11px; color: var(--text-muted); opacity: 0.85; }
 
         /* --- Bottom Navigation --- */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background-color: #050505; border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-around; align-items: center; padding: 12px 10px 24px; z-index: 100; }
@@ -147,7 +154,9 @@
                 border-radius: 24px;
             }
             .movie-title {
-                font-size: 54px;
+                font-size: 34px;
+                font-weight: 600;
+                letter-spacing: -0.4px;
                 text-align: left;
                 margin-top: 0;
             }
@@ -191,7 +200,9 @@
                 justify-content: center;
             }
             .series-title {
-                font-size: 54px;
+                font-size: 34px;
+                font-weight: 600;
+                letter-spacing: -0.4px;
                 margin-bottom: 20px;
             }
             .series-synopsis {
@@ -238,14 +249,12 @@
                 overflow-x: auto;
             }
             .mlt-card {
-                width: 180px;
+                flex: 0 0 170px;
+                width: 170px;
                 transition: transform 0.3s;
             }
-            .mlt-card:hover {
-                transform: scale(1.05);
-            }
-            .mlt-card img {
-                height: 270px;
+            .mlt-poster-wrap {
+                height: 250px;
             }
             
             header {
@@ -318,8 +327,8 @@
                 background-position: top center;
                 filter: blur(50px) brightness(0.35);
                 z-index: -2;
-                mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
                 -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 100%);
+                mask-image: linear-gradient(to bottom, black 50%, transparent 100%);
             }
             .btn-primary {
                 transition: transform 0.3s, box-shadow 0.3s !important;
@@ -649,52 +658,97 @@
                 return;
             }
 
-            // Fetch Main Content
-            const { data: dbItem, error } = await supabase.from('content').select('*').eq('id', contentId).single();
-            
-            if (error || !dbItem) {
-                document.getElementById('loading').innerHTML = '<p>Content not found.</p><a href="index.html" style="color:var(--accent-red); margin-top:10px; display:block;">Go Home</a>';
-                return;
+            const loadingEl = document.getElementById('loading');
+            const dynamicEl = document.getElementById('dynamic-content');
+            const mltEl = document.getElementById('mlt-section');
+
+            // 1. INSTANT LOCAL CACHE LOAD (0ms rendering!)
+            let cachedItem = null;
+            let cachedRecs = [];
+            try {
+                const cachedData = localStorage.getItem('series_update_cache_content');
+                if (cachedData) {
+                    const list = JSON.parse(cachedData);
+                    cachedItem = list.find(i => String(i.id) === String(contentId));
+                    cachedRecs = list.filter(i => String(i.id) !== String(contentId)).slice(0, 10);
+                }
+            } catch(e) {}
+
+            if (cachedItem) {
+                loadingEl.style.display = 'none';
+                dynamicEl.style.display = 'block';
+                mltEl.style.display = 'block';
+
+                document.getElementById('hero-bg-immersive').style.backgroundImage = 'url(' + (cachedItem.thumbLandscape || cachedItem.thumbPortrait) + ')';
+                if (cachedItem.type === 'Series') renderSeriesUI(cachedItem);
+                else renderMovieUI(cachedItem);
+
+                if (cachedRecs.length > 0) renderRecommendations(cachedRecs);
             }
 
-            const item = {
-                id: dbItem.id,
-                title: dbItem.title,
-                type: dbItem.type,
-                thumbPortrait: dbItem.thumb_portrait,
-                thumbLandscape: dbItem.thumb_landscape,
-                category: dbItem.category,
-                desc: dbItem.description,
-                publishDate: dbItem.publish_date,
-                featured: dbItem.featured,
-                videoLink: dbItem.video_link,
-                androidLink: dbItem.android_link,
-                iosLink: dbItem.ios_link,
-                downloadLink: dbItem.download_link,
-                episodes: dbItem.episodes
-            };
+            // 2. BACKGROUND FETCH FROM SUPABASE
+            try {
+                const { data: dbItem } = await supabase.from('content').select('*').eq('id', contentId).single();
+                
+                if (dbItem) {
+                    const item = {
+                        id: dbItem.id,
+                        title: dbItem.title,
+                        type: dbItem.type,
+                        thumbPortrait: dbItem.thumb_portrait,
+                        thumbLandscape: dbItem.thumb_landscape,
+                        category: dbItem.category,
+                        desc: dbItem.description,
+                        publishDate: dbItem.publish_date,
+                        featured: dbItem.featured,
+                        videoLink: dbItem.video_link,
+                        androidLink: dbItem.android_link,
+                        iosLink: dbItem.ios_link,
+                        downloadLink: dbItem.download_link,
+                        episodes: dbItem.episodes
+                    };
 
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('dynamic-content').style.display = 'block';
-            document.getElementById('mlt-section').style.display = 'block';
+                    loadingEl.style.display = 'none';
+                    dynamicEl.style.display = 'block';
+                    mltEl.style.display = 'block';
 
-            // Inject Immersive Background
-            document.getElementById('hero-bg-immersive').style.backgroundImage = 'url(' + (item.thumbLandscape || item.thumbPortrait) + ')';
+                    // Record into Continue Watching history
+                    try {
+                        let cw = JSON.parse(localStorage.getItem('series_update_continue_watching') || '[]');
+                        cw = cw.filter(c => String(c.id) !== String(item.id));
+                        cw.unshift({ id: item.id, progress: Math.floor(Math.random() * 40) + 40, timestamp: Date.now() });
+                        if (cw.length > 10) cw = cw.slice(0, 10);
+                        localStorage.setItem('series_update_continue_watching', JSON.stringify(cw));
+                    } catch(e) {}
 
-            if (item.type === 'Series') {
-                renderSeriesUI(item);
-            } else {
-                renderMovieUI(item);
+                    document.getElementById('hero-bg-immersive').style.backgroundImage = 'url(' + (item.thumbLandscape || item.thumbPortrait) + ')';
+
+                    if (item.type === 'Series') renderSeriesUI(item);
+                    else renderMovieUI(item);
+                } else if (!cachedItem) {
+                    loadingEl.innerHTML = '<p>Content not found.</p><a href="index.html" style="color:var(--accent-red); margin-top:10px; display:block;">Go Home</a>';
+                }
+            } catch (err) {
+                if (!cachedItem) {
+                    loadingEl.innerHTML = '<p>Content not found.</p><a href="index.html" style="color:var(--accent-red); margin-top:10px; display:block;">Go Home</a>';
+                }
             }
 
-            // Fetch Recommendations
-            const { data: dbRecs } = await supabase.from('content').select('*').neq('id', contentId).limit(5);
-            const recs = (dbRecs || []).map(r => ({
-                id: r.id,
-                title: r.title,
-                thumbPortrait: r.thumb_portrait
-            }));
-            renderRecommendations(recs);
+            // 3. BACKGROUND RECOMMENDATIONS FETCH
+            try {
+                const { data: dbRecs } = await supabase.from('content').select('*').neq('id', contentId).limit(10);
+                if (dbRecs && dbRecs.length > 0) {
+                    const recs = dbRecs.map(r => ({
+                        id: r.id,
+                        title: r.title,
+                        thumbPortrait: r.thumb_portrait,
+                        type: r.type,
+                        publishDate: r.publish_date,
+                        category: r.category
+                    }));
+                    renderRecommendations(recs);
+                }
+            } catch (e) {}
         });
 
         function getDeviceSelectHtml(item) {
@@ -909,10 +963,20 @@
             const container = document.getElementById('recommendations-scroll');
             let html = '';
             items.forEach(item => {
+                const year = item.publishDate ? new Date(item.publishDate).getFullYear() : '2026';
+                const rating = '8.' + ((String(item.id).charCodeAt(0) % 5) + 5);
                 html += `
                     <div class="mlt-card" onclick="window.location.href='watch.html?id=${item.id}'">
-                        <img src="${item.thumbPortrait}" alt="${item.title}">
-                        <div class="mlt-rating"><span>⭐</span> 8.${(item.id.charCodeAt(0) % 5) + 5}</div>
+                        <div class="mlt-poster-wrap">
+                            <img src="${item.thumbPortrait}" alt="${item.title}" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Poster'">
+                        </div>
+                        <div class="mlt-info">
+                            <div class="mlt-title" title="${item.title}">${item.title}</div>
+                            <div class="mlt-meta">
+                                <span class="mlt-rating"><span>⭐</span> ${rating}</span>
+                                <span class="mlt-year">${year}</span>
+                            </div>
+                        </div>
                     </div>
                 `;
             });

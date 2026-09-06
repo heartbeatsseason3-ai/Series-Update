@@ -47,8 +47,8 @@ header, .header {
     top: 0 !important;
     z-index: 1000 !important;
     background: rgba(5, 5, 5, 0.97) !important;
-    backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
+    backdrop-filter: blur(12px) !important;
     border-bottom: 1px solid rgba(255,255,255,0.05) !important;
     width: 100% !important;
 }
@@ -174,8 +174,8 @@ svg[style*="display:none"] {
     left: 0 !important;
     width: 100% !important;
     background: rgba(5,5,5,0.98) !important;
-    backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
+    backdrop-filter: blur(12px) !important;
     border-top: 1px solid rgba(255,255,255,0.06) !important;
     display: flex !important;
     justify-content: space-around !important;
@@ -208,18 +208,27 @@ svg[style*="display:none"] {
 /* ---------- 7. CONTENT CARDS — SCROLLABLE ON MOBILE ---------- */
 .cards-scroll,
 .trending-scroll,
-.mlt-scroll {
+.categories-scroll:not(.expanded-grid),
+.landscape-scroll,
+.mlt-scroll,
+.continue-watching-scroll {
     display: flex !important;
     flex-wrap: nowrap !important;
     overflow-x: auto !important;
     -webkit-overflow-scrolling: touch !important;
     scroll-snap-type: x mandatory !important;
-    gap: 12px !important;
-    padding-bottom: 12px !important;
+    scroll-padding-left: 20px !important;
+    gap: 14px !important;
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+    padding-top: 4px !important;
+    padding-bottom: 16px !important;
     scrollbar-width: none !important;
 }
 .cards-scroll::-webkit-scrollbar,
 .trending-scroll::-webkit-scrollbar,
+.categories-scroll::-webkit-scrollbar,
+.landscape-scroll::-webkit-scrollbar,
 .mlt-scroll::-webkit-scrollbar { display: none !important; }
 
 .movie-card {
@@ -255,47 +264,114 @@ svg[style*="display:none"] {
 }
 .hero-overlay { padding: 12px 14px !important; }
 
-/* Mobile Only (<= 767px): Remove buttons & text, minimize badge */
+/* Mobile Only (<= 767px): Clean, rich hero layout with visible title, badges & action buttons */
 @media (max-width: 767px) {
-    /* 1. Remove Play Now and More Info buttons */
-    .hero-actions,
-    .hero-buttons,
-    .btn-play,
-    .btn-info {
-        display: none !important;
+    .hero-card {
+        aspect-ratio: 16 / 10 !important;
+        height: auto !important;
     }
 
-    /* 2. Minimize Featured Today Badge */
+    .hero-overlay {
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.25) 0%, rgba(0, 0, 0, 0.85) 100%) !important;
+        padding: 14px 16px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+    }
+
     .badge-featured {
-        font-size: 8px !important;
-        padding: 2px 5px !important;
-        border-radius: 4px !important;
-        letter-spacing: 0.2px !important;
-        line-height: 1.1 !important;
+        font-size: 11px !important;
+        padding: 5px 10px !important;
+        border-radius: 6px !important;
+        letter-spacing: 0.5px !important;
+        font-weight: 700 !important;
+        background-color: #e50914 !important;
+        color: #ffffff !important;
+        box-shadow: 0 2px 8px rgba(229, 9, 20, 0.4) !important;
     }
 
-    /* 3. Remove Text in the Banner */
-    .hero-title,
-    .hero-desc,
-    .hero-description,
-    .hero-content h1,
-    .hero-content p {
-        display: none !important;
+    .badge-pagination {
+        font-size: 11px !important;
+        padding: 4px 10px !important;
+        background: rgba(0, 0, 0, 0.6) !important;
+        color: #ffffff !important;
+        border-radius: 12px !important;
+        font-weight: 600 !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
     }
 
     .hero-content {
+        display: block !important;
+        margin-top: auto !important;
         margin-bottom: 0 !important;
     }
 
-    /* 4. Remove Black Shade Overlay */
-    .hero-overlay {
-        background: transparent !important;
-        background-image: none !important;
+    .hero-title,
+    .hero-content h1 {
+        display: block !important;
+        font-size: 20px !important;
+        font-weight: 700 !important;
+        color: #ffffff !important;
+        text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8) !important;
+        margin-bottom: 4px !important;
+        line-height: 1.25 !important;
+    }
+
+    .hero-desc,
+    .hero-description,
+    .hero-content p {
+        display: -webkit-box !important;
+        -webkit-line-clamp: 2 !important;
+        line-clamp: 2 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+        font-size: 12px !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        margin-bottom: 12px !important;
+        line-height: 1.4 !important;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
+    }
+
+    .hero-actions,
+    .hero-buttons {
+        display: flex !important;
+        gap: 10px !important;
+        margin-top: 6px !important;
+    }
+
+    .btn-play {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        padding: 8px 16px !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        border-radius: 8px !important;
+        background: #e50914 !important;
+        color: #ffffff !important;
+        border: none !important;
+    }
+
+    .btn-info {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 6px !important;
+        padding: 8px 14px !important;
+        font-size: 13px !important;
+        font-weight: 600 !important;
+        border-radius: 8px !important;
+        background: rgba(255, 255, 255, 0.2) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
+        backdrop-filter: blur(4px) !important;
     }
 }
 
 /* ---------- 9. SECTION HEADERS ---------- */
-.section-header { padding: 0 16px !important; margin-bottom: 14px !important; }
+.section-header { padding: 0 20px !important; margin-bottom: 14px !important; }
 .section-title { font-size: 16px !important; }
 
 /* ---------- 10. MYLIST GRID ---------- */
@@ -372,6 +448,7 @@ svg[style*="display:none"] {
         max-width: 75% !important;
         display: -webkit-box !important;
         -webkit-line-clamp: 2 !important;
+        line-clamp: 2 !important;
         -webkit-box-orient: vertical !important;
         overflow: hidden !important;
     }
@@ -510,10 +587,12 @@ svg[style*="display:none"] {
     /* Watch / Series detail page */
     .series-hero, .movie-hero { padding: 40px 80px !important; max-width: 1200px !important; margin: 0 auto !important; }
     .episodes-section { padding: 20px 80px !important; max-width: 1200px !important; margin: 0 auto !important; }
-    .more-like-this, .section-header-mlt { max-width: 1200px !important; margin: 0 auto !important; padding: 0 80px !important; }
-    .mlt-scroll { padding: 0 80px 40px !important; gap: 20px !important; overflow-x: auto !important; }
-    .mlt-card { width: 160px !important; }
-    .mlt-card img { height: 240px !important; }
+    .more-like-this { max-width: 1200px !important; margin: 40px auto !important; padding: 0 !important; width: 100% !important; }
+    .section-header-mlt { padding: 0 80px !important; margin-bottom: 20px !important; }
+    .section-title-mlt { font-size: 20px !important; font-weight: 600 !important; border-left: 3px solid #e50914 !important; padding-left: 10px !important; letter-spacing: -0.3px !important; -webkit-font-smoothing: antialiased !important; }
+    .mlt-scroll { padding: 4px 80px 40px !important; gap: 20px !important; display: flex !important; overflow-x: auto !important; }
+    .mlt-card { flex: 0 0 170px !important; width: 170px !important; }
+    .mlt-poster-wrap { height: 255px !important; border-radius: 16px !important; }
 
     /* Player page */
     .player-container { max-width: 1200px !important; margin: 0 auto !important; border-radius: 16px !important; overflow: hidden !important; }
@@ -578,63 +657,236 @@ svg[style*="display:none"] {
 * { -webkit-tap-highlight-color: transparent; }
 
 /* =====================================================
-   LIGHT MODE THEME SYSTEM
+   PREMIUM LIGHT MODE THEME SYSTEM (OPTIMIZED UI / UX)
    ===================================================== */
 body.light-mode, html.light-mode body {
-    background-color: #f5f7fb !important;
-    color: #111827 !important;
+    background-color: #f8fafc !important;
+    color: #0f172a !important;
 }
 
+/* Header & Navigation */
 body.light-mode header,
 body.light-mode .header {
     background: rgba(255, 255, 255, 0.96) !important;
     border-bottom: 1px solid rgba(0, 0, 0, 0.08) !important;
-    color: #111827 !important;
+    color: #0f172a !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    backdrop-filter: blur(12px) !important;
 }
 
 body.light-mode .bottom-nav,
 body.light-mode nav.bottom-nav {
     background: rgba(255, 255, 255, 0.96) !important;
     border-top: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.04) !important;
 }
 
 body.light-mode .nav-item,
-body.light-mode .nav-item a {
-    color: #6b7280 !important;
+body.light-mode .nav-item a,
+body.light-mode .nav-label {
+    color: #334155 !important;
+    font-weight: 600 !important;
 }
 
 body.light-mode .nav-item.active,
-body.light-mode .nav-item.active a {
-    color: #E50914 !important;
+body.light-mode .nav-item.active a,
+body.light-mode .nav-item.active .nav-label {
+    color: #e50914 !important;
+}
+
+body.light-mode .nav-icon {
+    stroke: currentColor !important;
 }
 
 body.light-mode .desktop-nav a,
-body.light-mode .desktop-nav-item {
-    color: #4b5563 !important;
+body.light-mode .desktop-nav-item,
+body.light-mode header nav a {
+    color: #0f172a !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    opacity: 0.95 !important;
 }
 
 body.light-mode .desktop-nav a:hover,
 body.light-mode .desktop-nav a.active,
 body.light-mode .desktop-nav-item:hover,
 body.light-mode .desktop-nav-item.active {
-    color: #111827 !important;
-    border-bottom-color: #E50914 !important;
+    color: #e50914 !important;
+    opacity: 1 !important;
+    border-bottom-color: #e50914 !important;
+}
+
+/* Search Box */
+body.light-mode .search-container {
+    background: transparent !important;
 }
 
 body.light-mode .search-box {
     background-color: #ffffff !important;
-    border: 1px solid #e5e7eb !important;
+    border: 1px solid #cbd5e1 !important;
     box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06) !important;
 }
 
 body.light-mode .search-input {
-    color: #111827 !important;
+    color: #0f172a !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
 }
 
 body.light-mode .search-input::placeholder {
-    color: #9ca3af !important;
+    color: #475569 !important;
+    font-weight: 500 !important;
+    opacity: 1 !important;
 }
 
+body.light-mode .search-box svg {
+    stroke: #475569 !important;
+}
+
+/* Genre Pills & Filter Buttons in Light Mode */
+body.light-mode .genre-pill,
+body.light-mode .filter-pill {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .genre-pill.active,
+body.light-mode .filter-pill.active {
+    background-color: #e50914 !important;
+    color: #ffffff !important;
+    border-color: #e50914 !important;
+    box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3) !important;
+}
+
+body.light-mode .genre-pill svg {
+    stroke: currentColor !important;
+}
+
+body.light-mode .filter-btn {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .filter-btn svg {
+    stroke: #0f172a !important;
+}
+
+/* Search Page (search.html) Light Mode System */
+body.light-mode .section-title-sm,
+body.light-mode #results-header {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+
+body.light-mode .recent-pill {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .recent-pill svg {
+    stroke: #64748b !important;
+}
+
+body.light-mode .adv-search-box {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-mode .adv-search-input {
+    color: #0f172a !important;
+    font-weight: 500 !important;
+}
+
+body.light-mode .adv-search-input::placeholder {
+    color: #475569 !important;
+    font-weight: 500 !important;
+}
+
+body.light-mode .adv-filter-divider {
+    background: rgba(0, 0, 0, 0.1) !important;
+}
+
+body.light-mode .adv-filter-btn {
+    color: #0f172a !important;
+}
+
+body.light-mode .adv-filter-btn svg {
+    stroke: #0f172a !important;
+}
+
+body.light-mode .genre-btn {
+    color: #0f172a !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .genre-btn span {
+    color: #0f172a !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .top-search-card .ts-title {
+    color: #0f172a !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .top-search-card .ts-meta {
+    color: #475569 !important;
+    font-weight: 500 !important;
+}
+
+body.light-mode .top-search-card .ts-rating,
+body.light-mode .ts-rating {
+    color: #0f172a !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .ts-rating span {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+
+body.light-mode .result-item {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05) !important;
+    color: #0f172a !important;
+}
+
+body.light-mode .res-title {
+    color: #0f172a !important;
+    font-weight: 700 !important;
+}
+
+body.light-mode .res-meta {
+    color: #475569 !important;
+    font-weight: 500 !important;
+}
+
+body.light-mode .play-btn-circle {
+    background: #0f172a !important;
+}
+
+body.light-mode .play-btn-circle svg {
+    fill: #ffffff !important;
+}
+
+body.light-mode .more-dots {
+    color: #64748b !important;
+}
+
+/* Buttons & Icons */
 body.light-mode .header-icon,
 body.light-mode .icon-btn,
 body.light-mode .menu-btn,
@@ -642,7 +894,9 @@ body.light-mode .theme-toggle-btn,
 body.light-mode .fullscreen-btn,
 body.light-mode .header-actions button,
 body.light-mode .header-right button {
-    color: #111827 !important;
+    color: #0f172a !important;
+    background: rgba(0, 0, 0, 0.04) !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
 }
 
 body.light-mode .header-icon:hover,
@@ -652,42 +906,486 @@ body.light-mode .theme-toggle-btn:hover,
 body.light-mode .fullscreen-btn:hover,
 body.light-mode .header-actions button:hover,
 body.light-mode .header-right button:hover {
-    background-color: rgba(0, 0, 0, 0.06) !important;
+    background-color: rgba(0, 0, 0, 0.08) !important;
+    transform: translateY(-1px);
 }
 
+/* Typography & Headings */
 body.light-mode .section-title,
 body.light-mode .page-title,
 body.light-mode .card-title,
-body.light-mode .hero-title,
 body.light-mode h1,
 body.light-mode h2,
-body.light-mode h3 {
-    color: #111827 !important;
+body.light-mode h3,
+body.light-mode h4 {
+    color: #0f172a !important;
 }
 
 body.light-mode .page-subtitle,
 body.light-mode .card-meta,
-body.light-mode .hero-desc {
-    color: #4b5563 !important;
+body.light-mode .section-header .view-all,
+body.light-mode .view-all,
+body.light-mode .view-all-mlt,
+body.light-mode .see-all {
+    color: #1e293b !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
 }
 
+body.light-mode .view-all:hover,
+body.light-mode .view-all-mlt:hover,
+body.light-mode .see-all:hover {
+    color: #e50914 !important;
+}
+
+/* Hero Carousel Overlay & Text (ALWAYS High-Contrast White over dark backdrop) */
+body.light-mode .hero-container,
+body.light-mode .hero-banner,
+body.light-mode .hero-card {
+    border-radius: 20px !important;
+    overflow: hidden !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12) !important;
+}
+
+body.light-mode .hero-overlay,
+body.light-mode .hero-gradient {
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.15) 0%, rgba(15, 23, 42, 0.85) 100%) !important;
+}
+
+body.light-mode .hero-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.7) !important;
+}
+
+body.light-mode .hero-desc,
+body.light-mode .hero-description,
+body.light-mode #featured-desc {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8) !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+}
+
+body.light-mode .badge-pagination {
+    background: rgba(0, 0, 0, 0.6) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    font-weight: 600 !important;
+    font-size: 11px !important;
+}
+
+body.light-mode .badge-featured {
+    background: #e50914 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 11px !important;
+}
+
+/* Category Cards in Light Mode */
+body.light-mode .category-name {
+    color: #1e293b !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .category-icon {
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+body.light-mode .category-card:hover .category-icon {
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18) !important;
+}
+
+/* Movie Cards & Content Grid in Light Mode */
 body.light-mode .movie-card {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    transition: transform 0.25s ease !important;
+}
+
+body.light-mode .movie-card:hover {
+    transform: translateY(-4px) !important;
+}
+
+body.light-mode .poster-container {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    border-radius: 16px !important;
+}
+
+body.light-mode .movie-card:hover .poster-container {
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14) !important;
+}
+
+body.light-mode .movie-title {
+    color: #0f172a !important;
+    font-weight: 600 !important;
+}
+
+/* Card Meta text under poster - clean transparent line without strip background */
+body.light-mode .movie-card .movie-meta {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 2px 0 4px 0 !important;
+    color: #475569 !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+}
+
+body.light-mode .movie-rating {
+    color: #1e293b !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .badge-hd {
+    background: rgba(15, 23, 42, 0.85) !important;
+    color: #ffffff !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    backdrop-filter: blur(4px) !important;
+}
+
+/* Landscape Posters & Continue Watching */
+body.light-mode .continue-watching-section .section-title {
+    color: #0f172a !important;
+}
+
+body.light-mode .landscape-card {
     background: #ffffff !important;
-    border: 1px solid #e5e7eb !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-mode .landscape-card:hover {
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12) !important;
+    border-color: #cbd5e1 !important;
+}
+
+body.light-mode .landscape-title {
+    color: #0f172a !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .landscape-meta {
+    color: #475569 !important;
+    font-weight: 500 !important;
+}
+
+/* Notification & List Cards */
+body.light-mode .notif-card,
+body.light-mode .list-item-card,
+body.light-mode .ep-card,
+body.light-mode .device-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #0f172a !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-mode .notif-title,
+body.light-mode .ep-title,
+body.light-mode .device-name {
+    color: #0f172a !important;
+}
+
+body.light-mode .notif-desc,
+body.light-mode .ep-desc,
+body.light-mode .device-sub {
+    color: #475569 !important;
+    font-weight: 500 !important;
+}
+
+body.light-mode .btn-secondary {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03) !important;
+}
+
+body.light-mode .btn-secondary:hover {
+    background: #f1f5f9 !important;
+    border-color: #94a3b8 !important;
+}
+
+body.light-mode .badge-grey {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+/* App Download Banner in Light Mode */
+body.light-mode .app-download-banner {
+    background: linear-gradient(135deg, rgba(229, 9, 20, 0.08) 0%, rgba(255, 255, 255, 0.95) 100%) !important;
+    border: 1px solid rgba(229, 9, 20, 0.25) !important;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06) !important;
+}
+
+body.light-mode .app-text h3 {
+    color: #0f172a !important;
+}
+
+body.light-mode .app-text p {
+    color: #475569 !important;
+}
+
+/* Watch Page Specific Light Mode Enhancements for Mobile & Desktop PC */
+body.light-mode .hero-bg-immersive,
+body.light-mode .bg-glow {
+    display: none !important;
+    background: none !important;
+}
+
+body.light-mode header,
+body.light-mode .header {
+    background: rgba(255, 255, 255, 0.96) !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    color: #0f172a !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+}
+
+@media (min-width: 1024px) {
+    body.light-mode header {
+        position: relative !important;
+        background: #ffffff !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+    }
+    body.light-mode .mobile-frame {
+        padding-top: 0 !important;
+    }
+}
+
+body.light-mode .movie-hero,
+body.light-mode .series-hero {
+    background: transparent !important;
+    color: #0f172a !important;
+}
+
+body.light-mode .movie-title,
+body.light-mode .series-title {
+    color: #0f172a !important;
+    text-shadow: none !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.3px !important;
+}
+
+body.light-mode .movie-synopsis,
+body.light-mode .series-synopsis {
+    color: #334155 !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+}
+
+body.light-mode .series-genres {
+    color: #64748b !important;
+}
+
+body.light-mode .series-ratings {
+    color: #0f172a !important;
+}
+
+body.light-mode .s-badge-outline {
+    border-color: #cbd5e1 !important;
+    color: #475569 !important;
+}
+
+/* Movie Details stats box on Watch page */
+body.light-mode .movie-details .movie-meta,
+body.light-mode .movie-hero .movie-meta {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05) !important;
+    color: #0f172a !important;
+    padding: 16px 20px !important;
     border-radius: 12px !important;
 }
 
-body.light-mode .notif-card {
+body.light-mode .movie-details .movie-meta div div,
+body.light-mode .movie-hero .movie-meta div div {
+    color: #0f172a !important;
+}
+
+body.light-mode .movie-details .movie-meta div div:last-child,
+body.light-mode .movie-hero .movie-meta div div:last-child {
+    color: #64748b !important;
+}
+
+body.light-mode .device-select-container {
     background: #ffffff !important;
-    border: 1px solid #e5e7eb !important;
-    color: #111827 !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06) !important;
 }
 
-body.light-mode .notif-title {
-    color: #111827 !important;
+body.light-mode .device-select-title {
+    color: #0f172a !important;
 }
 
-body.light-mode .notif-desc {
-    color: #6b7280 !important;
+body.light-mode .device-select-subtitle {
+    color: #64748b !important;
+}
+
+body.light-mode .device-card-android {
+    background: linear-gradient(135deg, rgba(76, 175, 80, 0.08) 0%, rgba(240, 253, 244, 0.95) 100%) !important;
+    border: 1px solid rgba(76, 175, 80, 0.35) !important;
+    box-shadow: 0 4px 16px rgba(76, 175, 80, 0.08) !important;
+}
+
+body.light-mode .device-card-ios {
+    background: linear-gradient(135deg, rgba(168, 85, 247, 0.08) 0%, rgba(250, 245, 255, 0.95) 100%) !important;
+    border: 1px solid rgba(168, 85, 247, 0.35) !important;
+    box-shadow: 0 4px 16px rgba(168, 85, 247, 0.08) !important;
+}
+
+body.light-mode .device-card-web {
+    background: linear-gradient(135deg, rgba(33, 150, 243, 0.08) 0%, rgba(240, 249, 255, 0.95) 100%) !important;
+    border: 1px solid rgba(33, 150, 243, 0.35) !important;
+    box-shadow: 0 4px 16px rgba(33, 150, 243, 0.08) !important;
+}
+
+body.light-mode .device-name {
+    color: #0f172a !important;
+}
+
+body.light-mode .device-sub {
+    color: #64748b !important;
+}
+
+body.light-mode .episodes-title,
+body.light-mode .episodes-season {
+    color: #0f172a !important;
+}
+
+body.light-mode .episodes-title svg,
+body.light-mode .episodes-season svg {
+    stroke: #0f172a !important;
+}
+
+body.light-mode .ep-card {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-mode .ep-card.active {
+    border-color: #e50914 !important;
+    box-shadow: 0 0 14px rgba(229, 9, 20, 0.2) !important;
+}
+
+body.light-mode .ep-title {
+    color: #0f172a !important;
+}
+
+body.light-mode .ep-desc,
+body.light-mode .ep-duration {
+    color: #64748b !important;
+}
+
+/* More Like This Section in Light Mode */
+body.light-mode .section-title-mlt {
+    color: #0f172a !important;
+    border-left-color: #e50914 !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .view-all-mlt {
+    color: #64748b !important;
+}
+
+body.light-mode .view-all-mlt:hover {
+    color: #e50914 !important;
+}
+
+body.light-mode .mlt-card {
+    background: transparent !important;
+}
+
+body.light-mode .mlt-poster-wrap {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    background: #e2e8f0 !important;
+}
+
+body.light-mode .mlt-title {
+    color: #0f172a !important;
+}
+
+body.light-mode .mlt-rating {
+    color: #1e293b !important;
+}
+
+body.light-mode .mlt-year {
+    color: #64748b !important;
+}
+
+body.light-mode .device-modal-content {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #0f172a !important;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15) !important;
+}
+
+body.light-mode .device-modal-content h4,
+body.light-mode .device-modal-content h3 {
+    color: #0f172a !important;
+}
+
+body.light-mode .device-modal-close {
+    background: rgba(0, 0, 0, 0.06) !important;
+    color: #0f172a !important;
+}
+
+/* PC / Desktop Movie Poster Cards Optimization */
+@media (min-width: 1024px) {
+    .movie-card {
+        width: 100% !important;
+    }
+    .poster-container {
+        height: 280px !important;
+        border-radius: 16px !important;
+        box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35) !important;
+        transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+    }
+    .movie-card:hover .poster-container {
+        transform: translateY(-6px) scale(1.02) !important;
+        box-shadow: 0 14px 30px rgba(0, 0, 0, 0.5) !important;
+    }
+    body.light-mode .poster-container {
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08) !important;
+        border: 1px solid rgba(0, 0, 0, 0.06) !important;
+    }
+    body.light-mode .movie-card:hover .poster-container {
+        box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14) !important;
+    }
+    .movie-card .movie-title {
+        font-size: 14px !important;
+        font-weight: 600 !important;
+        margin-top: 8px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+    }
+    .movie-card .movie-meta {
+        font-size: 12px !important;
+        font-weight: 500 !important;
+    }
+
+    /* Main Movie & Series Title on Watch Page Desktop PC */
+    .movie-hero .movie-title,
+    .series-hero .series-title {
+        font-size: 34px !important;
+        font-weight: 600 !important;
+        line-height: 1.25 !important;
+        margin-top: 0 !important;
+        margin-bottom: 12px !important;
+        white-space: normal !important;
+        overflow: visible !important;
+        text-align: left !important;
+        letter-spacing: -0.4px !important;
+        -webkit-font-smoothing: antialiased !important;
+    }
+    body.light-mode .movie-hero .movie-title,
+    body.light-mode .series-hero .series-title {
+        color: #0f172a !important;
+    }
 }

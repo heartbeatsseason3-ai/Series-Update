@@ -249,13 +249,13 @@
         const navItems = document.querySelectorAll('.mobile-nav-item');
         const deskItems = document.querySelectorAll('.desktop-nav-item');
         const filterMap = {
-            'mob-home': 'all', 'mob-movies': null, 'mob-series': null, 'mob-trending': 'Trending', 'mob-shopping': null, 'mob-search': null, 'mob-profile': null
+            'mob-home': 'all', 'mob-movies': null, 'mob-series': null, 'mob-anime': null, 'mob-trending': 'Trending', 'mob-shopping': null, 'mob-search': null, 'mob-profile': null
         };
         const deskFilterMap = {
-            'desk-home': 'all', 'desk-movies': null, 'desk-series': null, 'desk-mylist': 'all'
+            'desk-home': 'all', 'desk-movies': null, 'desk-series': null, 'desk-anime': null, 'desk-mylist': 'all'
         };
-        const mobMap = { all: 'mob-home', Movie: 'mob-movies', Series: 'mob-series', Trending: 'mob-trending' };
-        const deskMap = { all: 'desk-home', Movie: 'desk-movies', Series: 'desk-series', Trending: 'desk-home' };
+        const mobMap = { all: 'mob-home', Movie: 'mob-movies', Series: 'mob-series', Trending: 'mob-trending', Anime: 'mob-anime' };
+        const deskMap = { all: 'desk-home', Movie: 'desk-movies', Series: 'desk-series', Trending: 'desk-home', Anime: 'desk-anime' };
 
         function applyFilter(filter) {
             // Sync mobile active visually
@@ -283,9 +283,10 @@
         navItems.forEach(function (item) {
             item.addEventListener('click', function (e) {
                 const filter = filterMap[this.id];
-                if (filter === null) return;
+                const href = this.getAttribute('href');
+                if (filter === null || (href && href.endsWith('.html') && href !== '#')) return;
                 e.preventDefault();
-                applyFilter(filter);
+                if (filter) applyFilter(filter);
             });
         });
 
@@ -293,9 +294,10 @@
         deskItems.forEach(function (item) {
             item.addEventListener('click', function (e) {
                 const filter = deskFilterMap[this.id];
-                if (filter === null) return;
+                const href = this.getAttribute('href');
+                if (filter === null || (href && href.endsWith('.html') && href !== '#')) return;
                 e.preventDefault();
-                applyFilter(filter);
+                if (filter) applyFilter(filter);
             });
         });
 

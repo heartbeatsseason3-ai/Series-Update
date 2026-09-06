@@ -1830,6 +1830,7 @@ body.is-fullscreen-mode header {
     top: 0.6rem;
     right: 0.6rem;
     background: rgba(0,0,0,0.8);
+    -webkit-backdrop-filter: blur(4px);
     backdrop-filter: blur(4px);
     color: #00D4FF;
     font-size: 0.65rem;

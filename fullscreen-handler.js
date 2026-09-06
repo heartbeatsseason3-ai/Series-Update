@@ -1,8 +1,7 @@
 /**
- * Series Update - Fullscreen Mode & Scroll Controller
+ * Series Update - Fullscreen Toggle Button Controller
  * - Adds/binds Full Screen toggle button at top bar header.
- * - Scroll UP -> Take Full Screen mode.
- * - Scroll DOWN -> Return to Normal mode.
+ * - Clicking the button toggles Full Screen / Normal Screen mode.
  */
 (function() {
     'use strict';
@@ -127,34 +126,6 @@
         updateIcons(isFullscreenActive());
     }
 
-    // Scroll Direction Detection: Scroll UP -> Full Screen | Scroll DOWN -> Normal Mode
-    let lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
-    let isTicking = false;
-
-    function onScrollHandler() {
-        const currentScrollY = window.pageYOffset || document.documentElement.scrollTop;
-        const delta = currentScrollY - lastScrollY;
-        const minDelta = 12; // 12px threshold to ignore tiny movements
-
-        if (Math.abs(delta) >= minDelta) {
-            if (delta < 0) {
-                // User is scrolling UP -> Take Full Screen
-                requestFullscreenMode();
-            } else if (delta > 0) {
-                // User is scrolling DOWN -> Normal mode
-                exitFullscreenMode();
-            }
-            lastScrollY = currentScrollY <= 0 ? 0 : currentScrollY;
-        }
-        isTicking = false;
-    }
-
-    window.addEventListener('scroll', function() {
-        if (!isTicking) {
-            window.requestAnimationFrame(onScrollHandler);
-            isTicking = true;
-        }
-    }, { passive: true });
 
     // Sync icons when native fullscreen state changes (ESC key, browser UI)
     ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'].forEach(evt => {
