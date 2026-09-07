@@ -51,7 +51,7 @@
 
         /* --- Movie UI Layout (KARA style) --- */
         .movie-hero { display: flex; flex-direction: column; align-items: center; padding: 20px; }
-        .movie-poster { width: 320px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .movie-poster { width: 280px; max-width: 90%; aspect-ratio: 2/3; object-fit: cover; border-radius: 20px; box-shadow: 0 16px 40px rgba(0,0,0,0.8); flex-shrink: 0; }
         .movie-title { font-size: 26px; font-weight: 600; margin-top: 24px; text-align: center; letter-spacing: -0.3px; -webkit-font-smoothing: antialiased; }
         .movie-tags { display: flex; gap: 12px; margin-top: 10px; justify-content: center; align-items: center; }
         .movie-meta { display: flex; justify-content: space-between; background: var(--btn-grey); padding: 16px 20px; border-radius: 12px; width: 100%; max-width: 340px; margin-top: 20px; border: 1px solid var(--border-color); }
@@ -150,8 +150,12 @@
                 margin: 0 auto;
             }
             .movie-poster {
-                width: 400px;
+                width: 280px;
+                max-width: 320px;
+                aspect-ratio: 2/3;
+                object-fit: cover;
                 border-radius: 24px;
+                flex-shrink: 0;
             }
             .movie-title {
                 font-size: 34px;
@@ -933,7 +937,7 @@
                         </div>
 
                         <div class="movie-actions">
-                            <button class="btn-primary" onclick="document.getElementById('device-select-section').scrollIntoView({behavior: 'smooth'})">
+                            <button class="btn-primary" onclick="window.location.href='player.html?id=${item.id}'">
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg> Watch Now
                             </button>
                             <div style="display:flex; gap:12px; width: 100%;">

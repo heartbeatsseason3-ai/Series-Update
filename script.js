@@ -17,50 +17,126 @@ class StreamVault {
         this.init();
     }
 
+    getFallbackContent() {
+        return [
+            {
+                id: "fb-1",
+                title: "Heart Beat 2026 Season 03",
+                type: "Series",
+                thumbPortrait: "https://i.ibb.co/S4mxsbrc/Chat-GPT-Image-Jun-7-2026-02-04-20-PMG.png",
+                thumbLandscape: "https://i.ibb.co/S4mxsbrc/Chat-GPT-Image-Jun-7-2026-02-04-20-PMG.png",
+                category: "Drama",
+                desc: "Heart Beat Season 3 is a Tamil medical drama series that premiered in 2026, featuring dramatic twists and emotional storylines.",
+                publishDate: "2026-07-30",
+                featured: true,
+                quality: "4K Ultra HD",
+                videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                episodes: [
+                    { title: "Episode 1: New Beginnings", videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+                    { title: "Episode 2: Critical Condition", videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
+                ]
+            },
+            {
+                id: "fb-2",
+                title: "Leo",
+                type: "Movie",
+                thumbPortrait: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&q=80",
+                thumbLandscape: "https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=1000&q=80",
+                category: "Action",
+                desc: "A cafe owner in a quiet town becomes an unexpected hero after thwarting a robbery, drawing violent figures from his past.",
+                publishDate: "2026-06-15",
+                featured: true,
+                quality: "4K Ultra HD",
+                videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+            },
+            {
+                id: "fb-3",
+                title: "Jailer",
+                type: "Movie",
+                thumbPortrait: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=500&q=80",
+                thumbLandscape: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?w=1000&q=80",
+                category: "Action",
+                desc: "A retired prison warden sets out to rescue his son and avenge his family, taking on an international syndicate.",
+                publishDate: "2026-05-10",
+                featured: false,
+                quality: "HD",
+                videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+            },
+            {
+                id: "fb-4",
+                title: "Cyber City 2099",
+                type: "Series",
+                thumbPortrait: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=500&q=80",
+                thumbLandscape: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=1000&q=80",
+                category: "Sci-Fi",
+                desc: "In a dystopian metropolis, a rogue hacker uncovers a conspiracy that threatens humanity.",
+                publishDate: "2026-04-20",
+                featured: true,
+                quality: "4K Ultra HD",
+                videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+            },
+            {
+                id: "fb-5",
+                title: "Shadow Hunter",
+                type: "Movie",
+                thumbPortrait: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500&q=80",
+                thumbLandscape: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1000&q=80",
+                category: "Thriller",
+                desc: "A detective with a troubled past tracks a phantom assassin operating in the dark underbelly of the city.",
+                publishDate: "2026-03-12",
+                featured: false,
+                quality: "HD",
+                videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+            }
+        ];
+    }
+
     async init() {
         const container = document.getElementById('content-container');
         
-        // 1. Instant Local Cache Load (0ms rendering!)
-        try {
-            const cached = localStorage.getItem('series_update_cache_content');
-            if (cached) {
-                const parsed = JSON.parse(cached);
-                if (parsed && Array.isArray(parsed) && parsed.length > 0) {
-                    this.content = parsed;
-                    this.renderAll();
+        // 1. Instant rendering from memory or Local Cache
+        if (this.content && Array.isArray(this.content) && this.content.length > 0) {
+            if (container) this.renderAll();
+        } else {
+            try {
+                const cached = localStorage.getItem('series_update_cache_content');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (parsed && Array.isArray(parsed) && parsed.length > 0) {
+                        this.content = parsed;
+                        if (container) this.renderAll();
+                    }
                 }
-            }
-        } catch (e) {}
+            } catch (e) {}
+        }
 
-        // 2. Show fallback loader only if cache is completely empty
-        if ((!this.content || this.content.length === 0) && container) {
-            container.innerHTML = `
-                <div style="text-align:center; padding: 4rem 2rem; color: #aaa;">
-                    <div style="font-size:2rem; margin-bottom:1rem;">⏳</div>
-                    <p>Loading content...</p>
-                </div>`;
+        // 2. Use fallback content if memory and cache are empty so screen is NEVER blank
+        if ((!this.content || this.content.length === 0)) {
+            this.content = this.getFallbackContent();
+            if (container) this.renderAll();
         }
         
         this.setupEventListeners();
         
         // 3. Background asynchronous revalidation
-        this.loadContent();
+        await this.loadContent();
         this.loadGlobalAds();
     }
 
     // Load Ad Placements
     async loadGlobalAds() {
         if (!window.supabaseClient) return;
-        const { data, error } = await window.supabaseClient.from('ads').select('*').eq('is_active', true);
-        if (data && !error) {
-            data.forEach(ad => {
-                // Ensure the slot exists on the current page before injecting
-                const slotEl = document.getElementById(`ad-${ad.slot_id}`);
-                if (slotEl && ad.code) {
-                    slotEl.innerHTML = ad.code;
-                }
-            });
-        }
+        try {
+            const { data, error } = await window.supabaseClient.from('ads').select('*').eq('is_active', true);
+            if (data && !error) {
+                data.forEach(ad => {
+                    const slotEl = document.getElementById(`ad-${ad.slot_id}`);
+                    if (slotEl && ad.code) {
+                        slotEl.innerHTML = ad.code;
+                    }
+                });
+            }
+        } catch(e) {}
     }
 
     // Load content from Supabase
@@ -76,34 +152,40 @@ class StreamVault {
 
             if (error) throw error;
 
-            // Map snake_case from DB back to camelCase for JS
-            const freshContent = (data || []).map(item => ({
-                id: item.id,
-                title: item.title,
-                type: item.type,
-                thumbPortrait: item.thumb_portrait,
-                thumbLandscape: item.thumb_landscape,
-                category: item.category,
-                desc: item.description,
-                publishDate: item.publish_date,
-                featured: item.featured,
-                quality: item.quality || '4K Ultra HD',
-                videoLink: item.video_link,
-                androidLink: item.android_link,
-                iosLink: item.ios_link,
-                downloadLink: item.download_link,
-                embedCode: item.embed_code,
-                episodes: item.episodes || []
-            }));
+            if (data && data.length > 0) {
+                // Map snake_case from DB back to camelCase for JS
+                const freshContent = data.map(item => ({
+                    id: item.id,
+                    title: item.title,
+                    type: item.type,
+                    thumbPortrait: item.thumb_portrait,
+                    thumbLandscape: item.thumb_landscape,
+                    category: item.category,
+                    desc: item.description,
+                    publishDate: item.publish_date,
+                    featured: item.featured,
+                    quality: item.quality || '4K Ultra HD',
+                    videoLink: item.video_link,
+                    androidLink: item.android_link,
+                    iosLink: item.ios_link,
+                    downloadLink: item.download_link,
+                    embedCode: item.embed_code,
+                    episodes: item.episodes || []
+                }));
 
-            this.content = freshContent;
+                this.content = freshContent;
 
-            // Persist to local cache for instant future loads
-            try {
-                localStorage.setItem('series_update_cache_content', JSON.stringify(freshContent));
-            } catch(e) {}
+                // Persist to local cache for instant future loads
+                try {
+                    localStorage.setItem('series_update_cache_content', JSON.stringify(freshContent));
+                } catch(e) {}
 
-            this.renderAll();
+                this.renderAll();
+            } else if (!this.content || this.content.length === 0) {
+                this.content = this.getFallbackContent();
+                this.renderAll();
+            }
+
             if (document.getElementById('admin-content-list')) {
                 this.renderAdminList();
                 this.loadWithdrawals();
@@ -111,15 +193,14 @@ class StreamVault {
             }
             return true;
         } catch (err) {
-            console.error('[Series Update] Error loading content:', err);
+            console.error('[Series Update] Error loading content from Supabase:', err);
             const container = document.getElementById('content-container');
-            if (container) {
-                container.innerHTML = `
-                    <div style="text-align:center; padding: 4rem 2rem; color:#e57373;">
-                        <div style="font-size:2rem; margin-bottom:1rem;">⚠️</div>
-                        <p><strong>Could not load content.</strong></p>
-                        <p style="font-size:0.85rem; color:#aaa; margin-top:0.5rem;">${err.message || err}</p>
-                    </div>`;
+            // If container is empty or error occurred, ensure we display fallback content instead of blank
+            if (!this.content || this.content.length === 0) {
+                this.content = this.getFallbackContent();
+                if (container) this.renderAll();
+            } else if (container && (container.children.length === 0 || container.innerHTML.trim() === '')) {
+                this.renderAll();
             }
             return false;
         }
@@ -1598,11 +1679,24 @@ class AdVault {
 
 window.auth = new Auth();
 
-document.addEventListener('DOMContentLoaded', () => {
+if (!window.app) {
     window.app = new StreamVault();
-    window.shop = new ShopVault();
-    window.adsManager = new AdVault();
+} else {
+    window.app.init();
+}
+window.shop = window.shop || new ShopVault();
+window.adsManager = window.adsManager || new AdVault();
+
+// Guarantee instant rendering when returning via Back Button (BFCache pageshow)
+window.addEventListener('pageshow', function(event) {
+    if (window.app) {
+        const container = document.getElementById('content-container');
+        if (container && (container.children.length === 0 || container.innerHTML.trim() === '' || event.persisted)) {
+            window.app.init();
+        }
+    }
 });
+
 
 
 

@@ -1022,7 +1022,7 @@ body.light-mode .movie-title {
 }
 
 /* Card Meta text under poster - clean transparent line without strip background */
-body.light-mode .movie-card .movie-meta {
+body.light-mode .movie-card > .movie-meta {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
