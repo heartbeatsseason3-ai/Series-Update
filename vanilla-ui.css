@@ -953,12 +953,12 @@ body.is-fullscreen-mode header {
 .extracted-style-51 { position:relative; }
 .extracted-style-52 { display:none; width: 8px; height: 8px; background-color: var(--accent-red); border-radius: 50%; position: absolute; top: 0; right: 0; }
 .extracted-style-53 { display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden; }
-.extracted-style-54 { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); color: #888; }
-.extracted-style-55 { display: none; }
-.extracted-style-56 { display: none; flex-direction: column; }
-.extracted-style-57 { display: none; }
-.extracted-style-58 { display: none; }
-.extracted-style-59 { display: none; }
+.extracted-style-54 { color: #888; }
+.extracted-style-55 { display: flex; }
+.extracted-style-56 { display: flex; flex-direction: column; }
+.extracted-style-57 { display: block; }
+.extracted-style-58 { display: inline-flex; }
+.extracted-style-59 { display: inline-flex; }
 .extracted-style-60 { display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden; }
 .extracted-style-61 { display: flex; justify-content: center; margin: 20px 0; width: 100%; overflow: hidden; }
 
