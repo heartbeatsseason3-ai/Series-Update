@@ -110,25 +110,7 @@
 
     function initHeaderButton() {
         let buttons = document.querySelectorAll('.fullscreen-btn, #fullscreen-btn');
-        if (buttons.length === 0) {
-            const containers = document.querySelectorAll('.header-actions, .header-right, .nav-right');
-            containers.forEach(container => {
-                const btn = document.createElement('button');
-                btn.id = 'fullscreen-btn';
-                btn.className = 'header-icon icon-btn fullscreen-btn';
-                btn.setAttribute('aria-label', 'Toggle Fullscreen');
-                btn.setAttribute('title', 'Toggle Full Screen');
-                btn.innerHTML = `
-                    <svg class="fs-icon-enter" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
-                    </svg>
-                    <svg class="fs-icon-exit" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
-                        <path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>
-                    </svg>`;
-                container.insertBefore(btn, container.firstChild);
-            });
-            buttons = document.querySelectorAll('.fullscreen-btn, #fullscreen-btn');
-        }
+
 
         buttons.forEach(btn => {
             btn.onclick = function(e) {
