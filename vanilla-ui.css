@@ -1371,3 +1371,31 @@ body.is-fullscreen-mode header {
         width: 210px;
     }
 }
+
+/* Image Loading Speed & Skeleton Shimmer Optimization */
+@keyframes posterShimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.poster-container,
+.poster-wrapper,
+.mlt-poster-wrap,
+.landscape-poster-container,
+.series-poster,
+.ep-thumb {
+    background: linear-gradient(90deg, #131722 25%, #1f2638 50%, #131722 75%);
+    background-size: 200% 100%;
+    animation: posterShimmer 1.6s infinite ease-in-out;
+}
+
+.poster-img,
+.landscape-poster-img,
+.series-poster-img,
+.movie-poster,
+.ts-poster,
+.res-poster {
+    content-visibility: auto;
+    image-rendering: -webkit-optimize-contrast;
+}
+

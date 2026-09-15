@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cinematic Player | Series Update</title>
+    <!-- Image Optimization CDN & DNS Preconnect -->
+    <link rel="preconnect" href="https://wsrv.nl">
+    <link rel="preconnect" href="https://i.ibb.co">
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="dns-prefetch" href="https://wsrv.nl">
+    <script src="image-optimizer.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -846,7 +853,8 @@
                     document.getElementById('next-ep-title').textContent = nextObj.title || `Episode ${currentEpIndex + 2}`;
                     document.getElementById('next-ep-desc').textContent = nextObj.desc || 'Continue watching next episode.';
                     document.getElementById('next-ep-dur').textContent = nextObj.duration || '45m';
-                    document.getElementById('next-ep-img').src = data.thumb_landscape || data.thumb_portrait || 'https://placehold.co/600x400/101216/ffffff?text=Series+Update';
+                    const rawNextImg = data.thumb_landscape || data.thumb_portrait || 'https://placehold.co/600x400/101216/ffffff?text=Series+Update';
+                    document.getElementById('next-ep-img').src = window.getOptimizedImageUrl ? window.getOptimizedImageUrl(rawNextImg, 400, 75) : rawNextImg;
                     
                     const nextUrl = `player.html?id=${id}&ep=${currentEpIndex + 1}`;
                     document.getElementById('next-ep-btn-card').onclick = () => {

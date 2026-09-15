@@ -4,6 +4,13 @@
         <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search — Series Update</title>
+    <!-- Image Optimization CDN & DNS Preconnect -->
+    <link rel="preconnect" href="https://wsrv.nl">
+    <link rel="preconnect" href="https://i.ibb.co">
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="dns-prefetch" href="https://wsrv.nl">
+    <script src="image-optimizer.js"></script>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="vanilla-ui.css">
     <style>
@@ -369,9 +376,10 @@
                 data.forEach(item => {
                     const rating = (Math.random() * (9.5 - 7.0) + 7.0).toFixed(1);
                     const year = item.publish_date ? new Date(item.publish_date).getFullYear() : '2026';
+                    const optTsPoster = window.getOptimizedImageUrl ? window.getOptimizedImageUrl(item.thumb_portrait, 300, 75) : item.thumb_portrait;
                     html += `
                     <div class="top-search-card" onclick="window.location.href='watch.html?id=${item.id}'">
-                        <img src="${item.thumb_portrait}" alt="${item.title}" class="ts-poster" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Poster+Not+Found'">
+                        <img src="${optTsPoster}" alt="${item.title}" class="ts-poster" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Poster+Not+Found'">
                         <div class="ts-title">${item.title}</div>
                         <div class="ts-meta">${year} • ${item.category || 'Movies'}</div>
                         <div class="ts-rating">⭐ <span style="color:white;font-weight:bold;">${rating}</span></div>
@@ -482,9 +490,11 @@
                     const releaseStr = `${item.publish_date ? new Date(item.publish_date).getFullYear() : '2026'} • English • ${type === 'Series' ? '1 Season' : '2h 10m'}`;
                     const rating = (Math.random() * (9.5 - 7.0) + 7.0).toFixed(1); // Demo rating if not exists
 
+                    const optResPoster = window.getOptimizedImageUrl ? window.getOptimizedImageUrl(item.thumb_portrait, 180, 75) : item.thumb_portrait;
+
                     html += `
                     <div class="result-item" onclick="window.location.href='watch.html?id=${item.id}'">
-                        <img src="${item.thumb_portrait}" alt="${item.title}" class="res-poster" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Poster+Not+Found'">
+                        <img src="${optResPoster}" alt="${item.title}" class="res-poster" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Poster+Not+Found'">
                         <div class="res-details">
                             <div class="res-title">${item.title}</div>
                             <div class="res-meta">${metaStr}</div>

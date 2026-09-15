@@ -4,6 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Series Update - Details</title>
+    <!-- Image Optimization CDN & DNS Preconnect -->
+    <link rel="preconnect" href="https://wsrv.nl">
+    <link rel="preconnect" href="https://i.ibb.co">
+    <link rel="preconnect" href="https://images.unsplash.com">
+    <link rel="dns-prefetch" href="https://wsrv.nl">
+    <script src="image-optimizer.js"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -832,12 +839,15 @@
 
             window.currentWatchItem = item;
             let epsHtml = '';
+            const optSeriesPoster = window.getOptimizedImageUrl ? window.getOptimizedImageUrl(item.thumbPortrait, 450, 80) : item.thumbPortrait;
+            const optEpThumb = window.getOptimizedImageUrl ? window.getOptimizedImageUrl(item.thumbLandscape || item.thumbPortrait, 300, 75) : (item.thumbLandscape || item.thumbPortrait);
+
             episodes.forEach((ep, idx) => {
                 const isActive = idx === 0;
                 epsHtml += `
                     <div class="ep-card ${isActive ? 'active' : ''}" onclick="showEpisodeDeviceModal(${idx})">
                         <div class="ep-thumb">
-                            <img src="${item.thumbLandscape || item.thumbPortrait}" alt="Episode ${idx+1}">
+                            <img src="${optEpThumb}" alt="Episode ${idx+1}" loading="lazy" decoding="async">
                             ${isActive ? '<div class="ep-now-playing">Now Playing</div>' : ''}
                             <div class="ep-play-overlay">
                                 ${isActive 
@@ -861,7 +871,7 @@
             const html = `
                 <div class="series-hero">
                     <div class="series-poster">
-                        <img src="${item.thumbPortrait}" class="series-poster-img">
+                        <img src="${optSeriesPoster}" class="series-poster-img" fetchpriority="high" decoding="async">
                         <div class="series-poster-play" onclick="document.getElementById('device-select-section').scrollIntoView({behavior: 'smooth'})">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                         </div>
@@ -906,10 +916,11 @@
 
         function renderMovieUI(item) {
             const year = item.publishDate ? new Date(item.publishDate).getFullYear() : '2026';
-            
+            const optMoviePoster = window.getOptimizedImageUrl ? window.getOptimizedImageUrl(item.thumbPortrait, 450, 80) : item.thumbPortrait;
+
             const html = `
                 <div class="movie-hero">
-                    <img src="${item.thumbPortrait}" class="movie-poster">
+                    <img src="${optMoviePoster}" class="movie-poster" fetchpriority="high" decoding="async">
                     <div class="movie-details">
                         <h1 class="movie-title">${item.title}</h1>
                         <div class="movie-tags">
@@ -966,10 +977,11 @@
             items.forEach(item => {
                 const year = item.publishDate ? new Date(item.publishDate).getFullYear() : '2026';
                 const rating = '8.' + ((String(item.id).charCodeAt(0) % 5) + 5);
+                const optPoster = window.getOptimizedImageUrl ? window.getOptimizedImageUrl(item.thumbPortrait, 300, 75) : item.thumbPortrait;
                 html += `
                     <div class="mlt-card" onclick="window.location.href='watch.html?id=${item.id}'">
                         <div class="mlt-poster-wrap">
-                            <img src="${item.thumbPortrait}" alt="${item.title}" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Poster'">
+                            <img src="${optPoster}" alt="${item.title}" loading="lazy" decoding="async" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Poster'">
                         </div>
                         <div class="mlt-info">
                             <div class="mlt-title" title="${item.title}">${item.title}</div>

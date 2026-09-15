@@ -933,14 +933,15 @@ class StreamVault {
     }
 
     generateLandscapeCardHtml(item) {
-        const landscapeImg = item.thumbLandscape || item.thumbPortrait || 'https://placehold.co/600x338/1a1a2e/ffffff?text=Series+Update';
+        const rawImg = item.thumbLandscape || item.thumbPortrait || 'https://placehold.co/600x338/1a1a2e/ffffff?text=Series+Update';
+        const landscapeImg = window.getOptimizedImageUrl ? window.getOptimizedImageUrl(rawImg, 550, 75) : rawImg;
         const progress = item.progress || 50;
         const year = item.publishDate ? new Date(item.publishDate).getFullYear() : '2026';
 
         return `
         <div class="landscape-card" data-id="${item.id}" onclick="window.app.navigateToWatch('${item.id}')">
             <div class="landscape-poster-container">
-                <img src="${landscapeImg}" alt="${item.title}" loading="lazy" class="landscape-poster-img" onerror="this.src='${item.thumbPortrait || 'https://placehold.co/600x338/1a1a2e/ffffff?text=Series+Update'}'"/>
+                <img src="${landscapeImg}" alt="${item.title}" loading="lazy" decoding="async" class="landscape-poster-img" onerror="this.src='${item.thumbPortrait || 'https://placehold.co/600x338/1a1a2e/ffffff?text=Series+Update'}'"/>
                 <div class="landscape-play-overlay">
                     <div class="landscape-play-btn">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -992,11 +993,12 @@ class StreamVault {
         const qualityBadge = item.quality || (item.type === 'Series' ? 'SERIES' : 'HD');
         const badgeLabel = isUpcoming ? 'SOON ⏳' : qualityBadge;
         const badgeClass = isUpcoming ? 'badge-hd badge-upcoming' : 'badge-hd';
+        const optPoster = window.getOptimizedImageUrl ? window.getOptimizedImageUrl(item.thumbPortrait, 320, 75) : item.thumbPortrait;
 
         return `
         <div class="movie-card card" data-id="${item.id}" onclick="window.app.navigateToWatch('${item.id}')">
             <div class="poster-container">
-                <img src="${item.thumbPortrait}" alt="${item.title}" loading="lazy" class="poster-img" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Poster+Not+Found'"/>
+                <img src="${optPoster}" alt="${item.title}" loading="lazy" decoding="async" class="poster-img" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Poster+Not+Found'"/>
                 ${badgeLabel ? `<span class="${badgeClass}">${badgeLabel}</span>` : ''}
             </div>
             <div class="movie-title">${item.title}</div>
@@ -1024,6 +1026,11 @@ class StreamVault {
             container.insertBefore(heroSection, container.firstChild);
         }
         
+        // Preload hero images in parallel
+        if (window.preloadImages) {
+            window.preloadImages(this.heroItems.map(i => i.thumbLandscape || i.thumbPortrait), 800);
+        }
+
         // Start Carousel
         this.renderHeroIndex(0);
         this.startHeroCarousel();
@@ -1054,9 +1061,12 @@ class StreamVault {
             }
         }
 
+        const rawHeroImg = featured.thumbLandscape || featured.thumbPortrait;
+        const heroImg = window.getOptimizedImageUrl ? window.getOptimizedImageUrl(rawHeroImg, 800, 80) : rawHeroImg;
+
         heroSection.innerHTML = `
         <div class="hero-card card" onclick="window.app.navigateToWatch('${featured.id}')" data-id="${featured.id}">
-            <img src="${featured.thumbLandscape}" alt="${featured.title}" class="hero-bg">
+            <img src="${heroImg}" alt="${featured.title}" class="hero-bg" fetchpriority="high" decoding="async">
             <div class="hero-overlay">
                 <div class="hero-top-badges">
                     <span class="badge-featured">FEATURED TODAY</span>
