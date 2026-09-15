@@ -538,6 +538,13 @@ body.is-fullscreen-mode header {
     border-radius: 4px;
 }
 
+.badge-upcoming {
+    background: linear-gradient(135deg, #FFD700 0%, #FF8C00 100%) !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+    box-shadow: 0 2px 8px rgba(255, 215, 0, 0.4);
+}
+
 .movie-title {
     font-size: 14px;
     font-weight: 600;

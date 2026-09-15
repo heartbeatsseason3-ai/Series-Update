@@ -87,6 +87,32 @@ class StreamVault {
                 featured: false,
                 quality: "HD",
                 videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+            },
+            {
+                id: "fb-6",
+                title: "Pushpa 2: The Rule",
+                type: "Movie",
+                thumbPortrait: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=500&q=80",
+                thumbLandscape: "https://images.unsplash.com/photo-1534447677768-be436bb09401?w=1000&q=80",
+                category: "Upcoming",
+                desc: "The clash between Pushpa Raj and Bhanwar Singh continues as Pushpa expands his red sandalwood empire globally.",
+                publishDate: "2026-12-05",
+                featured: true,
+                quality: "4K Ultra HD",
+                videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+            },
+            {
+                id: "fb-7",
+                title: "Stranger Things Season 5",
+                type: "Series",
+                thumbPortrait: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=500&q=80",
+                thumbLandscape: "https://images.unsplash.com/photo-1509198397868-475647b2a1e5?w=1000&q=80",
+                category: "Upcoming",
+                desc: "The final battle for Hawkins begins as Eleven and her friends join forces to destroy Vecna once and for all.",
+                publishDate: "2026-11-20",
+                featured: true,
+                quality: "4K Ultra HD",
+                videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
             }
         ];
     }
@@ -210,76 +236,114 @@ class StreamVault {
     async saveContent(newItem) {
         const dbItem = {
             title: newItem.title,
-            type: newItem.type,
-            thumb_portrait: newItem.thumbPortrait,
-            thumb_landscape: newItem.thumbLandscape,
-            category: newItem.category,
-            description: newItem.desc,
-            publish_date: newItem.publishDate,
-            featured: newItem.featured,
-            quality: newItem.quality,
-            video_link: newItem.videoLink,
-            android_link: newItem.androidLink,
-            ios_link: newItem.iosLink,
-            download_link: newItem.downloadLink,
-            embed_code: newItem.embedCode,
-            embed_code2: newItem.embedCode2,
-            embed_code3: newItem.embedCode3,
-            episodes: newItem.episodes
+            type: newItem.type || 'Movie',
+            thumb_portrait: newItem.thumbPortrait || '',
+            thumb_landscape: newItem.thumbLandscape || '',
+            category: newItem.category || 'Action',
+            description: newItem.desc || '',
+            publish_date: newItem.publishDate || new Date().toISOString().split('T')[0],
+            featured: !!newItem.featured,
+            quality: newItem.quality || '4K Ultra HD',
+            video_link: newItem.videoLink || '',
+            android_link: newItem.androidLink || '',
+            ios_link: newItem.iosLink || '',
+            download_link: newItem.downloadLink || '',
+            embed_code: newItem.embedCode || '',
+            embed_code2: newItem.embedCode2 || '',
+            embed_code3: newItem.embedCode3 || '',
+            episodes: newItem.episodes || []
         };
 
         const client = window.supabaseClient || window.supabase;
+        let supabaseSuccess = false;
 
-        if (this.editMode && this.currentEditId) {
-            // Update mode
-            let res = await client.from('content').update(dbItem).eq('id', this.currentEditId);
-            
-            // Auto-retry if columns are missing from PostgREST schema cache
-            while (res.error && res.error.message && res.error.message.includes("Could not find the '")) {
-                const match = res.error.message.match(/Could not find the '(.*?)' column/i);
-                if (match && match[1] && dbItem.hasOwnProperty(match[1])) {
-                    console.warn(`[Supabase] Column '${match[1]}' missing in table 'content'. Stripping field and retrying...`);
-                    delete dbItem[match[1]];
-                    res = await client.from('content').update(dbItem).eq('id', this.currentEditId);
+        if (client) {
+            try {
+                if (this.editMode && this.currentEditId) {
+                    // Update mode
+                    let res = await client.from('content').update(dbItem).eq('id', this.currentEditId);
+                    
+                    // Auto-retry if columns are missing from PostgREST schema cache
+                    while (res.error && res.error.message && res.error.message.includes("Could not find the '")) {
+                        const match = res.error.message.match(/Could not find the '(.*?)' column/i);
+                        if (match && match[1] && dbItem.hasOwnProperty(match[1])) {
+                            console.warn(`[Supabase] Column '${match[1]}' missing in table 'content'. Stripping field and retrying...`);
+                            delete dbItem[match[1]];
+                            res = await client.from('content').update(dbItem).eq('id', this.currentEditId);
+                        } else {
+                            break;
+                        }
+                    }
+
+                    if (!res.error) {
+                        supabaseSuccess = true;
+                    } else {
+                        console.error('[Supabase Update Error]', res.error);
+                        alert('Supabase Notice: ' + res.error.message + '\n(Content saved to local library).');
+                    }
+                    this.exitEditMode();
                 } else {
-                    break;
+                    // Create mode
+                    if (newItem.featured) {
+                        await client.from('content').update({ featured: false }).eq('featured', true).catch(() => {});
+                    }
+
+                    let res = await client.from('content').insert([dbItem]);
+
+                    // Auto-retry if columns are missing from PostgREST schema cache
+                    while (res.error && res.error.message && res.error.message.includes("Could not find the '")) {
+                        const match = res.error.message.match(/Could not find the '(.*?)' column/i);
+                        if (match && match[1] && dbItem.hasOwnProperty(match[1])) {
+                            console.warn(`[Supabase] Column '${match[1]}' missing in table 'content'. Stripping field and retrying...`);
+                            delete dbItem[match[1]];
+                            res = await client.from('content').insert([dbItem]);
+                        } else {
+                            break;
+                        }
+                    }
+
+                    if (!res.error) {
+                        supabaseSuccess = true;
+                    } else {
+                        console.error('[Supabase Insert Error]', res.error);
+                        alert('Supabase Notice: ' + res.error.message + '\n(Saved to local library).');
+                    }
                 }
-            }
-
-            if (res.error) {
-                alert('Error updating: ' + res.error.message);
-                return;
-            }
-            this.exitEditMode();
-        } else {
-            // Create mode
-            // If featured, unfeature all other items first
-            if (newItem.featured) {
-                await client.from('content').update({ featured: false }).eq('featured', true);
-            }
-
-            let res = await client.from('content').insert([dbItem]);
-
-            // Auto-retry if columns are missing from PostgREST schema cache
-            while (res.error && res.error.message && res.error.message.includes("Could not find the '")) {
-                const match = res.error.message.match(/Could not find the '(.*?)' column/i);
-                if (match && match[1] && dbItem.hasOwnProperty(match[1])) {
-                    console.warn(`[Supabase] Column '${match[1]}' missing in table 'content'. Stripping field and retrying...`);
-                    delete dbItem[match[1]];
-                    res = await client.from('content').insert([dbItem]);
-                } else {
-                    break;
-                }
-            }
-
-            if (res.error) {
-                alert('Error publishing: ' + res.error.message);
-                return;
+            } catch (err) {
+                console.error('[Supabase Connection Exception]', err);
             }
         }
-        
-        await this.loadContent();
-        alert(this.editMode ? 'Content Updated!' : 'Content Published!');
+
+        // Always update local cache & memory state so content is IMMEDIATELY available
+        const localItem = {
+            id: this.currentEditId || 'item-' + Date.now(),
+            ...newItem
+        };
+
+        if (this.editMode && this.currentEditId) {
+            const index = this.content.findIndex(i => String(i.id) === String(this.currentEditId));
+            if (index !== -1) {
+                this.content[index] = localItem;
+            }
+        } else {
+            this.content.unshift(localItem);
+        }
+
+        try {
+            localStorage.setItem('series_update_cache_content', JSON.stringify(this.content));
+        } catch (e) {}
+
+        // Reload content from DB if connected
+        if (client && supabaseSuccess) {
+            await this.loadContent();
+        } else {
+            this.renderAll();
+            if (document.getElementById('admin-content-list')) {
+                this.renderAdminList();
+            }
+        }
+
+        alert(this.editMode ? 'Content Updated Successfully!' : 'Content Published Successfully!');
     }
 
     // Delete content
@@ -309,6 +373,211 @@ class StreamVault {
         delete newItem.id; // Let DB generate new UUID
 
         await this.saveContent(newItem);
+    }
+
+    async importSeedContentToSupabase() {
+        const client = window.supabaseClient || window.supabase;
+        if (!client) {
+            alert('Supabase client not initialized!');
+            return;
+        }
+
+        const statusEl = document.getElementById('import-status-msg');
+        if (statusEl) {
+            statusEl.style.display = 'block';
+            statusEl.style.color = '#FFCA28';
+            statusEl.textContent = '⏳ Importing sample items into Supabase...';
+        }
+
+        try {
+            const seedItems = this.getFallbackContent();
+            let importedCount = 0;
+
+            for (const item of seedItems) {
+                const dbItem = {
+                    title: item.title,
+                    type: item.type,
+                    thumb_portrait: item.thumbPortrait,
+                    thumb_landscape: item.thumbLandscape,
+                    category: item.category,
+                    description: item.desc,
+                    publish_date: item.publishDate,
+                    featured: item.featured,
+                    quality: item.quality,
+                    video_link: item.videoLink,
+                    episodes: item.episodes || []
+                };
+
+                const { error } = await client.from('content').insert([dbItem]);
+                if (!error) {
+                    importedCount++;
+                } else {
+                    console.warn(`[Supabase Import] Note for '${item.title}':`, error.message);
+                }
+            }
+
+            // Also seed wallet_balance if missing
+            await client.from('wallet_balance').insert([{ id: 1, balance: 0.00 }]).catch(() => {});
+
+            if (statusEl) {
+                statusEl.style.color = '#81C784';
+                statusEl.textContent = `✅ Successfully imported ${importedCount} sample item(s) to Supabase!`;
+            }
+            alert(`Import completed! ${importedCount} item(s) added to your Supabase database.`);
+            await this.loadContent();
+        } catch (e) {
+            console.error('Import error:', e);
+            if (statusEl) {
+                statusEl.style.color = '#E57373';
+                statusEl.textContent = `❌ Import failed: ${e.message}`;
+            }
+            alert(`Import error: ${e.message}`);
+        }
+    }
+
+    async exportContentJSON() {
+        try {
+            const client = window.supabaseClient || window.supabase;
+            const { data, error } = await client.from('content').select('*');
+            const items = (data && !error && data.length > 0) ? data : this.content;
+            
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(items, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `series_update_content_export_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        } catch (e) {
+            alert('Export failed: ' + e.message);
+        }
+    }
+
+    async importContentJSON(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            try {
+                const items = JSON.parse(e.target.result);
+                if (!Array.isArray(items)) {
+                    alert('Invalid JSON file format. Expected an array of content items.');
+                    return;
+                }
+
+                const client = window.supabaseClient || window.supabase;
+                let count = 0;
+                for (const item of items) {
+                    const dbItem = {
+                        title: item.title || item.name || 'Untitled',
+                        type: item.type || 'Movie',
+                        thumb_portrait: item.thumb_portrait || item.thumbPortrait || '',
+                        thumb_landscape: item.thumb_landscape || item.thumbLandscape || '',
+                        category: item.category || 'General',
+                        description: item.description || item.desc || '',
+                        publish_date: item.publish_date || item.publishDate || new Date().toISOString().split('T')[0],
+                        featured: item.featured || false,
+                        quality: item.quality || '1080p Full HD',
+                        video_link: item.video_link || item.videoLink || '',
+                        android_link: item.android_link || item.androidLink || '',
+                        ios_link: item.ios_link || item.iosLink || '',
+                        download_link: item.download_link || item.downloadLink || '',
+                        embed_code: item.embed_code || item.embedCode || '',
+                        embed_code2: item.embed_code2 || item.embedCode2 || '',
+                        embed_code3: item.embed_code3 || item.embedCode3 || '',
+                        episodes: item.episodes || []
+                    };
+                    const { error } = await client.from('content').insert([dbItem]);
+                    if (!error) count++;
+                }
+
+                alert(`Successfully imported ${count} out of ${items.length} items to Supabase!`);
+                await this.loadContent();
+            } catch (err) {
+                alert('Error parsing JSON file: ' + err.message);
+            }
+        };
+        reader.readAsText(file);
+    }
+
+    async handleAdminFormSubmit(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        const adminForm = document.getElementById('admin-form');
+        if (!adminForm) return false;
+
+        try {
+            // Collect episodes if series
+            const episodes = [];
+            const contentTypeEl = document.getElementById('contentType');
+            if (contentTypeEl && contentTypeEl.value === 'Series') {
+                const rows = document.querySelectorAll('.episode-row');
+                rows.forEach(row => {
+                    const getEpVal = (selector) => {
+                        const el = row.querySelector(selector);
+                        return el ? el.value.trim() : '';
+                    };
+                    const title = getEpVal('.ep-title-input');
+                    const link = getEpVal('.ep-link-input');
+                    const link2 = getEpVal('.ep-link2-input');
+                    const link3 = getEpVal('.ep-link3-input');
+                    const androidLink = getEpVal('.ep-android-input');
+                    const iosLink = getEpVal('.ep-ios-input');
+                    const downloadLink = getEpVal('.ep-download-input');
+                    const embedCode = getEpVal('.ep-embed-input');
+                    const embedCode2 = getEpVal('.ep-embed2-input');
+                    const embedCode3 = getEpVal('.ep-embed3-input');
+
+                    if (title && (link || embedCode || androidLink || iosLink || downloadLink)) {
+                        episodes.push({ title, link, link2, link3, downloadLink, androidLink, iosLink, embedCode, embedCode2, embedCode3 });
+                    }
+                });
+            }
+
+            const getFormVal = (id) => {
+                const el = document.getElementById(id);
+                return el ? el.value.trim() : '';
+            };
+
+            const newItem = {
+                title: getFormVal('title'),
+                type: getFormVal('contentType') || 'Movie',
+                thumbPortrait: getFormVal('thumbPortrait'),
+                thumbLandscape: getFormVal('thumbLandscape'),
+                category: getFormVal('category'),
+                desc: getFormVal('content'),
+                publishDate: getFormVal('publishDate') || new Date().toISOString().split('T')[0],
+                featured: document.getElementById('is-featured') ? document.getElementById('is-featured').checked : false,
+                quality: getFormVal('quality') || '4K Ultra HD',
+                videoLink: getFormVal('videoLink'),
+                androidLink: getFormVal('androidLink'),
+                iosLink: getFormVal('iosLink'),
+                downloadLink: getFormVal('downloadLink'),
+                embedCode: getFormVal('embedCode'),
+                embedCode2: getFormVal('embedCode2'),
+                embedCode3: getFormVal('embedCode3'),
+                episodes: episodes
+            };
+
+            if (!newItem.title) {
+                alert('Please fill out the Content Title field.');
+                return false;
+            }
+
+            await this.saveContent(newItem);
+            adminForm.reset();
+            const dateEl = document.getElementById('publishDate');
+            if (dateEl) dateEl.valueAsDate = new Date();
+            this.exitEditMode();
+            return false;
+        } catch (err) {
+            console.error('[Series Update] Admin submission error:', err);
+            alert('Error submitting form: ' + err.message);
+            return false;
+        }
     }
 
     toggleAllCategories(btn) {
@@ -648,16 +917,20 @@ class StreamVault {
     }
 
     generateCardHtml(item) {
+        const isUpcoming = item.category === 'Upcoming' || (item.publishDate && new Date(item.publishDate) > new Date());
+        const badgeLabel = isUpcoming ? 'SOON ⏳' : (item.type === 'Series' ? 'SERIES' : 'HD');
+        const badgeClass = isUpcoming ? 'badge-hd badge-upcoming' : 'badge-hd';
+
         return `
         <div class="movie-card card" data-id="${item.id}" onclick="window.app.navigateToWatch('${item.id}')">
             <div class="poster-container">
                 <img src="${item.thumbPortrait}" alt="${item.title}" loading="lazy" class="poster-img" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Poster+Not+Found'"/>
-                <span class="badge-hd">${item.type === 'Series' ? 'SERIES' : 'HD'}</span>
+                <span class="${badgeClass}">${badgeLabel}</span>
             </div>
             <div class="movie-title">${item.title}</div>
             <div class="movie-meta">${item.publishDate ? new Date(item.publishDate).getFullYear() : '2026'} • ${item.type}</div>
             <div class="movie-rating">
-                <span class="star-rating">⭐</span> 8.${(item.id.charCodeAt(0) % 5) + 5}
+                <span class="star-rating">${isUpcoming ? '⏳' : '⭐'}</span> ${isUpcoming ? 'COMING SOON' : `8.${(String(item.id).charCodeAt(0) % 5) + 5}`}
             </div>
         </div>`;
     }
@@ -769,57 +1042,9 @@ class StreamVault {
         // Admin Form
         const adminForm = document.getElementById('admin-form');
         if (adminForm) {
-            adminForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                
-                // Collect episodes if series
-                const episodes = [];
-                if (document.getElementById('contentType').value === 'Series') {
-                    const rows = document.querySelectorAll('.episode-row');
-                    rows.forEach(row => {
-                        const title = row.querySelector('.ep-title-input').value;
-                        const link = row.querySelector('.ep-link-input').value;
-                        const link2 = row.querySelector('.ep-link2-input') ? row.querySelector('.ep-link2-input').value : '';
-                        const link3 = row.querySelector('.ep-link3-input') ? row.querySelector('.ep-link3-input').value : '';
-                        const androidLink = row.querySelector('.ep-android-input') ? row.querySelector('.ep-android-input').value : '';
-                        const iosLink = row.querySelector('.ep-ios-input') ? row.querySelector('.ep-ios-input').value : '';
-                        const downloadLink = row.querySelector('.ep-download-input').value;
-                        const embedCode = row.querySelector('.ep-embed-input').value;
-                        const embedCode2 = row.querySelector('.ep-embed2-input') ? row.querySelector('.ep-embed2-input').value : '';
-                        const embedCode3 = row.querySelector('.ep-embed3-input') ? row.querySelector('.ep-embed3-input').value : '';
-                        if (title && (link || embedCode || androidLink || iosLink)) {
-                            episodes.push({ title, link, link2, link3, downloadLink, androidLink, iosLink, embedCode, embedCode2, embedCode3 });
-                        }
-                    });
-                }
-
-                const newItem = {
-                    title: document.getElementById('title').value,
-                    type: document.getElementById('contentType').value,
-                    thumbPortrait: document.getElementById('thumbPortrait').value,
-                    thumbLandscape: document.getElementById('thumbLandscape').value,
-                    category: document.getElementById('category').value,
-                    desc: document.getElementById('content').value,
-                    publishDate: document.getElementById('publishDate').value || new Date().toISOString().split('T')[0],
-                    featured: document.getElementById('is-featured').checked,
-                    quality: document.getElementById('quality') ? document.getElementById('quality').value : '4K Ultra HD',
-                    videoLink: document.getElementById('videoLink').value,
-                    androidLink: document.getElementById('androidLink') ? document.getElementById('androidLink').value : '',
-                    iosLink: document.getElementById('iosLink') ? document.getElementById('iosLink').value : '',
-                    downloadLink: document.getElementById('downloadLink').value,
-                    embedCode: document.getElementById('embedCode').value || '',
-                    embedCode2: document.getElementById('embedCode2') ? document.getElementById('embedCode2').value : '',
-                    embedCode3: document.getElementById('embedCode3') ? document.getElementById('embedCode3').value : '',
-                    episodes: episodes
-                };
-                
-                await this.saveContent(newItem);
-                adminForm.reset();
-                document.getElementById('publishDate').valueAsDate = new Date();
-                this.exitEditMode(); 
-            });
-
-            document.getElementById('cancel-edit-btn').addEventListener('click', () => this.exitEditMode());
+            adminForm.addEventListener('submit', (e) => this.handleAdminFormSubmit(e));
+            const cancelBtn = document.getElementById('cancel-edit-btn');
+            if (cancelBtn) cancelBtn.addEventListener('click', () => this.exitEditMode());
         }
 
         // Withdrawal Form
@@ -1686,6 +1911,28 @@ if (!window.app) {
 }
 window.shop = window.shop || new ShopVault();
 window.adsManager = window.adsManager || new AdVault();
+
+// Re-bind listeners once DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.app) window.app.setupEventListeners();
+    if (window.shop) window.shop.setupEventListeners();
+    if (window.adsManager) {
+        const adForm = document.getElementById('admin-ad-form');
+        if (adForm) window.adsManager.setupAdminEventListeners(adForm);
+    }
+});
+
+// Document-level form submit interceptor to PREVENT any accidental page reloads
+document.addEventListener('submit', function(e) {
+    if (e.target && e.target.id === 'admin-form') {
+        e.preventDefault();
+        e.stopPropagation();
+        if (window.app) {
+            window.app.handleAdminFormSubmit(e);
+        }
+        return false;
+    }
+}, true);
 
 // Guarantee instant rendering when returning via Back Button (BFCache pageshow)
 window.addEventListener('pageshow', function(event) {

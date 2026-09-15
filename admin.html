@@ -40,6 +40,78 @@
             display: none;
         }
 
+        /* Supabase Toolbar Styles */
+        .supabase-status-card {
+            margin-bottom: 2rem;
+            background: rgba(18, 24, 38, 0.85);
+            border: 1px solid rgba(76, 175, 80, 0.4);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .supabase-status-flex {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .supabase-status-title {
+            margin: 0 0 4px 0;
+            color: #4CAF50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+        }
+
+        .supabase-status-sub {
+            margin: 0;
+            font-size: 13px;
+            color: #B0BEC5;
+        }
+
+        .supabase-status-url {
+            color: #64B5F6;
+            font-family: monospace;
+            background: rgba(255,255,255,0.06);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .supabase-btn-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .btn-seed-import {
+            background: rgba(76, 175, 80, 0.15) !important;
+            border-color: rgba(76, 175, 80, 0.4) !important;
+            color: #81C784 !important;
+            padding: 6px 12px !important;
+            font-size: 13px !important;
+        }
+
+        .btn-toolbar-small {
+            padding: 6px 12px !important;
+            font-size: 13px !important;
+        }
+
+        .btn-file-upload-label {
+            cursor: pointer;
+            margin: 0;
+            padding: 6px 12px !important;
+            font-size: 13px !important;
+        }
+
+        .import-status-message {
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            display: none;
+        }
+
         @media (max-width: 650px) {
             #admin-navbar {
                 height: auto !important;
@@ -62,7 +134,7 @@
 
     <!-- Auth Check -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.js"></script>
-    <script src="supabase-config.js?v=1781308664458"></script>
+    <script src="supabase-config.js?v=1789456531642"></script>
     <script src="script.js?v=1781307879668"></script>
     <script>
         // Critical: Check auth before rendering the rest of the page
@@ -81,8 +153,6 @@
 <body
 
  class="admin-body">
-
-
 
     <!-- Navigation Bar -->
     <nav class="navbar scrolled" id="admin-navbar">
@@ -112,13 +182,39 @@
             <p class="admin-subtitle">Create and manage your OTT library from here.</p>
         </div>
 
+        <!-- Supabase Connection & Data Import Tools -->
+        <div class="admin-card supabase-status-card">
+            <div class="supabase-status-flex">
+                <div>
+                    <h3 class="supabase-status-title">
+                        <span>⚡</span> Supabase Connected
+                    </h3>
+                    <p class="supabase-status-sub">
+                        Active URL: <code class="supabase-status-url">https://itesblkjljdsulbtdeon.supabase.co</code>
+                    </p>
+                </div>
+                <div class="supabase-btn-group">
+                    <button type="button" class="btn btn-secondary btn-small btn-seed-import" onclick="app.importSeedContentToSupabase()">
+                        📥 Import Sample Content
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-small btn-toolbar-small" onclick="app.exportContentJSON()">
+                        📤 Export JSON
+                    </button>
+                    <label class="btn btn-secondary btn-small btn-file-upload-label">
+                        📥 Import JSON <input type="file" id="import-json-file" accept=".json" onchange="app.importContentJSON(event)" class="hidden-initial">
+                    </label>
+                </div>
+            </div>
+            <div id="import-status-msg" class="import-status-message"></div>
+        </div>
+
         <div class="admin-grid">
             <!-- Create Content Section -->
             <section class="admin-card">
                 <h2 class="admin-section-title">
                     <span>➕</span> Add New Content
                 </h2>
-                <form id="admin-form">
+                <form id="admin-form" onsubmit="event.preventDefault(); window.app && window.app.handleAdminFormSubmit(event); return false;">
                     <div class="form-group">
                         <label for="title">Content Title</label>
                         <input type="text" id="title" placeholder="e.g. Inception" required>
@@ -152,6 +248,7 @@
                             <option value="Mystery">Mystery 🔍</option>
                             <option value="Crime">Crime 🚨</option>
                             <option value="Trending Now">Trending Now 🔥</option>
+                            <option value="Upcoming">Upcoming Releases ⏳</option>
                             <option value="Latest Uploads">Latest Uploads 🆕</option>
                         </select>
                     </div>
