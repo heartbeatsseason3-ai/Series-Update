@@ -701,6 +701,7 @@
                         desc: dbItem.description,
                         publishDate: dbItem.publish_date,
                         featured: dbItem.featured,
+                        quality: dbItem.quality || '',
                         videoLink: dbItem.video_link,
                         androidLink: dbItem.android_link,
                         iosLink: dbItem.ios_link,
@@ -869,7 +870,7 @@
                         <h1 class="series-title">${item.title}</h1>
                         <div class="series-badges">
                             <span class="s-badge-red">${year}</span>
-                            <span class="s-badge-outline">A</span>
+                            ${item.quality ? `<span class="s-badge-outline">${item.quality}</span>` : ''}
                             <span class="s-badge-outline">18+</span>
                         </div>
                         <div class="series-genres">${genres}</div>
@@ -912,9 +913,9 @@
                     <div class="movie-details">
                         <h1 class="movie-title">${item.title}</h1>
                         <div class="movie-tags">
-                            <span class="badge-grey">${item.quality || '1080p Full HD'}</span>
-                            <span style="color: #2196F3; font-size: 13px;">Published: June 5, ${year}</span>
-                            <span class="badge-grey">${item.category || 'Action'}</span>
+                            ${item.quality ? `<span class="badge-grey">${item.quality}</span>` : ''}
+                            <span style="color: #2196F3; font-size: 13px;">Published: ${year}</span>
+                            <span class="badge-grey">${item.category || 'Movie'}</span>
                         </div>
                         
                         <div class="movie-meta">

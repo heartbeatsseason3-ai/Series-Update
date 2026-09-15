@@ -534,21 +534,61 @@
                 return;
             }
 
-            // Fetch actual uploaded movies
-            const { data, error } = await window.supabaseClient
-                .from('content')
-                .select('*')
-                .eq('type', 'Movie')
-                .order('created_at', { ascending: false });
+            let data = null;
+            if (window.supabaseClient) {
+                try {
+                    const res = await window.supabaseClient
+                        .from('content')
+                        .select('*')
+                        .or('type.ilike.%movie%,category.ilike.%movie%')
+                        .order('created_at', { ascending: false });
+                    if (!res.error && res.data && res.data.length > 0) {
+                        data = res.data;
+                    }
+                } catch (e) {}
+            }
 
-            if (error) {
-                container.innerHTML = '<div style="color: #E50914; text-align: center; padding: 40px;">Error loading content.</div>';
-                return;
+            // Multi-tier Fallback Strategy if DB is empty or fails
+            if (!data || data.length === 0) {
+                if (window.app && window.app.content && window.app.content.length > 0) {
+                    const pool = window.app.content.filter(i => (i.type && i.type.toLowerCase().includes('movie')) || (i.category && i.category.toLowerCase().includes('movie')));
+                    data = (pool.length > 0 ? pool : window.app.content).map(i => ({
+                        id: i.id,
+                        title: i.title,
+                        type: i.type || 'Movie',
+                        thumb_portrait: i.thumbPortrait || i.thumb_portrait,
+                        category: i.category || 'Movie',
+                        publish_date: i.publishDate || i.publish_date
+                    }));
+                } else {
+                    const cached = localStorage.getItem('series_update_cache_content');
+                    if (cached) {
+                        try {
+                            const parsed = JSON.parse(cached);
+                            const pool = parsed.filter(i => (i.type && i.type.toLowerCase().includes('movie')) || (i.category && i.category.toLowerCase().includes('movie')));
+                            data = (pool.length > 0 ? pool : parsed).map(i => ({
+                                id: i.id,
+                                title: i.title,
+                                type: i.type || 'Movie',
+                                thumb_portrait: i.thumbPortrait || i.thumb_portrait,
+                                category: i.category || 'Movie',
+                                publish_date: i.publishDate || i.publish_date
+                            }));
+                        } catch(e) {}
+                    }
+                }
             }
 
             if (!data || data.length === 0) {
-                container.innerHTML = '<div style="color: #888; text-align: center; padding: 40px;">No movies uploaded yet.</div>';
-                return;
+                const fallbackSeed = (window.app ? window.app.getFallbackContent() : []).filter(i => i.type === 'Movie');
+                data = fallbackSeed.map(i => ({
+                    id: i.id,
+                    title: i.title,
+                    type: i.type,
+                    thumb_portrait: i.thumbPortrait,
+                    category: i.category,
+                    publish_date: i.publishDate
+                }));
             }
 
             container.innerHTML = '';
@@ -560,23 +600,23 @@
             // 2. Trending Now (Next 5 items, or shuffle if not enough)
             const trendingNow = data.length > 5 ? data.slice(5, 10) : [...data].reverse();
 
-            // 3. Top Rated (Sort by an arbitrary stable metric since rating doesn't exist, e.g., title length, or just another slice)
+            // 3. Top Rated
             const topRated = [...data].sort((a, b) => (b.title || '').length - (a.title || '').length).slice(0, 6);
 
             // Generate HTML for a Row
             function generateRow(title, iconHtml, items, isLarge = false) {
-                if(items.length === 0) return '';
+                if(!items || items.length === 0) return '';
                 
                 let cardsHtml = '';
                 items.forEach(item => {
-                    // Random fixed rating based on ID for stability
-                    const rating = (7.5 + ((item.id.charCodeAt(0) % 20) / 10)).toFixed(1); 
+                    const itemIdStr = String(item.id || 'm-1');
+                    const rating = (7.5 + ((itemIdStr.charCodeAt(0) % 20) / 10)).toFixed(1); 
                     const year = item.publish_date ? new Date(item.publish_date).getFullYear() : '2026';
                     
                     cardsHtml += `
                     <div class="movie-card" onclick="window.location.href='watch.html?id=${item.id}'">
                         <div class="poster-wrapper">
-                            <img src="${item.thumb_portrait}" alt="${item.title}" class="poster-img" loading="lazy" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Poster+Not+Found'">
+                            <img src="${item.thumb_portrait || 'https://placehold.co/300x450/1a1a2e/ffffff?text=Movie'}" alt="${item.title}" class="poster-img" loading="lazy" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Movie'">
                             <div class="hd-badge">HD</div>
                             <div class="play-overlay">
                                 <div class="play-circle">

@@ -188,7 +188,7 @@
     <div class="page-title-section">
         <h1 class="page-title">
             <span class="title-accent"></span>
-            Anime Series & Movies 🌸
+            Anime Series 🌸
         </h1>
         <p class="page-subtitle">Stream popular anime, dubs, subs & OVA specials in HD quality.</p>
     </div>
@@ -200,6 +200,9 @@
             <input type="text" id="anime-search-input" placeholder="Search anime titles, genres...">
         </div>
     </div>
+
+    <!-- Featured Anime Hero Banner -->
+    <section id="anime-hero-banner" class="hero-container" style="padding: 0 20px; margin-bottom: 24px;"></section>
 
     <!-- Content Container -->
     <main id="anime-content-container">
@@ -242,35 +245,136 @@
             const searchInput = document.getElementById('anime-search-input');
             let allAnimeData = [];
 
-            if (!window.supabaseClient) {
-                container.innerHTML = '<div style="color: #E50914; text-align: center; padding: 40px;">Database connection error.</div>';
-                return;
+            // Notification dot logic
+            if (localStorage.getItem('notificationsRead') !== 'true') {
+                const dot = document.getElementById('nav-notif-dot');
+                if (dot) dot.style.display = 'block';
             }
 
-            // Fetch Anime content (by type 'Anime' OR category 'Anime')
-            const { data, error } = await window.supabaseClient
-                .from('content')
-                .select('*')
-                .or('type.ilike.%Anime%,category.ilike.%Anime%')
-                .order('created_at', { ascending: false });
+            // Anime Featured Banner Logic
+            let animeHeroItems = [];
+            let animeHeroIndex = 0;
+            let animeHeroTimer = null;
 
-            if (error) {
-                console.error("Error fetching anime:", error);
+            window.renderAnimeHeroIndex = function(index) {
+                const heroSection = document.getElementById('anime-hero-banner');
+                if (!heroSection || !animeHeroItems[index]) return;
+                animeHeroIndex = index;
+                const item = animeHeroItems[index];
+
+                const landscapeImg = item.thumb_landscape || item.thumbLandscape || item.thumb_portrait || item.thumbPortrait || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1000&q=80';
+                const descText = item.description || item.desc || 'Stream featured anime series in HD quality.';
+                
+                let dotsHtml = '';
+                for (let i = 0; i < animeHeroItems.length; i++) {
+                    dotsHtml += `<div class="dot ${i === index ? 'active' : ''}" onclick="event.stopPropagation(); window.renderAnimeHeroIndex(${i});"></div>`;
+                }
+
+                heroSection.innerHTML = `
+                <div class="hero-card card" onclick="window.location.href='watch.html?id=${item.id}'" data-id="${item.id}">
+                    <img src="${landscapeImg}" alt="${item.title}" class="hero-bg" onerror="this.src='${item.thumb_portrait || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1000&q=80'}'">
+                    <div class="hero-overlay">
+                        <div class="hero-top-badges">
+                            <span class="badge-featured">FEATURED ANIME 🌸</span>
+                            <span class="badge-pagination">${index + 1} / ${animeHeroItems.length}</span>
+                        </div>
+                        <div class="hero-content">
+                            <h1 class="hero-title">${item.title}</h1>
+                            <p class="hero-desc">${descText.length > 80 ? descText.substring(0, 80) + '...' : descText}</p>
+                            <div class="hero-actions">
+                                <button class="btn btn-play" onclick="event.stopPropagation(); window.location.href='watch.html?id=${item.id}'">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                    Play Now
+                                </button>
+                                <button class="btn btn-info" onclick="event.stopPropagation(); window.location.href='watch.html?id=${item.id}'">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+                                    More Info
+                                </button>
+                            </div>
+                        </div>
+                        <div class="hero-dots">
+                            ${dotsHtml}
+                        </div>
+                    </div>
+                </div>`;
+            };
+
+            function initAnimeHeroBanner(items) {
+                if (!items || items.length === 0) return;
+                const featured = items.filter(i => i.featured);
+                animeHeroItems = featured.length > 0 ? featured.slice(0, 5) : items.slice(0, 5);
+
+                window.renderAnimeHeroIndex(0);
+
+                if (animeHeroTimer) clearInterval(animeHeroTimer);
+                if (animeHeroItems.length > 1) {
+                    animeHeroTimer = setInterval(() => {
+                        animeHeroIndex = (animeHeroIndex + 1) % animeHeroItems.length;
+                        window.renderAnimeHeroIndex(animeHeroIndex);
+                    }, 5000);
+                }
             }
 
-            allAnimeData = data || [];
+            // 1. Fetch Anime content from Supabase (by type 'Anime' OR category 'Anime')
+            if (window.supabaseClient) {
+                try {
+                    const { data, error } = await window.supabaseClient
+                        .from('content')
+                        .select('*')
+                        .or('type.ilike.%Anime%,category.ilike.%Anime%')
+                        .order('created_at', { ascending: false });
 
-            // If no specific anime tagged items yet, show recent uploads
-            if (allAnimeData.length === 0) {
-                const { data: fallbackData } = await window.supabaseClient
-                    .from('content')
-                    .select('*')
-                    .order('created_at', { ascending: false })
-                    .limit(10);
-                allAnimeData = fallbackData || [];
+                    if (!error && data && data.length > 0) {
+                        allAnimeData = data;
+                    }
+                } catch(e) {}
             }
+
+            // 2. Fallback to STRICT local anime app content / cache if DB data has no anime
+            if (!allAnimeData || allAnimeData.length === 0) {
+                if (window.app && window.app.content && window.app.content.length > 0) {
+                    const animePool = window.app.content.filter(i => 
+                        (i.type && i.type.toLowerCase().includes('anime')) || 
+                        (i.category && i.category.toLowerCase().includes('anime'))
+                    );
+                    if (animePool.length > 0) {
+                        allAnimeData = animePool.map(i => ({
+                            id: i.id,
+                            title: i.title,
+                            thumb_portrait: i.thumbPortrait || i.thumb_portrait,
+                            thumb_landscape: i.thumbLandscape || i.thumb_landscape,
+                            category: i.category || 'Anime',
+                            publish_date: i.publishDate || i.publish_date,
+                            featured: i.featured || false,
+                            description: i.desc || i.description
+                        }));
+                    }
+                }
+            }
+
+            // 3. Ultimate Fallback Seed Anime Items if still empty
+            if (!allAnimeData || allAnimeData.length === 0) {
+                const fallbackSeed = (window.app ? window.app.getFallbackContent() : []).filter(i => 
+                    (i.type && i.type.toLowerCase().includes('anime')) || 
+                    (i.category && i.category.toLowerCase().includes('anime'))
+                );
+                allAnimeData = fallbackSeed.map(i => ({
+                    id: i.id,
+                    title: i.title,
+                    thumb_portrait: i.thumbPortrait || i.thumb_portrait,
+                    thumb_landscape: i.thumbLandscape || i.thumb_landscape,
+                    category: i.category || 'Anime',
+                    publish_date: i.publishDate || i.publish_date,
+                    featured: i.featured || false,
+                    description: i.desc || i.description
+                }));
+            }
+
+            // Initialize Anime Hero Banner
+            initAnimeHeroBanner(allAnimeData);
 
             function renderRows(items) {
+                if (!container) return;
                 if (!items || items.length === 0) {
                     container.innerHTML = '<div style="color: #888; text-align: center; padding: 40px;">No anime content available.</div>';
                     return;
@@ -280,15 +384,18 @@
                 const trendingAnime = items.length > 5 ? items.slice(5, 10) : [...items].reverse();
 
                 function generateRow(title, iconHtml, rowItems) {
-                    if (rowItems.length === 0) return '';
+                    if (!rowItems || rowItems.length === 0) return '';
                     let cardsHtml = '';
                     rowItems.forEach(item => {
-                        const rating = (8.0 + ((item.id.charCodeAt(0) % 15) / 10)).toFixed(1);
+                        const itemIdStr = String(item.id || 'a-1');
+                        const rating = (8.0 + ((itemIdStr.charCodeAt(0) % 15) / 10)).toFixed(1);
                         const year = item.publish_date ? new Date(item.publish_date).getFullYear() : '2026';
+                        const thumbImg = item.thumb_portrait || item.thumbPortrait || 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500&q=80';
+                        
                         cardsHtml += `
                         <div class="movie-card" onclick="window.location.href='watch.html?id=${item.id}'">
                             <div class="poster-wrapper">
-                                <img src="${item.thumb_portrait}" alt="${item.title}" class="poster-img" loading="lazy" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Anime'">
+                                <img src="${thumbImg}" alt="${item.title}" class="poster-img" loading="lazy" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Anime'">
                                 <div class="hd-badge">HD</div>
                             </div>
                             <div class="card-title">${item.title}</div>

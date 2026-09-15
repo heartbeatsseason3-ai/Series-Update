@@ -113,6 +113,36 @@ class StreamVault {
                 featured: true,
                 quality: "4K Ultra HD",
                 videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
+            },
+            {
+                id: "fb-8",
+                title: "Solo Leveling Season 2",
+                type: "Anime",
+                thumbPortrait: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500&q=80",
+                thumbLandscape: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=1000&q=80",
+                category: "Anime",
+                desc: "Sung Jinwoo continues his journey as the Shadow Monarch in this action-packed fantasy anime series.",
+                publishDate: "2026-08-10",
+                featured: true,
+                quality: "4K Ultra HD",
+                videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                episodes: [
+                    { title: "Episode 1: Arise Again", videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ" },
+                    { title: "Episode 2: The Monarch's Shadow", videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ" }
+                ]
+            },
+            {
+                id: "fb-9",
+                title: "Demon Slayer: Infinity Castle",
+                type: "Anime",
+                thumbPortrait: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500&q=80",
+                thumbLandscape: "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=1000&q=80",
+                category: "Anime",
+                desc: "Tanjiro and the Hashira infiltrate the Infinity Castle to face Muzan Kibutsuji and the Upper Ranks.",
+                publishDate: "2026-07-15",
+                featured: false,
+                quality: "4K Ultra HD",
+                videoLink: "https://www.youtube.com/embed/dQw4w9WgXcQ"
             }
         ];
     }
@@ -190,7 +220,7 @@ class StreamVault {
                     desc: item.description,
                     publishDate: item.publish_date,
                     featured: item.featured,
-                    quality: item.quality || '4K Ultra HD',
+                    quality: item.quality || '',
                     videoLink: item.video_link,
                     androidLink: item.android_link,
                     iosLink: item.ios_link,
@@ -243,7 +273,7 @@ class StreamVault {
             description: newItem.desc || '',
             publish_date: newItem.publishDate || new Date().toISOString().split('T')[0],
             featured: !!newItem.featured,
-            quality: newItem.quality || '4K Ultra HD',
+            quality: newItem.quality || '',
             video_link: newItem.videoLink || '',
             android_link: newItem.androidLink || '',
             ios_link: newItem.iosLink || '',
@@ -510,10 +540,10 @@ class StreamVault {
         if (!adminForm) return false;
 
         try {
-            // Collect episodes if series
+            // Collect episodes if series or anime
             const episodes = [];
             const contentTypeEl = document.getElementById('contentType');
-            if (contentTypeEl && contentTypeEl.value === 'Series') {
+            if (contentTypeEl && (contentTypeEl.value === 'Series' || contentTypeEl.value === 'Anime')) {
                 const rows = document.querySelectorAll('.episode-row');
                 rows.forEach(row => {
                     const getEpVal = (selector) => {
@@ -551,7 +581,7 @@ class StreamVault {
                 desc: getFormVal('content'),
                 publishDate: getFormVal('publishDate') || new Date().toISOString().split('T')[0],
                 featured: document.getElementById('is-featured') ? document.getElementById('is-featured').checked : false,
-                quality: getFormVal('quality') || '4K Ultra HD',
+                quality: getFormVal('quality'),
                 videoLink: getFormVal('videoLink'),
                 androidLink: getFormVal('androidLink'),
                 iosLink: getFormVal('iosLink'),
@@ -775,31 +805,52 @@ class StreamVault {
             return;
         }
 
-        // Generate content rows grouped by category
+        // Generate content rows grouped by category & type
         if (filter === 'Trending' || filter.startsWith('search:')) {
              this.appendCardGrid(container, items, filter === 'Trending' ? 'Trending Results' : 'Search Results');
+        } else if (filter === 'all') {
+             // 1. Trending Now
+             const trendingItems = [...items].sort((a,b) => new Date(b.publishDate || 0) - new Date(a.publishDate || 0)).slice(0, 8);
+             if (trendingItems.length > 0) {
+                 this.appendCardScrollRow(container, trendingItems, 'Trending Now 🔥');
+             }
+
+             // 2. Popular Movies (Explicit row for movies on home page)
+             const moviesList = items.filter(i => (i.type && i.type.toLowerCase().includes('movie')) || (i.category && i.category.toLowerCase().includes('movie')));
+             const finalMovies = moviesList.length > 0 ? moviesList : items.filter(i => i.type !== 'Series');
+             if (finalMovies.length > 0) {
+                 this.appendCardScrollRow(container, finalMovies, 'Popular Movies 🎬');
+             }
+
+             // 3. Trending TV Shows / Series
+             const seriesList = items.filter(i => (i.type && (i.type.toLowerCase().includes('series') || i.type.toLowerCase().includes('show'))) || (i.category && i.category.toLowerCase().includes('series')));
+             if (seriesList.length > 0) {
+                 this.appendCardScrollRow(container, seriesList, 'Trending TV Shows 📺');
+             }
+
+             // 4. Upcoming Releases
+             const upcomingItems = items.filter(i => i.category === 'Upcoming' || (i.publishDate && new Date(i.publishDate) > new Date()));
+             if (upcomingItems.length > 0) {
+                 this.appendCardScrollRow(container, upcomingItems, 'Upcoming Releases ⏳');
+             }
+
+             // 5. Genre-specific rows
+             const uniqueCategories = [...new Set(items.map(i => i.category))].filter(c => c && c !== 'Trending Now' && c !== 'Upcoming' && c !== 'Movie' && c !== 'Series');
+             uniqueCategories.forEach(cat => {
+                 const catItems = items.filter(i => i.category === cat);
+                 if (catItems.length > 0) {
+                     this.appendCardScrollRow(container, catItems, `${cat} Collection`);
+                 }
+             });
         } else {
-             // Group by category: Upcoming Releases FIRST (4. directly under Continue to Watch), then Trending Now, then other genres
+             // Filter views (Movie, Series, Upcoming, or specific genre)
              const uniqueCategories = [...new Set(items.map(i => i.category))].filter(c => c && c !== 'Trending Now' && c !== 'Upcoming');
-             const categories = filter === 'all' 
-                 ? ['Upcoming', 'Trending Now', ...uniqueCategories] 
-                 : (filter === 'Upcoming' ? ['Upcoming', ...uniqueCategories] : uniqueCategories);
+             const categories = uniqueCategories.length > 0 ? uniqueCategories : ['All Content'];
              
              categories.forEach(cat => {
-                 let catItems = items;
-                 let sectionTitle = cat;
-
-                 if (cat === 'Trending Now') {
-                     catItems = [...items].sort((a,b) => new Date(b.publishDate) - new Date(a.publishDate)).slice(0, 5);
-                 } else if (cat === 'Upcoming') {
-                     sectionTitle = 'Upcoming Releases ⏳';
-                     catItems = items.filter(i => i.category === 'Upcoming' || (i.publishDate && new Date(i.publishDate) > new Date()));
-                 } else {
-                     catItems = items.filter(i => i.category === cat);
-                 }
-
+                 let catItems = cat === 'All Content' ? items : items.filter(i => i.category === cat);
                  if (catItems.length > 0) {
-                     this.appendCardScrollRow(container, catItems, sectionTitle);
+                     this.appendCardScrollRow(container, catItems, cat === 'All Content' ? filter : cat);
                  }
              });
         }
@@ -938,14 +989,15 @@ class StreamVault {
 
     generateCardHtml(item) {
         const isUpcoming = item.category === 'Upcoming' || (item.publishDate && new Date(item.publishDate) > new Date());
-        const badgeLabel = isUpcoming ? 'SOON ⏳' : (item.type === 'Series' ? 'SERIES' : 'HD');
+        const qualityBadge = item.quality || (item.type === 'Series' ? 'SERIES' : 'HD');
+        const badgeLabel = isUpcoming ? 'SOON ⏳' : qualityBadge;
         const badgeClass = isUpcoming ? 'badge-hd badge-upcoming' : 'badge-hd';
 
         return `
         <div class="movie-card card" data-id="${item.id}" onclick="window.app.navigateToWatch('${item.id}')">
             <div class="poster-container">
                 <img src="${item.thumbPortrait}" alt="${item.title}" loading="lazy" class="poster-img" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Poster+Not+Found'"/>
-                <span class="${badgeClass}">${badgeLabel}</span>
+                ${badgeLabel ? `<span class="${badgeClass}">${badgeLabel}</span>` : ''}
             </div>
             <div class="movie-title">${item.title}</div>
             <div class="movie-meta">${item.publishDate ? new Date(item.publishDate).getFullYear() : '2026'} • ${item.type}</div>
@@ -1386,7 +1438,7 @@ class StreamVault {
         const featuredCheckbox = document.getElementById('is-featured');
         if (featuredCheckbox) featuredCheckbox.checked = !!item.featured;
 
-        setVal('quality', item.quality || '4K Ultra HD');
+        setVal('quality', item.quality || '');
         setVal('videoLink', item.videoLink || item.video_link);
         setVal('androidLink', item.androidLink || item.android_link);
         setVal('iosLink', item.iosLink || item.ios_link);
@@ -1443,16 +1495,21 @@ class StreamVault {
 
     // Helper Methods for UI
     toggleStreamTypeFields() {
-        const type = document.getElementById('contentType').value;
+        const typeEl = document.getElementById('contentType');
+        if (!typeEl) return;
+        const type = typeEl.value;
         const movieFields = document.getElementById('movie-fields');
         const seriesFields = document.getElementById('series-fields');
         
         if (type === 'Movie') {
-            movieFields.style.display = 'block';
-            seriesFields.style.display = 'none';
-        } else {
-            movieFields.style.display = 'none';
-            seriesFields.style.display = 'block';
+            if (movieFields) movieFields.style.display = 'block';
+            if (seriesFields) seriesFields.style.display = 'none';
+        } else if (type === 'Series') {
+            if (movieFields) movieFields.style.display = 'none';
+            if (seriesFields) seriesFields.style.display = 'block';
+        } else if (type === 'Anime') {
+            if (movieFields) movieFields.style.display = 'block';
+            if (seriesFields) seriesFields.style.display = 'block';
         }
     }
 

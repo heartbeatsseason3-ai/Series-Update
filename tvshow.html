@@ -525,21 +525,64 @@
                 return;
             }
 
-            // Fetch actual uploaded TV shows
-            const { data, error } = await window.supabaseClient
-                .from('content')
-                .select('*')
-                .eq('type', 'Series')
-                .order('created_at', { ascending: false });
+            let data = null;
+            if (window.supabaseClient) {
+                try {
+                    const res = await window.supabaseClient
+                        .from('content')
+                        .select('*')
+                        .or('type.ilike.%series%,type.ilike.%show%,type.ilike.%tv%,category.ilike.%series%,category.ilike.%show%')
+                        .order('created_at', { ascending: false });
+                    if (!res.error && res.data && res.data.length > 0) {
+                        data = res.data;
+                    }
+                } catch (e) {}
+            }
 
-            if (error) {
-                container.innerHTML = '<div style="color: #E50914; text-align: center; padding: 40px;">Error loading content.</div>';
-                return;
+            // Multi-tier Fallback Strategy if DB is empty or fails
+            if (!data || data.length === 0) {
+                if (window.app && window.app.content && window.app.content.length > 0) {
+                    const pool = window.app.content.filter(i => (i.type && (i.type.toLowerCase().includes('series') || i.type.toLowerCase().includes('show'))) || (i.category && i.category.toLowerCase().includes('series')));
+                    data = (pool.length > 0 ? pool : window.app.content).map(i => ({
+                        id: i.id,
+                        title: i.title,
+                        type: i.type || 'Series',
+                        thumb_portrait: i.thumbPortrait || i.thumb_portrait,
+                        category: i.category || 'Series',
+                        publish_date: i.publishDate || i.publish_date,
+                        episodes: i.episodes || []
+                    }));
+                } else {
+                    const cached = localStorage.getItem('series_update_cache_content');
+                    if (cached) {
+                        try {
+                            const parsed = JSON.parse(cached);
+                            const pool = parsed.filter(i => (i.type && (i.type.toLowerCase().includes('series') || i.type.toLowerCase().includes('show'))) || (i.category && i.category.toLowerCase().includes('series')));
+                            data = (pool.length > 0 ? pool : parsed).map(i => ({
+                                id: i.id,
+                                title: i.title,
+                                type: i.type || 'Series',
+                                thumb_portrait: i.thumbPortrait || i.thumb_portrait,
+                                category: i.category || 'Series',
+                                publish_date: i.publishDate || i.publish_date,
+                                episodes: i.episodes || []
+                            }));
+                        } catch(e) {}
+                    }
+                }
             }
 
             if (!data || data.length === 0) {
-                container.innerHTML = '<div style="color: #888; text-align: center; padding: 40px;">No TV shows uploaded yet.</div>';
-                return;
+                const fallbackSeed = (window.app ? window.app.getFallbackContent() : []).filter(i => i.type === 'Series');
+                data = fallbackSeed.map(i => ({
+                    id: i.id,
+                    title: i.title,
+                    type: i.type,
+                    thumb_portrait: i.thumbPortrait,
+                    category: i.category,
+                    publish_date: i.publishDate,
+                    episodes: i.episodes || []
+                }));
             }
 
             container.innerHTML = '';
@@ -551,20 +594,19 @@
             // 2. Trending Now (Next 5 items, or reverse if not enough)
             const trendingNow = data.length > 5 ? data.slice(5, 10) : [...data].reverse();
 
-            // 3. Top Rated Shows (Sort by title length or other metric for variety)
+            // 3. Top Rated Shows
             const topRated = [...data].sort((a, b) => (b.title || '').length - (a.title || '').length).slice(0, 6);
 
             // Generate HTML for a Row
             function generateRow(title, iconHtml, items) {
-                if(items.length === 0) return '';
+                if(!items || items.length === 0) return '';
                 
                 let cardsHtml = '';
                 items.forEach(item => {
-                    // Random fixed rating based on ID for stability
-                    const rating = (7.5 + ((item.id.charCodeAt(0) % 20) / 10)).toFixed(1); 
+                    const itemIdStr = String(item.id || 's-1');
+                    const rating = (7.5 + ((itemIdStr.charCodeAt(0) % 20) / 10)).toFixed(1); 
                     const year = item.publish_date ? new Date(item.publish_date).getFullYear() : '2026';
                     
-                    // Determine seasons string based on episodes if available
                     let seasonsStr = "1 Season";
                     try {
                         const episodes = item.episodes ? (typeof item.episodes === 'string' ? JSON.parse(item.episodes) : item.episodes) : null;
@@ -576,7 +618,7 @@
                     cardsHtml += `
                     <div class="movie-card" onclick="window.location.href='watch.html?id=${item.id}'">
                         <div class="poster-wrapper">
-                            <img src="${item.thumb_portrait}" alt="${item.title}" class="poster-img" loading="lazy" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=Poster+Not+Found'">
+                            <img src="${item.thumb_portrait || 'https://placehold.co/300x450/1a1a2e/ffffff?text=TV+Show'}" alt="${item.title}" class="poster-img" loading="lazy" onerror="this.src='https://placehold.co/300x450/1a1a2e/ffffff?text=TV+Show'">
                             <div class="hd-badge">HD</div>
                             <div class="play-overlay">
                                 <div class="play-circle">
