@@ -667,6 +667,9 @@ class StreamVault {
                     <div class="category-card" onclick="window.app.renderAll('search:mystery')">
                         <div class="category-icon cat-mystery"><span class="category-emoji">🔍</span></div><span class="category-name">Mystery</span>
                     </div>
+                    <div class="category-card" onclick="window.app.renderAll('search:upcoming')">
+                        <div class="category-icon cat-upcoming"><span class="category-emoji">⏳</span></div><span class="category-name">Upcoming</span>
+                    </div>
                     <div class="category-card" onclick="window.app.renderAll('search:crime')">
                         <div class="category-icon cat-crime"><span class="category-emoji">🚨</span></div><span class="category-name">Crime</span>
                     </div>
@@ -676,12 +679,12 @@ class StreamVault {
             return;
         }
 
-        // Hero and Categories Icons only on 'all'
+        // Hero, Categories, Continue to Watch, and Upcoming on 'all'
         if (filter === 'all') {
-            this.updateHero(); // we'll append the hero div to container inside updateHero
-            this.appendContinueWatchingRow(container);
-            
-            // Append static categories icons row with 3D Emojis
+            // 1. Featured Banner
+            this.updateHero();
+
+            // 2. Categories row directly under Featured Banner
             const catHtml = `
             <section class="categories-section">
                 <div class="section-header">
@@ -689,6 +692,9 @@ class StreamVault {
                     <a href="#" onclick="window.app.toggleAllCategories(this); return false;" class="view-all">View all <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></a>
                 </div>
                 <div class="categories-scroll hide-scroll">
+                    <div class="category-card" onclick="window.app.renderAll('search:upcoming')">
+                        <div class="category-icon cat-upcoming"><span class="category-emoji">⏳</span></div><span class="category-name">Upcoming</span>
+                    </div>
                     <div class="category-card" onclick="window.app.renderAll('search:action')">
                         <div class="category-icon cat-action"><span class="category-emoji">💥</span></div><span class="category-name">Action</span>
                     </div>
@@ -733,12 +739,16 @@ class StreamVault {
             const catWrapper = document.createElement('div');
             catWrapper.innerHTML = catHtml;
             container.appendChild(catWrapper.firstElementChild);
+
+            // 3. Continue to Watch row directly under Categories
+            this.appendContinueWatchingRow(container);
         } else {
              // Search/Filter Header
              const hdrMap = {
-                Movie:    { icon: '🎬', title: 'Movies',    sub: 'All movies in the Series Update library' },
-                Series:   { icon: '📺', title: 'Series',    sub: 'Binge-worthy series, season by season' },
-                Trending: { icon: '🔥', title: 'Trending',  sub: 'What everyone is watching right now' }
+                Movie:    { icon: '🎬', title: 'Movies',            sub: 'All movies in the Series Update library' },
+                Series:   { icon: '📺', title: 'Series',            sub: 'Binge-worthy series, season by season' },
+                Trending: { icon: '🔥', title: 'Trending',          sub: 'What everyone is watching right now' },
+                Upcoming: { icon: '⏳', title: 'Upcoming Releases', sub: 'Movies and series arriving soon' }
             };
             let h = hdrMap[filter] || { icon: '📁', title: filter, sub: '' };
             if (filter.startsWith('search:')) {
@@ -765,23 +775,31 @@ class StreamVault {
             return;
         }
 
-        // Generate content rows grouped by category or just one big list
+        // Generate content rows grouped by category
         if (filter === 'Trending' || filter.startsWith('search:')) {
              this.appendCardGrid(container, items, filter === 'Trending' ? 'Trending Results' : 'Search Results');
         } else {
-             // Group by category, ensuring Trending Now is never duplicated
-             const uniqueCategories = [...new Set(items.map(i => i.category))].filter(c => c && c !== 'Trending Now');
-             const categories = filter === 'all' ? ['Trending Now', ...uniqueCategories] : uniqueCategories;
+             // Group by category: Upcoming Releases FIRST (4. directly under Continue to Watch), then Trending Now, then other genres
+             const uniqueCategories = [...new Set(items.map(i => i.category))].filter(c => c && c !== 'Trending Now' && c !== 'Upcoming');
+             const categories = filter === 'all' 
+                 ? ['Upcoming', 'Trending Now', ...uniqueCategories] 
+                 : (filter === 'Upcoming' ? ['Upcoming', ...uniqueCategories] : uniqueCategories);
              
              categories.forEach(cat => {
                  let catItems = items;
+                 let sectionTitle = cat;
+
                  if (cat === 'Trending Now') {
                      catItems = [...items].sort((a,b) => new Date(b.publishDate) - new Date(a.publishDate)).slice(0, 5);
+                 } else if (cat === 'Upcoming') {
+                     sectionTitle = 'Upcoming Releases ⏳';
+                     catItems = items.filter(i => i.category === 'Upcoming' || (i.publishDate && new Date(i.publishDate) > new Date()));
                  } else {
                      catItems = items.filter(i => i.category === cat);
                  }
+
                  if (catItems.length > 0) {
-                     this.appendCardScrollRow(container, catItems, cat);
+                     this.appendCardScrollRow(container, catItems, sectionTitle);
                  }
              });
         }
@@ -851,11 +869,13 @@ class StreamVault {
             </div>
         `;
         
+        const catSection = container.querySelector('.categories-section');
         const heroSection = document.getElementById('hero-banner');
-        if (heroSection) {
+        
+        if (catSection) {
+            catSection.insertAdjacentElement('afterend', row);
+        } else if (heroSection) {
             heroSection.insertAdjacentElement('afterend', row);
-        } else if (container.firstChild) {
-            container.insertBefore(row, container.firstChild);
         } else {
             container.appendChild(row);
         }

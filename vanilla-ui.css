@@ -485,6 +485,7 @@ body.is-fullscreen-mode header {
 .cat-romance { background: linear-gradient(135deg, #FF758C 0%, #FF7EB3 100%); }
 .cat-mystery { background: linear-gradient(135deg, #2C3E50 0%, #4CA1AF 100%); }
 .cat-crime { background: linear-gradient(135deg, #EB3349 0%, #F45C43 100%); }
+.cat-upcoming { background: linear-gradient(135deg, #FFB300 0%, #FF6D00 100%); }
 .cat-family { background: linear-gradient(135deg, #11998e, #38ef7d); }
 .cat-more { background: linear-gradient(135deg, #141e30, #243b55); }
 
