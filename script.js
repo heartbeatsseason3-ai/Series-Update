@@ -362,7 +362,7 @@ class StreamVault {
 
     // Duplicate content
     async duplicateItem(id) {
-        const item = this.content.find(i => i.id === id);
+        const item = this.content.find(i => String(i.id) === String(id));
         if (!item) return;
 
         const newItem = {
@@ -1213,15 +1213,15 @@ class StreamVault {
 
         listContainer.innerHTML = this.content.map(item => `
             <div class="list-item">
-                <img src="${item.thumbPortrait}" alt="${item.title}">
+                <img src="${item.thumbPortrait || item.thumb_portrait || 'https://placehold.co/100x150/1a1a2e/ffffff?text=No+Image'}" alt="${item.title}">
                 <div class="list-item-info">
                     <h4>${item.title} ${item.featured ? '🌟' : ''}</h4>
-                    <p>${item.type || 'Movie'} • ${item.category} • ${item.publishDate}</p>
+                    <p>${item.type || 'Movie'} • ${item.category || ''} • ${item.publishDate || item.publish_date || ''}</p>
                 </div>
                 <div class="list-actions">
-                    <button class="duplicate-btn" onclick="app.duplicateItem('${item.id}')">Duplicate</button>
-                    <button class="edit-btn" onclick="app.enterEditMode('${item.id}')">Edit</button>
-                    <button class="delete-btn" onclick="app.deleteItem('${item.id}')">Delete</button>
+                    <button type="button" class="duplicate-btn" onclick="app.duplicateItem('${item.id}')">Duplicate</button>
+                    <button type="button" class="edit-btn" onclick="app.enterEditMode('${item.id}')">Edit</button>
+                    <button type="button" class="delete-btn" onclick="app.deleteItem('${item.id}')">Delete</button>
                 </div>
             </div>
         `).join('');
@@ -1340,46 +1340,62 @@ class StreamVault {
 
     // Edit Mode Logic
     enterEditMode(id) {
-        const item = this.content.find(i => i.id === id);
-        if (!item) return;
+        const item = this.content.find(i => String(i.id) === String(id));
+        if (!item) {
+            console.warn(`[Edit Mode] Item with ID '${id}' not found in content library.`);
+            return;
+        }
 
         this.editMode = true;
-        this.currentEditId = id;
+        this.currentEditId = item.id;
 
-        // Populate fields
-        document.getElementById('title').value = item.title;
-        document.getElementById('contentType').value = item.type || 'Movie';
-        document.getElementById('thumbPortrait').value = item.thumbPortrait;
-        document.getElementById('thumbLandscape').value = item.thumbLandscape;
-        document.getElementById('category').value = item.category;
-        document.getElementById('content').value = item.desc;
-        document.getElementById('publishDate').value = item.publishDate;
-        document.getElementById('is-featured').checked = item.featured;
-        if (document.getElementById('quality')) {
-            document.getElementById('quality').value = item.quality || '4K Ultra HD';
-        }
-        document.getElementById('videoLink').value = item.videoLink || '';
-        if (document.getElementById('androidLink')) document.getElementById('androidLink').value = item.androidLink || '';
-        if (document.getElementById('iosLink')) document.getElementById('iosLink').value = item.iosLink || '';
-        document.getElementById('downloadLink').value = item.downloadLink || '';
-        document.getElementById('embedCode').value = item.embedCode || '';
-        if (document.getElementById('embedCode2')) document.getElementById('embedCode2').value = item.embed_code2 || '';
-        if (document.getElementById('embedCode3')) document.getElementById('embedCode3').value = item.embed_code3 || '';
+        const setVal = (fieldId, val) => {
+            const el = document.getElementById(fieldId);
+            if (el) el.value = (val !== undefined && val !== null) ? val : '';
+        };
+
+        // Populate fields (supporting both camelCase and snake_case)
+        setVal('title', item.title);
+        setVal('contentType', item.type || 'Movie');
+        setVal('thumbPortrait', item.thumbPortrait || item.thumb_portrait);
+        setVal('thumbLandscape', item.thumbLandscape || item.thumb_landscape);
+        setVal('category', item.category);
+        setVal('content', item.desc || item.description);
+        setVal('publishDate', item.publishDate || item.publish_date);
+        
+        const featuredCheckbox = document.getElementById('is-featured');
+        if (featuredCheckbox) featuredCheckbox.checked = !!item.featured;
+
+        setVal('quality', item.quality || '4K Ultra HD');
+        setVal('videoLink', item.videoLink || item.video_link);
+        setVal('androidLink', item.androidLink || item.android_link);
+        setVal('iosLink', item.iosLink || item.ios_link);
+        setVal('downloadLink', item.downloadLink || item.download_link);
+        setVal('embedCode', item.embedCode || item.embed_code);
+        setVal('embedCode2', item.embedCode2 || item.embed_code2);
+        setVal('embedCode3', item.embedCode3 || item.embed_code3);
 
         // Handle Episodes
         const container = document.getElementById('episodes-container');
-        container.innerHTML = '';
-        if (item.episodes && item.episodes.length > 0) {
-            item.episodes.forEach(ep => this.addEpisodeRow(ep));
+        if (container) {
+            container.innerHTML = '';
+            if (item.episodes && item.episodes.length > 0) {
+                item.episodes.forEach(ep => this.addEpisodeRow(ep));
+            }
         }
 
         this.toggleStreamTypeFields();
 
         // UI Updates
-        document.getElementById('edit-mode-tag').classList.remove('hidden-initial');
-        document.getElementById('submit-btn').innerHTML = '💾 Save Changes';
-        document.getElementById('cancel-edit-btn').style.display = 'block';
-        
+        const editTag = document.getElementById('edit-mode-tag');
+        if (editTag) editTag.classList.remove('hidden-initial');
+
+        const submitBtn = document.getElementById('submit-btn');
+        if (submitBtn) submitBtn.innerHTML = '💾 Save Changes';
+
+        const cancelBtn = document.getElementById('cancel-edit-btn');
+        if (cancelBtn) cancelBtn.style.display = 'block';
+
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
