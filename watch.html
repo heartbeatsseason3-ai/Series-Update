@@ -552,6 +552,10 @@
                 </div>
             </div>
             <div class="header-right">
+                <button class="htw-header-btn" onclick="openHowToWatchModal()" title="How to Watch Video Guide">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                    <span>How to Watch</span>
+                </button>
                 <a href="https://t.me/seriesupdate2" target="_blank" rel="noopener noreferrer" class="telegram-header-link watch-telegram-link" title="Request Movie in Group">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     <span class="hidden-mobile">Request Movie</span>
@@ -654,6 +658,7 @@
     <script src="supabase-config.js?v=1789459272914"></script>
     <script src="fullscreen-handler.js"></script>
     <script src="theme-handler.js"></script>
+    <script src="how-to-watch-modal.js"></script>
     
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
@@ -904,6 +909,8 @@
 
                 ${getDeviceSelectHtml(item)}
 
+                ${window.getHowToWatchSectionHtml ? window.getHowToWatchSectionHtml() : ''}
+
                 ${episodes.length > 0 ? `
                 <div class="episodes-section">
                     <div class="episodes-header">
@@ -969,6 +976,8 @@
                         </p>
 
                         ${getDeviceSelectHtml(item)}
+
+                        ${window.getHowToWatchSectionHtml ? window.getHowToWatchSectionHtml() : ''}
                     </div>
                 </div>
             `;
