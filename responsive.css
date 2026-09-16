@@ -1403,24 +1403,15 @@ html, body {
         display: none !important;
     }
 
-    /* Header Compact Icon Buttons on Mobile */
-    .telegram-header-link {
-        width: 36px !important;
-        height: 36px !important;
-        min-width: 36px !important;
-        max-width: 36px !important;
-        padding: 0 !important;
-        border-radius: 50% !important;
-        justify-content: center !important;
-        align-items: center !important;
-        gap: 0 !important;
-        flex-shrink: 0 !important;
+    /* Hide Top Bar Telegram Buttons on Mobile Version */
+    header .telegram-header-link,
+    .header .telegram-header-link,
+    .header-actions .telegram-header-link,
+    .header-right .telegram-header-link,
+    .watch-telegram-link {
+        display: none !important;
     }
-    .telegram-header-link svg {
-        margin: 0 !important;
-        width: 18px !important;
-        height: 18px !important;
-    }
+
 
     header, .header {
         padding: 10px 12px !important;
