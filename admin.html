@@ -112,6 +112,103 @@
             display: none;
         }
 
+        /* Telegram Admin Toolbar Styles */
+        .admin-telegram-card {
+            background: rgba(0, 136, 204, 0.1);
+            border: 1px solid rgba(0, 136, 204, 0.4);
+            margin-bottom: 2rem;
+        }
+
+        .admin-telegram-flex {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .admin-telegram-title {
+            margin: 0 0 6px 0;
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+        }
+
+        .admin-telegram-sub {
+            margin: 0;
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        .admin-telegram-code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #38bdf8;
+        }
+
+        .admin-telegram-btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-tg-sync {
+            background: rgba(0, 136, 204, 0.25) !important;
+            border-color: rgba(0, 136, 204, 0.5) !important;
+            color: #ffffff !important;
+        }
+
+        .btn-tg-link {
+            text-decoration: none;
+        }
+
+        .admin-telegram-bot-box {
+            margin-top: 15px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(0, 136, 204, 0.3);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .admin-telegram-bot-label {
+            font-size: 12px;
+            color: #cbd5e1;
+            font-weight: 500;
+        }
+
+        .admin-telegram-bot-input-token {
+            flex: 1;
+            min-width: 200px;
+            padding: 6px 10px;
+            font-size: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 136, 204, 0.4);
+            color: #fff;
+            border-radius: 6px;
+        }
+
+        .admin-telegram-bot-input-chat {
+            width: 160px;
+            padding: 6px 10px;
+            font-size: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 136, 204, 0.4);
+            color: #fff;
+            border-radius: 6px;
+        }
+
+        .btn-tg-save-bot {
+            padding: 6px 12px !important;
+            font-size: 12px !important;
+            background: rgba(0, 136, 204, 0.3) !important;
+            color: #fff !important;
+        }
+
         @media (max-width: 650px) {
             #admin-navbar {
                 height: auto !important;
@@ -206,6 +303,40 @@
                 </div>
             </div>
             <div id="import-status-msg" class="import-status-message"></div>
+        </div>
+
+        <!-- Telegram Channel & Discussion Group Management Card -->
+        <div class="admin-card admin-telegram-card">
+            <div class="admin-telegram-flex">
+                <div>
+                    <h3 class="admin-telegram-title">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2L2 9.5l7.5 3L17 6.5l-5.5 8.5 7 4.5z"/></svg>
+                        Telegram Channel & Discussion Group Connected
+                    </h3>
+                    <p class="admin-telegram-sub">
+                        Channel: <code class="admin-telegram-code">https://t.me/seriesupdate1</code> | 
+                        Group: <code class="admin-telegram-code">https://t.me/seriesupdate2</code>
+                    </p>
+                </div>
+                <div class="admin-telegram-btn-group">
+                    <button type="button" class="btn btn-secondary btn-small btn-tg-sync" onclick="window.telegramService && window.telegramService.syncTelegramPostsToDatabase()">
+                        🔄 Sync Telegram Channel Posts
+                    </button>
+                    <a href="https://t.me/seriesupdate1" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-small btn-tg-link">
+                        Channel ↗
+                    </a>
+                    <a href="https://t.me/seriesupdate2" target="_blank" rel="noopener noreferrer" class="btn btn-secondary btn-small btn-tg-link">
+                        Group 💬
+                    </a>
+                </div>
+            </div>
+            <!-- Optional Direct Bot API Configuration -->
+            <div class="admin-telegram-bot-box">
+                <span class="admin-telegram-bot-label">🤖 Automatic Telegram Bot Posting (Optional Zero-Click):</span>
+                <input type="text" id="tg_bot_token" placeholder="Bot Token (e.g. 123456:ABC...)" class="admin-telegram-bot-input-token" onchange="localStorage.setItem('tg_bot_token', this.value.trim())">
+                <input type="text" id="tg_chat_id" placeholder="Chat ID (e.g. @seriesupdate2)" class="admin-telegram-bot-input-chat" onchange="localStorage.setItem('tg_chat_id', this.value.trim())">
+                <button type="button" class="btn btn-secondary btn-small btn-tg-save-bot" onclick="window.telegramService && window.telegramService.saveBotCredentials()">💾 Save Bot Config</button>
+            </div>
         </div>
 
         <div class="admin-grid">
@@ -329,6 +460,11 @@
                         <label for="is-featured" class="checkbox-label">Show in Hero (Featured) 🌟</label>
                     </div>
 
+                    <div class="form-group featured-checkbox-group">
+                        <input type="checkbox" id="auto-share-telegram" class="checkbox-input" checked>
+                        <label for="auto-share-telegram" class="checkbox-label">📢 Auto-Share to Telegram Group (@seriesupdate2) & Channel (@seriesupdate1)</label>
+                    </div>
+
                     <button type="submit" id="submit-btn" class="btn btn-primary publish-submit-btn">
                         🚀 Publish to Website
                     </button>
@@ -348,147 +484,6 @@
                     <div class="loading-status">
                         <p>Loading content...</p>
                     </div>
-                </div>
-            </section>
-        </div>
-
-        <div class="extracted-style-143 admin-header" >
-            <h1 class="admin-title">Products Dashboard <span id="prod-edit-mode-tag"
-                    class="edit-mode-indicator hidden-initial">EDIT MODE</span></h1>
-            <p class="admin-subtitle">Manage affiliate shopping products.</p>
-        </div>
-
-        <div class="admin-grid">
-            <!-- Create Product Section -->
-            <section class="admin-card">
-                <h2 class="admin-section-title">
-                    <span>🛍️</span> Add New Product
-                </h2>
-                <form id="admin-product-form">
-                    <div class="form-group">
-                        <label for="prodName">Product Name</label>
-                        <input type="text" id="prodName" placeholder="e.g. Smart Watch" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="prodImage">Product Image URL</label>
-                        <input type="url" id="prodImage" placeholder="Image URL..." required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="prodCategory">Category</label>
-                        <input type="text" id="prodCategory" placeholder="e.g. Electronics" required>
-                    </div>
-
-     <div class="extracted-style-144" >
-                        <div class="extracted-style-145 form-group" >
-                            <label for="prodOriginalPrice">Original Price</label>
-                            <input type="text" id="prodOriginalPrice" placeholder="e.g. ₹2,999" required>
-                        </div>
-                        <div class="extracted-style-146 form-group" >
-                            <label for="prodPrice">Sale Price</label>
-                            <input type="text" id="prodPrice" placeholder="e.g. ₹1,999" required>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="prodDiscount">Discount Percentage (Auto-calculated)</label>
-       <input class="extracted-style-147" type="number" id="prodDiscount" placeholder="%" readonly >
-                    </div>
-
-                    <div class="form-group">
-                        <label for="prodAffiliateUrl">Affiliate URL (Buy Link)</label>
-                        <input type="url" id="prodAffiliateUrl" placeholder="https://amazon.com/..." required>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="prodDesc">Short Description</label>
-                        <textarea id="prodDesc" rows="3" placeholder="Briefly describe the product..." required></textarea>
-                    </div>
-
-                    <div class="form-group featured-checkbox-group">
-                        <input type="checkbox" id="prodFeatured" class="checkbox-input">
-                        <label for="prodFeatured" class="checkbox-label">Featured Product 🌟</label>
-                    </div>
-                    
-                    <div class="form-group featured-checkbox-group">
-                        <input type="checkbox" id="prodStatus" class="checkbox-input" checked>
-                        <label for="prodStatus" class="checkbox-label">Visible (Active) 👁️</label>
-                    </div>
-
-                    <button type="submit" id="prod-submit-btn" class="btn btn-primary publish-submit-btn">
-                        🚀 Publish Product
-                    </button>
-                    <button type="button" id="prod-cancel-edit-btn" class="btn btn-secondary btn-cancel-edit">
-                        Cancel Editing
-                    </button>
-                </form>
-            </section>
-
-            <!-- Manage Products Section -->
-            <section class="admin-card">
-                <h2 class="admin-section-title">
-                    <span>📦</span> Manage Products
-                </h2>
-                <div class="content-list" id="admin-product-list">
-                    <div class="loading-status">
-                        <p>Loading products...</p>
-                    </div>
-                </div>
-            </section>
-        </div>
-        <div class="extracted-style-148 admin-header" >
-            <h1 class="admin-title">Ads Dashboard <span id="ad-edit-mode-tag" class="edit-mode-indicator hidden-initial">EDIT MODE</span></h1>
-            <p class="admin-subtitle">Manage advertisement banners globally.</p>
-        </div>
-
-        <div class="admin-grid">
-            <section class="admin-card">
-                <h2 class="admin-section-title"><span>📢</span> Add New Banner</h2>
-                <form id="admin-ad-form">
-                    <div class="form-group">
-                        <label for="adPosition">Position</label>
-                        <select id="adPosition" required>
-                            <option value="top">Top (Below Header)</option>
-                            <option value="middle">Middle of Content</option>
-                            <option value="bottom">Bottom (Above Footer)</option>
-                        </select>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="adImage">Banner Image URL</label>
-                        <input type="url" id="adImage" placeholder="Image URL (optional if using script)">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="adLink">Destination URL</label>
-                        <input type="url" id="adLink" placeholder="Where the ad goes when clicked...">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="adScript">Custom Script / HTML (Optional)</label>
-                        <textarea id="adScript" rows="4" placeholder="Paste ad network script here (e.g. <script>...</script>). Overrides image/link if provided."></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="adOrder">Display Order (Lower = First)</label>
-                        <input type="number" id="adOrder" value="0" required>
-                    </div>
-
-                    <div class="form-group featured-checkbox-group">
-                        <input type="checkbox" id="adStatus" class="checkbox-input" checked>
-                        <label for="adStatus" class="checkbox-label">Visible (Active) 👁️</label>
-                    </div>
-
-                    <button type="submit" id="ad-submit-btn" class="btn btn-primary publish-submit-btn">🚀 Publish Ad</button>
-                    <button type="button" id="ad-cancel-edit-btn" class="extracted-style-149 btn btn-secondary" >Cancel Editing</button>
-                </form>
-            </section>
-
-            <section class="admin-card">
-                <h2 class="admin-section-title"><span>📊</span> Manage Ads</h2>
-                <div class="content-list" id="admin-ad-list">
-                    <div class="loading-status"><p>Loading ads...</p></div>
                 </div>
             </section>
         </div>

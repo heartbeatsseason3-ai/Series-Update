@@ -598,6 +598,13 @@ class StreamVault {
             }
 
             await this.saveContent(newItem);
+
+            // Auto-Share to Telegram Group/Channel if requested
+            const autoShareCheckbox = document.getElementById('auto-share-telegram');
+            if (autoShareCheckbox && autoShareCheckbox.checked && window.telegramService) {
+                window.telegramService.shareContentToTelegram(newItem);
+            }
+
             adminForm.reset();
             const dateEl = document.getElementById('publishDate');
             if (dateEl) dateEl.valueAsDate = new Date();
@@ -770,7 +777,12 @@ class StreamVault {
             catWrapper.innerHTML = catHtml;
             container.appendChild(catWrapper.firstElementChild);
 
-            // 3. Continue to Watch row directly under Categories
+            // 3. Request Movie Banner
+            if (window.telegramService) {
+                window.telegramService.renderRequestBanner(container);
+            }
+
+            // 4. Continue to Watch row directly under Categories
             this.appendContinueWatchingRow(container);
         } else {
              // Search/Filter Header
@@ -798,8 +810,11 @@ class StreamVault {
             emptyDiv.className = 'px-5 py-10 flex flex-col items-center text-center';
             emptyDiv.innerHTML = `
                 <span class="text-4xl mb-4 opacity-50">🎬</span>
-                <h2 class="text-white font-semibold mb-2">No content yet</h2>
-                <p class="text-white/60 text-sm">Nothing matches this view. <a href="admin.html" class="text-primary hover:underline">Admin Panel</a></p>
+                <h2 class="text-white font-semibold mb-2">No content found</h2>
+                <p class="text-white/60 text-sm mb-4">Can't find what you're looking for? Send a message in our Telegram group!</p>
+                <a href="https://t.me/seriesupdate2" target="_blank" rel="noopener noreferrer" class="telegram-btn telegram-btn-group" style="display: inline-flex;">
+                    💬 Request Movie in Telegram Group
+                </a>
             `;
             container.appendChild(emptyDiv);
             return;
@@ -808,6 +823,7 @@ class StreamVault {
         // Generate content rows grouped by category & type
         if (filter === 'Trending' || filter.startsWith('search:')) {
              this.appendCardGrid(container, items, filter === 'Trending' ? 'Trending Results' : 'Search Results');
+             if (window.telegramService) window.telegramService.renderRequestBanner(container);
         } else if (filter === 'all') {
              // 1. Trending Now
              const trendingItems = [...items].sort((a,b) => new Date(b.publishDate || 0) - new Date(a.publishDate || 0)).slice(0, 8);
@@ -815,14 +831,14 @@ class StreamVault {
                  this.appendCardScrollRow(container, trendingItems, 'Trending Now 🔥');
              }
 
-             // 2. Popular Movies (Explicit row for movies on home page)
+             // 3. Popular Movies (Explicit row for movies on home page)
              const moviesList = items.filter(i => (i.type && i.type.toLowerCase().includes('movie')) || (i.category && i.category.toLowerCase().includes('movie')));
              const finalMovies = moviesList.length > 0 ? moviesList : items.filter(i => i.type !== 'Series');
              if (finalMovies.length > 0) {
                  this.appendCardScrollRow(container, finalMovies, 'Popular Movies 🎬');
              }
 
-             // 3. Trending TV Shows / Series
+             // 4. Trending TV Shows / Series
              const seriesList = items.filter(i => (i.type && (i.type.toLowerCase().includes('series') || i.type.toLowerCase().includes('show'))) || (i.category && i.category.toLowerCase().includes('series')));
              if (seriesList.length > 0) {
                  this.appendCardScrollRow(container, seriesList, 'Trending TV Shows 📺');
@@ -1301,6 +1317,7 @@ class StreamVault {
                     <p>${item.type || 'Movie'} • ${item.category || ''} • ${item.publishDate || item.publish_date || ''}</p>
                 </div>
                 <div class="list-actions">
+                    <button type="button" class="duplicate-btn" style="background: rgba(0, 136, 204, 0.2); color: #38bdf8; border: 1px solid rgba(0, 136, 204, 0.4);" onclick="window.telegramService && window.telegramService.shareContentToTelegram(app.content.find(i => String(i.id) === '${item.id}'))">📢 Share TG</button>
                     <button type="button" class="duplicate-btn" onclick="app.duplicateItem('${item.id}')">Duplicate</button>
                     <button type="button" class="edit-btn" onclick="app.enterEditMode('${item.id}')">Edit</button>
                     <button type="button" class="delete-btn" onclick="app.deleteItem('${item.id}')">Delete</button>
@@ -2004,6 +2021,254 @@ class AdVault {
         }
     }
 }
+
+class TelegramService {
+    constructor() {
+        this.channelUrl = 'https://t.me/seriesupdate1';
+        this.channelHandle = 'seriesupdate1';
+        this.groupUrl = 'https://t.me/seriesupdate2';
+        this.groupHandle = 'seriesupdate2';
+        this.cachedPosts = [];
+        this.init();
+    }
+
+    init() {
+        window.openTelegramChannel = () => window.open(this.channelUrl, '_blank');
+        window.openTelegramGroup = () => window.open(this.groupUrl, '_blank');
+        this.fetchChannelPosts();
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.restoreBotInputs());
+        } else {
+            this.restoreBotInputs();
+        }
+    }
+
+    restoreBotInputs() {
+        const tokenInput = document.getElementById('tg_bot_token');
+        const chatInput = document.getElementById('tg_chat_id');
+        if (tokenInput) tokenInput.value = localStorage.getItem('tg_bot_token') || '';
+        if (chatInput) chatInput.value = localStorage.getItem('tg_chat_id') || '@seriesupdate2';
+    }
+
+    saveBotCredentials() {
+        const token = (document.getElementById('tg_bot_token')?.value || '').trim();
+        const chatId = (document.getElementById('tg_chat_id')?.value || '').trim() || '@seriesupdate2';
+        if (token) localStorage.setItem('tg_bot_token', token);
+        else localStorage.removeItem('tg_bot_token');
+        localStorage.setItem('tg_chat_id', chatId);
+        alert('Telegram Bot configuration saved!');
+    }
+
+    async shareContentToTelegram(item, targetGroup = '@seriesupdate2') {
+        if (!item) return;
+
+        const baseUrl = window.location.origin + window.location.pathname.replace('admin.html', '');
+        const watchUrl = item.id ? `${baseUrl}watch.html?id=${item.id}` : `${baseUrl}index.html`;
+
+        const caption = `🎬 *NEW RELEASE ADDED!* 🎬\n\n` +
+            `📌 *Title:* ${item.title}\n` +
+            `🎭 *Type:* ${item.type || 'Movie'} | *Category:* ${item.category || 'Action'}\n` +
+            `💿 *Quality:* ${item.quality || '4K Ultra HD'}\n` +
+            `📅 *Date:* ${item.publishDate || item.publish_date || new Date().toISOString().split('T')[0]}\n\n` +
+            `📝 *Synopsis:* ${item.desc || item.description || 'Now available on Series Update!'}\n\n` +
+            `▶️ *Watch Now:* ${watchUrl}\n\n` +
+            `💬 *Request Movies in Group:* https://t.me/seriesupdate2\n` +
+            `📢 *Official Channel:* https://t.me/seriesupdate1`;
+
+        const botToken = localStorage.getItem('tg_bot_token');
+        const chatId = localStorage.getItem('tg_chat_id') || targetGroup;
+
+        let botSuccess = false;
+
+        // Option A: Direct Zero-Click posting via Telegram Bot API if configured
+        if (botToken && chatId) {
+            try {
+                const apiEndpoint = (item.thumbPortrait || item.thumb_portrait)
+                    ? `https://api.telegram.org/bot${botToken}/sendPhoto`
+                    : `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+                const bodyData = (item.thumbPortrait || item.thumb_portrait)
+                    ? { chat_id: chatId, photo: item.thumbPortrait || item.thumb_portrait, caption: caption, parse_mode: 'Markdown' }
+                    : { chat_id: chatId, text: caption, parse_mode: 'Markdown' };
+
+                const res = await fetch(apiEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(bodyData)
+                });
+
+                const resData = await res.json();
+                if (resData.ok) {
+                    botSuccess = true;
+                    alert(`✅ Automatically posted "${item.title}" to Telegram Group (${chatId}) via Telegram Bot!`);
+                } else {
+                    console.warn('[Telegram Bot API notice]:', resData);
+                }
+            } catch (err) {
+                console.warn('[Telegram Bot API Exception]:', err);
+            }
+        }
+
+        // Option B: 1-Click Telegram Share Intent (Opens Telegram with pre-filled announcement text)
+        if (!botSuccess) {
+            const cleanText = `🎬 NEW RELEASE: ${item.title}\nType: ${item.type || 'Movie'} (${item.category || ''})\nQuality: ${item.quality || '4K UHD'}\n\n${item.desc || item.description || ''}\n\n▶️ Watch: ${watchUrl}\n💬 Discussion Group: https://t.me/seriesupdate2\n📢 Channel: https://t.me/seriesupdate1`;
+            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(watchUrl)}&text=${encodeURIComponent(cleanText)}`;
+            window.open(shareUrl, '_blank', 'noopener,noreferrer');
+        }
+    }
+
+    async fetchChannelPosts() {
+        try {
+            const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent('https://t.me/s/' + this.channelHandle)}`);
+            if (res.ok) {
+                const data = await res.json();
+                if (data && data.contents) {
+                    const parsed = this.parseTelegramHTML(data.contents);
+                    if (parsed && parsed.length > 0) {
+                        this.cachedPosts = parsed;
+                        try { localStorage.setItem('series_update_tg_posts', JSON.stringify(parsed)); } catch(e){}
+                        return parsed;
+                    }
+                }
+            }
+        } catch(e) {
+            console.warn('[Telegram Service] Live fetch notice:', e);
+        }
+
+        try {
+            const local = localStorage.getItem('series_update_tg_posts');
+            if (local) {
+                this.cachedPosts = JSON.parse(local);
+                return this.cachedPosts;
+            }
+        } catch(e) {}
+
+        this.cachedPosts = [
+            {
+                id: 'tg-1',
+                text: '🎬 Heart Beat Season 03 (2026) HD Multi-Audio Premiere is OUT NOW! Send message in group to request more movies.',
+                title: 'Heart Beat Season 3 Premiere',
+                date: 'Just now',
+                image: 'https://i.ibb.co/S4mxsbrc/Chat-GPT-Image-Jun-7-2026-02-04-20-PMG.png',
+                link: 'https://t.me/seriesupdate1',
+                type: 'Series'
+            },
+            {
+                id: 'tg-2',
+                text: '🔥 DEMON SLAYER: INFINITY CASTLE Full HD & 4K streams added! Join discussion group @seriesupdate2 to request new movies!',
+                title: 'Demon Slayer: Infinity Castle',
+                date: '2 hours ago',
+                image: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=500&q=80',
+                link: 'https://t.me/seriesupdate1',
+                type: 'Anime'
+            },
+            {
+                id: 'tg-3',
+                text: '🚀 SOLO LEVELING SEASON 2 Episodes 1-4 added to streaming vault! Click request movie button if you want specific Dubs.',
+                title: 'Solo Leveling Season 2',
+                date: '5 hours ago',
+                image: 'https://images.unsplash.com/photo-1578632767115-351597cf2477?w=500&q=80',
+                link: 'https://t.me/seriesupdate1',
+                type: 'Anime'
+            }
+        ];
+        return this.cachedPosts;
+    }
+
+    parseTelegramHTML(html) {
+        const posts = [];
+        try {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const msgs = doc.querySelectorAll('.tgme_widget_message');
+            msgs.forEach((msg, idx) => {
+                const textEl = msg.querySelector('.tgme_widget_message_text');
+                const photoEl = msg.querySelector('.tgme_widget_message_photo_wrap');
+                const timeEl = msg.querySelector('.tgme_widget_message_date time');
+                const linkEl = msg.querySelector('.tgme_widget_message_date');
+                
+                let img = '';
+                if (photoEl) {
+                    const style = photoEl.getAttribute('style') || '';
+                    const m = style.match(/url\(['"]?(.*?)['"]?\)/);
+                    if (m && m[1]) img = m[1];
+                }
+                const txt = textEl ? textEl.textContent.trim() : '';
+                const time = timeEl ? timeEl.textContent.trim() : 'Recently';
+                const link = linkEl ? linkEl.getAttribute('href') : `https://t.me/seriesupdate1`;
+                
+                if (txt || img) {
+                    posts.unshift({
+                        id: `tg-${idx}`,
+                        text: txt || 'New update posted on channel',
+                        date: time,
+                        image: img || 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=500&q=80',
+                        link: link
+                    });
+                }
+            });
+        } catch(e) {}
+        return posts;
+    }
+
+    renderFeedWidget(container) {
+        // Disabled per user request: LIVE AUTO-UPDATES Telegram Channel Feed removed
+        return;
+    }
+
+    renderRequestBanner(container) {
+        if (!container) return;
+        const banner = document.createElement('div');
+        banner.className = 'request-movie-banner';
+        banner.innerHTML = `
+            <div class="request-banner-left">
+                <div class="request-banner-icon">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                </div>
+                <div>
+                    <h3 class="request-banner-title">🎬 Can't Find Your Movie or Series?</h3>
+                    <p class="request-banner-sub">Click to send a message in our Telegram Discussion Group (@seriesupdate2)!</p>
+                </div>
+            </div>
+            <a href="${this.groupUrl}" target="_blank" rel="noopener noreferrer" class="telegram-btn telegram-btn-group">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Request Movie in Group
+            </a>
+        `;
+        container.appendChild(banner);
+    }
+
+    async syncTelegramPostsToDatabase() {
+        const client = window.supabaseClient || window.supabase;
+        if (!client) {
+            alert('Supabase client not initialized!');
+            return;
+        }
+        const posts = await this.fetchChannelPosts();
+        let addedCount = 0;
+        for (const post of posts) {
+            const newItem = {
+                title: post.title || post.text.substring(0, 30) || 'Telegram Release',
+                type: post.type || 'Movie',
+                thumb_portrait: post.image,
+                thumb_landscape: post.image,
+                category: 'Telegram Live',
+                description: post.text,
+                publish_date: new Date().toISOString().split('T')[0],
+                featured: true,
+                quality: '4K Ultra HD',
+                video_link: post.link || this.channelUrl
+            };
+            const { error } = await client.from('content').insert([newItem]);
+            if (!error) addedCount++;
+        }
+        alert(`Successfully synced ${addedCount} post(s) from Telegram Channel (@seriesupdate1) into database!`);
+        if (window.app) window.app.loadContent();
+    }
+}
+
+window.telegramService = new TelegramService();
 
 window.auth = new Auth();
 

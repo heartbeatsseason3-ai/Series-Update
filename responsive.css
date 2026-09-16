@@ -1387,3 +1387,182 @@ body.light-mode .device-modal-close {
         color: #0f172a !important;
     }
 }
+
+/* =====================================================
+   MOBILE UI/UX POLISH & OVERFLOW PREVENTION (<768px)
+   ===================================================== */
+html, body {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+}
+
+@media (max-width: 768px) {
+    .hidden-mobile {
+        display: none !important;
+    }
+
+    /* Header Compact Icon Buttons on Mobile */
+    .telegram-header-link {
+        width: 36px !important;
+        height: 36px !important;
+        min-width: 36px !important;
+        max-width: 36px !important;
+        padding: 0 !important;
+        border-radius: 50% !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 0 !important;
+        flex-shrink: 0 !important;
+    }
+    .telegram-header-link svg {
+        margin: 0 !important;
+        width: 18px !important;
+        height: 18px !important;
+    }
+
+    header, .header {
+        padding: 10px 12px !important;
+        gap: 8px !important;
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
+    }
+
+    .header-actions, .header-right {
+        gap: 6px !important;
+    }
+
+    /* Request Movie Banner Mobile Layout */
+    .request-movie-banner {
+        flex-direction: column !important;
+        text-align: center !important;
+        padding: 18px 16px !important;
+        margin: 16px auto !important;
+        width: calc(100% - 24px) !important;
+        max-width: 100% !important;
+        gap: 14px !important;
+        box-sizing: border-box !important;
+        box-shadow: 0 8px 25px rgba(0, 136, 204, 0.25) !important;
+    }
+
+    .request-banner-left {
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 10px !important;
+    }
+
+    .request-banner-title {
+        font-size: 1.05rem !important;
+        line-height: 1.35 !important;
+    }
+
+    .request-banner-sub {
+        font-size: 0.82rem !important;
+        line-height: 1.4 !important;
+        color: rgba(255, 255, 255, 0.75) !important;
+    }
+
+    .request-movie-banner .telegram-btn,
+    .request-movie-banner .telegram-btn-group {
+        width: 100% !important;
+        justify-content: center !important;
+        box-sizing: border-box !important;
+        padding: 11px 16px !important;
+        font-size: 0.9rem !important;
+    }
+
+    /* Live Telegram Channel Feed Mobile Polish */
+    .telegram-feed-container {
+        padding: 0 12px !important;
+        margin: 20px 0 !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+    }
+
+    .telegram-feed-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 10px !important;
+        margin-bottom: 14px !important;
+    }
+
+    .telegram-feed-title-wrap {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 6px !important;
+    }
+
+    .telegram-feed-title-wrap h2 {
+        font-size: 1.05rem !important;
+        line-height: 1.3 !important;
+    }
+
+    .telegram-feed-header .telegram-btn {
+        width: 100% !important;
+        justify-content: center !important;
+        font-size: 13px !important;
+        padding: 8px 16px !important;
+    }
+
+    .telegram-feed-scroll {
+        padding-left: 4px !important;
+        padding-right: 12px !important;
+        gap: 12px !important;
+    }
+
+    .telegram-post-card {
+        flex: 0 0 250px !important;
+        width: 250px !important;
+        max-width: 82vw !important;
+        padding: 12px !important;
+        box-sizing: border-box !important;
+    }
+
+    .telegram-post-badge {
+        font-size: 9px !important;
+        padding: 2px 6px !important;
+    }
+
+    .telegram-post-img {
+        height: 125px !important;
+        margin-bottom: 10px !important;
+    }
+
+    .telegram-post-text {
+        font-size: 12px !important;
+        line-height: 1.4 !important;
+        margin-bottom: 10px !important;
+        display: -webkit-box !important;
+        -webkit-line-clamp: 3 !important;
+        line-clamp: 3 !important;
+        -webkit-box-orient: vertical !important;
+        overflow: hidden !important;
+    }
+
+    .telegram-post-footer {
+        display: flex !important;
+        gap: 6px !important;
+        margin-top: auto !important;
+        width: 100% !important;
+    }
+
+    .telegram-post-footer .telegram-header-link,
+    .telegram-post-footer .telegram-btn {
+        flex: 1 1 0% !important;
+        width: 50% !important;
+        height: 32px !important;
+        min-width: 0 !important;
+        padding: 0 4px !important;
+        font-size: 10.5px !important;
+        border-radius: 16px !important;
+        justify-content: center !important;
+        text-align: center !important;
+        white-space: nowrap !important;
+        box-sizing: border-box !important;
+    }
+}
+
